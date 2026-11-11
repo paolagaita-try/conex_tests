@@ -1,0 +1,40 @@
+{
+  "proceso": "Hola",
+  "version": "1.0",
+  "definiciones": [
+    {
+      "codigo": "saludos",
+      "nombre": "Saludos",
+      "descripcion": "Administra: empleado. Origen: Ejemplo de la plantilla. Citado en: frm_holaRevisar.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "ALTO",
+      "visibilidad": "CLIENTE",
+      "fallback": ""
+    }
+  ],
+  "valores": [
+    {
+      "definicion": "saludos",
+      "proceso": "Hola",
+      "codigo": "hola",
+      "etiqueta": "Hola",
+      "orden": 1
+    },
+    {
+      "definicion": "saludos",
+      "proceso": "Hola",
+      "codigo": "buenos_dias",
+      "etiqueta": "Buenos días",
+      "orden": 2
+    },
+    {
+      "definicion": "saludos",
+      "proceso": "Hola",
+      "codigo": "bienvenida",
+      "etiqueta": "Bienvenida",
+      "orden": 3
+    }
+  ],
+  "invariantes": []
+}

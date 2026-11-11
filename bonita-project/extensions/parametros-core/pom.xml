@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>co.trycore.hubspot</groupId>
+    <artifactId>hubspot-bonita-extensions</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <artifactId>hubspot-bonita-parametros-core</artifactId>
+  <name>Módulo de parámetros — núcleo (parametros-core)</name>
+  <description>Única lógica del módulo de parámetros: resolución por ámbito, serialización canónica, huella encadenada y escritura transaccional. Sin dependencias de Bonita en el núcleo.</description>
+
+  <!-- Las pruebas contra base de datos real (H2 1.4.200 y PostgreSQL, las versiones del bundle) solo se
+       activan cuando se les pasan las URLs (-Dkit.h2.url=… / -Dkit.pg.url=…) de un esquema creado por el
+       motor; en el build normal Spock las marca como SALTADAS. -->
+
+  <properties>
+    <byte-buddy.version>1.14.5</byte-buddy.version>
+    <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
+    <spock-core.version>2.3-groovy-3.0</spock-core.version>
+    <logback-classic.version>1.2.13</logback-classic.version>
+    <h2.version>1.4.200</h2.version>
+    <postgresql.version>42.7.4</postgresql.version>
+    <!-- vacías por defecto: sin ellas Maven pasaría el literal «${kit.h2.url}» y una prueba lo
+         tomaría por una URL. Se rellenan con -D en la línea de mvn. -->
+    <kit.h2.url></kit.h2.url>
+    <kit.pg.url></kit.pg.url>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>${spock-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>${byte-buddy.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-classic.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/groovy</sourceDirectory>
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Se incluye todo lo que compila bajo src/test, porque los sufijos por defecto (*Test) no
+               casan con *Spec, y un Spec que no corre no mide. -->
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+          <systemPropertyVariables>
+            <kit.h2.url>${kit.h2.url}</kit.h2.url>
+            <kit.pg.url>${kit.pg.url}</kit.pg.url>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

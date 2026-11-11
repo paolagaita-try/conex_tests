@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applications xmlns="http://documentation.bonitasoft.com/application-xml-schema/1.1">
+  <application token="hola" version="1.0" profile="User" homePage="frmHolaRevisar" state="ACTIVATED" layout="custompage_layoutBonita" theme="custompage_themeBonita">
+    <displayName>Hola</displayName>
+    <description>Aplicación Hola: contiene las pantallas de sus formularios.</description>
+    <applicationPages>
+      <applicationPage customPage="custompage_frmHolaRevisar" token="frmHolaRevisar" />
+    </applicationPages>
+    <applicationMenus />
+  </application>
+</applications>

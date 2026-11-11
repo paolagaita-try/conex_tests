@@ -1,0 +1,6 @@
+{
+  "_origen": "trycore-spec-build-harness@062c6fd asset-types.json",
+  "_nota": "Tipos de asset que el arnés declara al hub en POST /agents/register. Los del original (arch.drivers, arch.adr, arch.backlog) son de arquitectura de software y no aplican a Bonita; el hub acepta la lista vacía (AgentRegisterIn.asset_types: list[Any] = [] e ingest_harness_catalog([]) -> applied).",
+  "meta_schema_version": 1,
+  "types": []
+}

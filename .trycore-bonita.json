@@ -1,0 +1,8 @@
+{
+  "nombre": "hubspot-bonita",
+  "grupo": "co.trycore.hubspot",
+  "version_bonita": "2026.2",
+  "edicion_desarrollo": "community",
+  "edicion_destino": "community",
+  "formularios": "svelte"
+}

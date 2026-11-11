@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Aplicación de ADMINISTRACIÓN DE PARÁMETROS de la plantilla (módulo de parámetros): una sola página
+  (custompage_formInternoParametros, frontend/src/forms/parametros) con navegación propia: inicio por ámbito,
+  listas, parámetros con doble control, aprobaciones, permisos, importar y traza.
+
+  Perfil `User`, no `AdministracionParametros`: en Community no hay perfiles propios y una aplicación que nombra un
+  perfil que el runtime no tiene ABORTA la instalación entera (LIVING_APP_REFERENCES_UNKNOWN_PROFILE, medido en
+  2026.2-u0: el runtime no arranca). Quién administra lo decide el módulo, no el perfil: la API de parámetros solo
+  deja escribir al rol `superAdministradorParametros` (o a una delegación vigente) y la página se cierra entera para
+  el resto. El mapeo de los usuarios al perfil `User` lo hace después del despliegue `tools/arnes.sh perfiles`.
+
+  Es de la plantilla, no del generador: no está en build/generados.json y `generar` no la toca.
+-->
+<applications xmlns="http://documentation.bonitasoft.com/application-xml-schema/1.1">
+  <application token="parametros" version="1.0" profile="User" homePage="parametros" state="ACTIVATED" layout="custompage_layoutBonita" theme="custompage_themeBonita">
+    <displayName>Parámetros de negocio</displayName>
+    <description>Administración de las listas y los parámetros de negocio de los procesos: cambiarlos sin desplegar, con doble control en los de impacto alto y traza de cada cambio.</description>
+    <applicationPages>
+      <applicationPage customPage="custompage_formInternoParametros" token="parametros" />
+    </applicationPages>
+    <applicationMenus />
+  </application>
+</applications>

@@ -1,0 +1,76 @@
+{
+  "proceso": "Solicitud de Beca de Estudios",
+  "version": "1",
+  "definiciones": [
+    {
+      "codigo": "programa",
+      "nombre": "Programa de estudios",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE"
+    },
+    {
+      "codigo": "monto_por_programa",
+      "nombre": "Monto máximo de la beca por programa",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "minimo": "0.00",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA",
+      "dependeDe": "programa"
+    },
+    {
+      "codigo": "tope_coordinacion",
+      "nombre": "Tope que aprueba la coordinación",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "tope_comite",
+      "nombre": "Tope que aprueba el comité de becas",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "promedio_minimo",
+      "nombre": "Promedio mínimo para solicitar",
+      "clase": "PARAMETRO",
+      "tipoDato": "DECIMAL",
+      "minimo": "0.00",
+      "maximo": "5.00",
+      "decimales": 2,
+      "impacto": "NORMAL",
+      "fallback": "3.50",
+      "visibilidad": "CLIENTE"
+    }
+  ],
+  "valores": [
+    {"definicion": "programa", "proceso": "Solicitud de Beca de Estudios", "codigo": "curso", "etiqueta": "Curso corto", "orden": 1},
+    {"definicion": "programa", "proceso": "Solicitud de Beca de Estudios", "codigo": "diplomado", "etiqueta": "Diplomado", "orden": 2},
+    {"definicion": "programa", "proceso": "Solicitud de Beca de Estudios", "codigo": "maestria", "etiqueta": "Maestría", "orden": 3},
+    {"definicion": "monto_por_programa", "proceso": "Solicitud de Beca de Estudios", "codigoPadre": "curso", "valor": "800.00"},
+    {"definicion": "monto_por_programa", "proceso": "Solicitud de Beca de Estudios", "codigoPadre": "diplomado", "valor": "2500.00"},
+    {"definicion": "monto_por_programa", "proceso": "Solicitud de Beca de Estudios", "codigoPadre": "maestria", "valor": "9000.00"},
+    {"definicion": "tope_coordinacion", "proceso": "Solicitud de Beca de Estudios", "valor": "2500.00"},
+    {"definicion": "tope_comite", "proceso": "Solicitud de Beca de Estudios", "valor": "9000.00"},
+    {"definicion": "promedio_minimo", "valor": "3.50"},
+    {"definicion": "promedio_minimo", "proceso": "Solicitud de Beca de Estudios", "valor": "4.00"}
+  ],
+  "invariantes": [
+    {"tipo": "CRECIENTE", "definiciones": ["tope_coordinacion", "tope_comite"]}
+  ]
+}

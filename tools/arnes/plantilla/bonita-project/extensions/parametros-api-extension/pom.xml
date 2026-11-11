@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>{{GRUPO}}</groupId>
+    <artifactId>{{NOMBRE}}-extensions</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <artifactId>{{NOMBRE}}-parametros-api-extension</artifactId>
+  <name>Módulo de parámetros — REST API extension (parametros-api-extension)</name>
+  <description>REST API extension `parametros/*` (19 recursos): escritura transaccional con traza encadenada, lectura, semillas, propuestas, importaciones y delegaciones. Toda la lógica vive en parametros-core; aquí solo HTTP, JNDI e identityAPI.</description>
+  <!-- Las versiones vienen del parent org.bonitasoft:bonita-project. parametros-core viaja en lib/ del zip
+       por el assembly; la configuración y las semillas del proyecto (bonita-project/parametros/), en su raíz. -->
+  <properties>
+    <byte-buddy.version>1.14.5</byte-buddy.version>
+    <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
+    <spock-core.version>2.3-groovy-3.0</spock-core.version>
+    <logback-classic.version>1.2.13</logback-classic.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>{{NOMBRE}}-parametros-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bonitasoft.web</groupId>
+      <artifactId>bonita-web-extensions</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>${spock-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>${byte-buddy.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-classic.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main/groovy</sourceDirectory>
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <defaultGoal>verify</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Todo lo que compila bajo src/test, porque los sufijos por defecto (*Test) no casan con *Spec, y
+               un Spec que no corre no mide. -->
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptorSourceDirectory>${project.basedir}/src/assembly</descriptorSourceDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

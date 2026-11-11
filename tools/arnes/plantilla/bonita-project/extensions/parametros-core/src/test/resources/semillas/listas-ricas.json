@@ -1,0 +1,340 @@
+{
+  "proceso": "Solicitud de documentos",
+  "version": "1.0",
+  "definiciones": [
+    {
+      "codigo": "tipos_documento",
+      "nombre": "Tipos de documento",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE"
+    },
+    {
+      "codigo": "empresas",
+      "nombre": "Empresas",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE"
+    },
+    {
+      "codigo": "estados",
+      "nombre": "Estados del caso",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE"
+    },
+    {
+      "codigo": "estados.id_interno",
+      "nombre": "Estados del caso › idInterno",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "estados"
+    },
+    {
+      "codigo": "estados.estado_visible",
+      "nombre": "Estados del caso › estadoVisible",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "estados"
+    },
+    {
+      "codigo": "notificaciones",
+      "nombre": "Notificaciones",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE"
+    },
+    {
+      "codigo": "notificaciones.activa",
+      "nombre": "Notificaciones › activa",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "BOOLEANO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "notificaciones"
+    },
+    {
+      "codigo": "destinatarios",
+      "nombre": "Destinatarios fijos",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE"
+    },
+    {
+      "codigo": "destinatarios.correo",
+      "nombre": "Destinatarios fijos › correo",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "destinatarios"
+    },
+    {
+      "codigo": "revisores_por_tipo.revisor1",
+      "nombre": "Revisores por tipo › revisor1",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "tipos_documento"
+    },
+    {
+      "codigo": "revisores_por_tipo.revisor2",
+      "nombre": "Revisores por tipo › revisor2",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "tipos_documento"
+    },
+    {
+      "codigo": "variantes_por_tipo.revision_previa",
+      "nombre": "Variantes por tipo › revisionPrevia",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "tipos_documento"
+    },
+    {
+      "codigo": "variantes_por_tipo.revision_externa",
+      "nombre": "Variantes por tipo › revisionExterna",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "PARAMETRO",
+      "tipoDato": "BOOLEANO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA",
+      "dependeDe": "tipos_documento"
+    },
+    {
+      "codigo": "estructura.area",
+      "nombre": "Estructura organizacional › area",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE",
+      "dependeDe": "empresas"
+    },
+    {
+      "codigo": "estructura.direccion",
+      "nombre": "Estructura organizacional › direccion",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE",
+      "dependeDe": "estructura.area"
+    },
+    {
+      "codigo": "estructura.departamento",
+      "nombre": "Estructura organizacional › departamento",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE",
+      "dependeDe": "estructura.direccion"
+    },
+    {
+      "codigo": "estructura.puesto",
+      "nombre": "Estructura organizacional › puesto",
+      "descripcion": "Administra: Administracion. Origen: Regla de negocio. Citado en: Tarea T-1.",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "CLIENTE",
+      "dependeDe": "estructura.departamento"
+    }
+  ],
+  "valores": [
+    {
+      "definicion": "tipos_documento",
+      "proceso": "Solicitud de documentos",
+      "codigo": "1",
+      "etiqueta": "Política",
+      "orden": 1
+    },
+    {
+      "definicion": "tipos_documento",
+      "proceso": "Solicitud de documentos",
+      "codigo": "2",
+      "etiqueta": "Instructivo",
+      "orden": 2
+    },
+    {
+      "definicion": "empresas",
+      "proceso": "Solicitud de documentos",
+      "codigo": "1",
+      "etiqueta": "Empresa uno",
+      "orden": 1
+    },
+    {
+      "definicion": "empresas",
+      "proceso": "Solicitud de documentos",
+      "codigo": "2",
+      "etiqueta": "Empresa dos",
+      "orden": 2
+    },
+    {
+      "definicion": "estados",
+      "proceso": "Solicitud de documentos",
+      "codigo": "2",
+      "etiqueta": "Abierto",
+      "orden": 1
+    },
+    {
+      "definicion": "estados",
+      "proceso": "Solicitud de documentos",
+      "codigo": "10",
+      "etiqueta": "En espera de firma",
+      "orden": 2
+    },
+    {
+      "definicion": "estados.id_interno",
+      "codigoPadre": "2",
+      "valor": "abierto"
+    },
+    {
+      "definicion": "estados.id_interno",
+      "codigoPadre": "10",
+      "valor": "en_espera_firma"
+    },
+    {
+      "definicion": "estados.estado_visible",
+      "codigoPadre": "2",
+      "valor": "Registrada"
+    },
+    {
+      "definicion": "estados.estado_visible",
+      "codigoPadre": "10",
+      "valor": "En aprobación"
+    },
+    {
+      "definicion": "notificaciones",
+      "proceso": "Solicitud de documentos",
+      "codigo": "0191",
+      "etiqueta": "Apertura",
+      "orden": 1
+    },
+    {
+      "definicion": "notificaciones",
+      "proceso": "Solicitud de documentos",
+      "codigo": "0141",
+      "etiqueta": "Aviso",
+      "orden": 2
+    },
+    {
+      "definicion": "notificaciones.activa",
+      "codigoPadre": "0191",
+      "valor": "true"
+    },
+    {
+      "definicion": "notificaciones.activa",
+      "codigoPadre": "0141",
+      "valor": "false"
+    },
+    {
+      "definicion": "destinatarios",
+      "proceso": "Solicitud de documentos",
+      "codigo": "correodireccion",
+      "etiqueta": "Aviso a la dirección",
+      "orden": 1
+    },
+    {
+      "definicion": "destinatarios.correo",
+      "codigoPadre": "correodireccion",
+      "valor": "direccion@ejemplo.test"
+    },
+    {
+      "definicion": "revisores_por_tipo.revisor1",
+      "codigoPadre": "1",
+      "valor": "revisor.uno"
+    },
+    {
+      "definicion": "revisores_por_tipo.revisor2",
+      "codigoPadre": "1",
+      "valor": "revisor.dos"
+    },
+    {
+      "definicion": "variantes_por_tipo.revision_previa",
+      "codigoPadre": "1",
+      "valor": "siempre"
+    },
+    {
+      "definicion": "variantes_por_tipo.revision_externa",
+      "codigoPadre": "1",
+      "valor": "false"
+    },
+    {
+      "definicion": "estructura.area",
+      "proceso": "Solicitud de documentos",
+      "codigoPadre": "1",
+      "codigo": "a1",
+      "etiqueta": "Área uno",
+      "orden": 1
+    },
+    {
+      "definicion": "estructura.area",
+      "proceso": "Solicitud de documentos",
+      "codigoPadre": "2",
+      "codigo": "a2",
+      "etiqueta": "Área dos",
+      "orden": 1
+    },
+    {
+      "definicion": "estructura.direccion",
+      "proceso": "Solicitud de documentos",
+      "codigoPadre": "a1",
+      "codigo": "d1",
+      "etiqueta": "Dirección uno",
+      "orden": 1
+    },
+    {
+      "definicion": "estructura.departamento",
+      "proceso": "Solicitud de documentos",
+      "codigoPadre": "d1",
+      "codigo": "dp1",
+      "etiqueta": "Departamento uno",
+      "orden": 1
+    },
+    {
+      "definicion": "estructura.puesto",
+      "proceso": "Solicitud de documentos",
+      "codigoPadre": "dp1",
+      "codigo": "p1",
+      "etiqueta": "Puesto uno",
+      "orden": 1
+    },
+    {
+      "definicion": "estructura.puesto",
+      "proceso": "Solicitud de documentos",
+      "codigoPadre": "dp1",
+      "codigo": "p2",
+      "etiqueta": "Puesto dos",
+      "orden": 2
+    }
+  ],
+  "invariantes": []
+}

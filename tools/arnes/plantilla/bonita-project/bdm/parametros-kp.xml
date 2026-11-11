@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<businessObjectModel xmlns="http://documentation.bonitasoft.com/bdm-xml-schema/1.0" modelVersion="1.0">
+    <businessObjects>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpDefinicionParametro">
+            <fields>
+                <field type="STRING" length="100" name="codigo" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="nombre" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="descripcion" nullable="true" collection="false"/>
+                <field type="STRING" length="20" name="clase" nullable="false" collection="false"/>
+                <field type="STRING" length="20" name="tipoDato" nullable="false" collection="false"/>
+                <field type="STRING" length="20" name="unidad" nullable="true" collection="false"/>
+                <field type="STRING" length="50" name="minimo" nullable="true" collection="false"/>
+                <field type="STRING" length="50" name="maximo" nullable="true" collection="false"/>
+                <field type="INTEGER" length="255" name="decimales" nullable="true" collection="false"/>
+                <field type="STRING" length="100" name="dependeDe" nullable="false" collection="false"/>
+                <field type="STRING" length="10" name="impacto" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="fallback" nullable="true" collection="false"/>
+                <field type="STRING" length="20" name="origen" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="procesoSemilla" nullable="true" collection="false"/>
+                <field type="STRING" length="10" name="visibilidad" nullable="false" collection="false"/>
+                <field type="BOOLEAN" length="255" name="activo" nullable="false" collection="false"/>
+            </fields>
+            <uniqueConstraints>
+                <uniqueConstraint name="UK_KP_DEF_CODIGO">
+                    <fieldNames>
+                        <fieldName>codigo</fieldName>
+                    </fieldNames>
+                </uniqueConstraint>
+            </uniqueConstraints>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpValorParametro">
+            <fields>
+                <field type="STRING" length="100" name="definicion" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="proceso" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="actividad" nullable="false" collection="false"/>
+                <field type="STRING" length="100" name="codigoPadre" nullable="false" collection="false"/>
+                <field type="STRING" length="100" name="codigo" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="etiqueta" nullable="true" collection="false"/>
+                <field type="STRING" length="255" name="ayuda" nullable="true" collection="false"/>
+                <field type="INTEGER" length="255" name="orden" nullable="true" collection="false"/>
+                <field type="TEXT" length="512" name="valor" nullable="true" collection="false"/>
+                <field type="BOOLEAN" length="255" name="activo" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="copiadoDe" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="codigosOrigen" nullable="true" collection="false"/>
+            </fields>
+            <uniqueConstraints>
+                <uniqueConstraint name="UK_KP_VALOR">
+                    <fieldNames>
+                        <fieldName>definicion</fieldName>
+                        <fieldName>proceso</fieldName>
+                        <fieldName>actividad</fieldName>
+                        <fieldName>codigoPadre</fieldName>
+                        <fieldName>codigo</fieldName>
+                    </fieldNames>
+                </uniqueConstraint>
+            </uniqueConstraints>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpPropuestaCambio">
+            <fields>
+                <field type="STRING" length="100" name="definicion" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="proceso" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="actividad" nullable="false" collection="false"/>
+                <field type="STRING" length="100" name="codigoPadre" nullable="false" collection="false"/>
+                <field type="STRING" length="100" name="codigo" nullable="false" collection="false"/>
+                <field type="STRING" length="40" name="accion" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="valorAnterior" nullable="true" collection="false"/>
+                <field type="TEXT" length="512" name="valorPropuesto" nullable="true" collection="false"/>
+                <field type="STRING" length="255" name="proponente" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="motivo" nullable="false" collection="false"/>
+                <field type="STRING" length="20" name="estado" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="aprobador" nullable="true" collection="false"/>
+                <field type="TEXT" length="512" name="comentario" nullable="true" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="creadaEn" nullable="false" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="resueltaEn" nullable="true" collection="false"/>
+                <field type="STRING" length="800" name="pendienteClave" nullable="false" collection="false"/>
+            </fields>
+            <uniqueConstraints>
+                <uniqueConstraint name="UK_KP_PROP_PEND">
+                    <fieldNames>
+                        <fieldName>pendienteClave</fieldName>
+                    </fieldNames>
+                </uniqueConstraint>
+            </uniqueConstraints>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpDelegacionParametro">
+            <fields>
+                <field type="STRING" length="20" name="tipoSujeto" nullable="false" collection="false"/>
+                <field type="LONG" length="255" name="sujetoUsuarioId" nullable="true" collection="false"/>
+                <field type="LONG" length="255" name="sujetoGrupoId" nullable="true" collection="false"/>
+                <field type="LONG" length="255" name="sujetoRolId" nullable="true" collection="false"/>
+                <field type="STRING" length="255" name="sujetoRuta" nullable="true" collection="false"/>
+                <field type="BOOLEAN" length="255" name="incluyeSubgrupos" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="proceso" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="actividades" nullable="true" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="vigenteDesde" nullable="true" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="vigenteHasta" nullable="true" collection="false"/>
+                <field type="BOOLEAN" length="255" name="activo" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="otorgadoPor" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="motivo" nullable="false" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes>
+                <index name="IX_KP_DELEG_PROC">
+                    <fieldNames>
+                        <fieldName>proceso</fieldName>
+                        <fieldName>activo</fieldName>
+                    </fieldNames>
+                </index>
+            </indexes>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpTrazaParametro">
+            <fields>
+                <field type="OFFSETDATETIME" length="64" name="fechaHora" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="usuario" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="rolesVigentes" nullable="true" collection="false"/>
+                <field type="STRING" length="40" name="accion" nullable="false" collection="false"/>
+                <field type="STRING" length="800" name="claveNegocio" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="valorAnterior" nullable="true" collection="false"/>
+                <field type="TEXT" length="512" name="valorNuevo" nullable="true" collection="false"/>
+                <field type="TEXT" length="512" name="motivo" nullable="false" collection="false"/>
+                <field type="STRING" length="20" name="origen" nullable="false" collection="false"/>
+                <field type="STRING" length="64" name="lote" nullable="true" collection="false"/>
+                <field type="STRING" length="64" name="hashAnterior" nullable="false" collection="false"/>
+                <field type="STRING" length="64" name="hash" nullable="false" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes>
+                <index name="IX_KP_TRAZA_CLAVE">
+                    <fieldNames>
+                        <fieldName>claveNegocio</fieldName>
+                    </fieldNames>
+                </index>
+                <index name="IX_KP_TRAZA_FECHA">
+                    <fieldNames>
+                        <fieldName>fechaHora</fieldName>
+                    </fieldNames>
+                </index>
+            </indexes>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpIntentoRechazado">
+            <fields>
+                <field type="OFFSETDATETIME" length="64" name="fechaHora" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="usuario" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="rolesVigentes" nullable="true" collection="false"/>
+                <field type="STRING" length="40" name="accion" nullable="false" collection="false"/>
+                <field type="STRING" length="800" name="claveNegocio" nullable="true" collection="false"/>
+                <field type="STRING" length="20" name="motivoRechazo" nullable="false" collection="false"/>
+                <field type="TEXT" length="512" name="detalle" nullable="true" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes>
+                <index name="IX_KP_INT_USR_FEC">
+                    <fieldNames>
+                        <fieldName>usuario</fieldName>
+                        <fieldName>fechaHora</fieldName>
+                    </fieldNames>
+                </index>
+            </indexes>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpUsoParametro">
+            <fields>
+                <field type="STRING" length="100" name="definicion" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="proceso" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="actividad" nullable="false" collection="false"/>
+                <field type="STRING" length="255" name="campoORegla" nullable="false" collection="false"/>
+                <field type="STRING" length="100" name="ultimoCodigo" nullable="true" collection="false"/>
+                <field type="LONG" length="255" name="ultimoCaso" nullable="true" collection="false"/>
+                <field type="STRING" length="20" name="ultimoOrigen" nullable="true" collection="false"/>
+                <field type="STRING" length="20" name="tipo" nullable="true" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="ultimoUso" nullable="true" collection="false"/>
+                <field type="LONG" length="255" name="contador" nullable="false" collection="false"/>
+                <field type="LONG" length="255" name="fallbacks" nullable="false" collection="false"/>
+            </fields>
+            <uniqueConstraints>
+                <uniqueConstraint name="UK_KP_USO">
+                    <fieldNames>
+                        <fieldName>definicion</fieldName>
+                        <fieldName>proceso</fieldName>
+                        <fieldName>actividad</fieldName>
+                        <fieldName>campoORegla</fieldName>
+                    </fieldNames>
+                </uniqueConstraint>
+            </uniqueConstraints>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.trycore.parametros.model.KpCadenaTraza">
+            <fields>
+                <field type="STRING" length="50" name="nombre" nullable="false" collection="false"/>
+                <field type="STRING" length="64" name="ultimoHash" nullable="false" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="ultimaFecha" nullable="true" collection="false"/>
+                <field type="LONG" length="255" name="ultimaTrazaId" nullable="true" collection="false"/>
+                <field type="LONG" length="255" name="verificadoHastaId" nullable="true" collection="false"/>
+                <field type="STRING" length="64" name="verificadoHastaHash" nullable="true" collection="false"/>
+                <field type="OFFSETDATETIME" length="64" name="verificadoEn" nullable="true" collection="false"/>
+            </fields>
+            <uniqueConstraints>
+                <uniqueConstraint name="UK_KP_CADENA">
+                    <fieldNames>
+                        <fieldName>nombre</fieldName>
+                    </fieldNames>
+                </uniqueConstraint>
+            </uniqueConstraints>
+            <queries/>
+            <indexes/>
+        </businessObject>
+    </businessObjects>
+</businessObjectModel>

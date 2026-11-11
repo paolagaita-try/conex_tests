@@ -1,0 +1,50 @@
+{
+  "bonita_version": "2025.1",
+  "actualizacion": "u0",
+  "runtime": "10.3.0",
+  "maven_parent": {
+    "groupId": "org.bonitasoft",
+    "artifactId": "bonita-project",
+    "version": "10.3.0"
+  },
+  "docker": {
+    "bonita": "bonita:2025.1-u0",
+    "postgres": "bonitasoft/bonita-postgres:16.4",
+    "arquitecturas": [
+      "amd64"
+    ],
+    "platform": "linux/amd64"
+  },
+  "conectores": {
+    "rest": {
+      "groupId": "org.bonitasoft.connectors",
+      "artifactId": "bonita-connector-rest",
+      "version": "1.5.1",
+      "definiciones": {
+        "rest-get": {
+          "definitionId": "rest-get",
+          "definitionVersion": "1.4.1",
+          "implementationId": "rest-get-impl",
+          "implementationVersion": "1.5.1"
+        }
+      }
+    },
+    "email": "org.bonitasoft.connectors:bonita-connector-email:1.5.0"
+  },
+  "verificado": {
+    "actualizacion": "Maven Central: bonita-runtime-bom 10.3.0 es el ultimo BOM publico de la linea; bonita-project 10.3.0 declara branding.version 2025.1-u0 (2026-11-06)",
+    "docker": "Docker Hub: bonita:2025.1-u0 y bonita:10.3.0 tienen el mismo digest, solo amd64 (2026-11-06)",
+    "conectores.rest": "tests/e2e/e2e_vacaciones.sh con VERSION_BONITA=2025.1: build -Pbundle sobre bundle-tomcat 10.3.0 y caso real contra el mock (solicitud.saldoConsultado = 20); ACEPTACION VERDE (2026-11-06)",
+    "proyecto": "tests/e2e/e2e_vacaciones.sh y e2e_compras.sh con VERSION_BONITA=2025.1: custodios, Newman 113 y 167 aserciones sin fallos, Playwright 5 passed (2026-11-06)"
+  },
+  "no_verificado": [
+    "docker.bonita (imagen publicada, no arrancada)",
+    "docker.postgres",
+    "conectores.email",
+    "Studio (import del proyecto generado)"
+  ],
+  "notas": {
+    "conectores": "Mismas versiones que la matriz 2026.2.",
+    "apple_silicon": "Las imagenes son solo amd64: en Mac con Apple Silicon corren emuladas con platform linux/amd64."
+  }
+}

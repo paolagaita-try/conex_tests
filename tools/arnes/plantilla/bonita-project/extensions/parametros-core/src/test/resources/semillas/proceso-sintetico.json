@@ -1,0 +1,245 @@
+{
+  "proceso": "Proceso sintetico de parametros",
+  "version": "1",
+  "definiciones": [
+    {
+      "codigo": "tope_sintetico",
+      "nombre": "Tope sintético",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "minimo": "0.00",
+      "maximo": "1000000.00",
+      "decimales": 2,
+      "impacto": "NORMAL",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "tope_sin_valor",
+      "nombre": "Tope sin valor (fallback)",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "minimo": "0.00",
+      "maximo": "1000000.00",
+      "decimales": 2,
+      "impacto": "NORMAL",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "canal_sintetico",
+      "nombre": "Canal sintético",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "producto_sintetico",
+      "nombre": "Producto (sintético)",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "tope_coordinacion_sintetico",
+      "nombre": "Tope de aprobación de la coordinación (sintético)",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "tope_comite_sintetico",
+      "nombre": "Tope de aprobación del comité (sintético)",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "tope_direccion_sintetico",
+      "nombre": "Tope de aprobación de la dirección (sintético)",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "porcentaje_maximo_beca_sintetico",
+      "nombre": "Porcentaje máximo de beca (sintético)",
+      "clase": "PARAMETRO",
+      "tipoDato": "PORCENTAJE",
+      "unidad": "%",
+      "minimo": "0.00",
+      "maximo": "100.00",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "30.00",
+      "visibilidad": "INTERNA"
+    },
+    {
+      "codigo": "tope_por_producto_sintetico",
+      "nombre": "Tope por producto (sintético)",
+      "clase": "PARAMETRO",
+      "tipoDato": "MONTO",
+      "unidad": "USD",
+      "decimales": 2,
+      "impacto": "ALTO",
+      "fallback": "0.00",
+      "visibilidad": "INTERNA",
+      "dependeDe": "producto_sintetico"
+    },
+    {
+      "codigo": "plazos_por_producto_sintetico",
+      "nombre": "Plazos por producto (sintético)",
+      "clase": "LISTA",
+      "tipoDato": "TEXTO",
+      "dependeDe": "producto_sintetico",
+      "impacto": "NORMAL",
+      "visibilidad": "INTERNA"
+    }
+  ],
+  "valores": [
+    {
+      "definicion": "tope_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "etiqueta": "Tope",
+      "valor": "250000.00"
+    },
+    {
+      "definicion": "canal_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigo": "web",
+      "etiqueta": "Web",
+      "orden": 1
+    },
+    {
+      "definicion": "canal_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigo": "oficina",
+      "etiqueta": "Oficina",
+      "orden": 2
+    },
+    {
+      "definicion": "canal_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "actividad": "Revisar parametros",
+      "codigo": "oficina",
+      "etiqueta": "Oficina",
+      "orden": 1
+    },
+    {
+      "definicion": "producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigo": "curso",
+      "etiqueta": "Curso corto",
+      "orden": 1
+    },
+    {
+      "definicion": "producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigo": "taller",
+      "etiqueta": "Taller práctico",
+      "orden": 2
+    },
+    {
+      "definicion": "tope_coordinacion_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "valor": "1500000.00"
+    },
+    {
+      "definicion": "tope_comite_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "valor": "3000000.00"
+    },
+    {
+      "definicion": "tope_direccion_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "valor": "10000000.00"
+    },
+    {
+      "definicion": "porcentaje_maximo_beca_sintetico",
+      "valor": "40.00"
+    },
+    {
+      "definicion": "porcentaje_maximo_beca_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "valor": "35.00"
+    },
+    {
+      "definicion": "tope_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "curso",
+      "valor": "500000.00"
+    },
+    {
+      "definicion": "tope_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "taller",
+      "valor": "100000.00"
+    },
+    {
+      "definicion": "plazos_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "curso",
+      "codigo": "12",
+      "etiqueta": "12 meses",
+      "orden": 1
+    },
+    {
+      "definicion": "plazos_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "curso",
+      "codigo": "24",
+      "etiqueta": "24 meses",
+      "orden": 2
+    },
+    {
+      "definicion": "plazos_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "curso",
+      "codigo": "36",
+      "etiqueta": "36 meses",
+      "orden": 3
+    },
+    {
+      "definicion": "plazos_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "curso",
+      "codigo": "48",
+      "etiqueta": "48 meses",
+      "orden": 4
+    },
+    {
+      "definicion": "plazos_por_producto_sintetico",
+      "proceso": "Proceso sintetico de parametros",
+      "codigoPadre": "curso",
+      "codigo": "60",
+      "etiqueta": "60 meses",
+      "orden": 5
+    }
+  ],
+  "invariantes": [
+    {
+      "tipo": "CRECIENTE",
+      "definiciones": [
+        "tope_coordinacion_sintetico",
+        "tope_comite_sintetico",
+        "tope_direccion_sintetico"
+      ]
+    }
+  ]
+}

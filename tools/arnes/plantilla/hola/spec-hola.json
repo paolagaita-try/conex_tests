@@ -1,0 +1,78 @@
+{
+  "proyecto": {"nombre": "hola"},
+  "formularios": {
+    "aplicaciones": [{"familia_actores": null, "nombre": "Hola", "perfiles": ["User"], "token": "hola"}],
+    "formularios": [
+      {
+        "acciones": "Enviar (fija mensaje).",
+        "actor": "Empleado",
+        "campos": [
+          {"campo": "Saludo inicial", "catalogo": null, "control": "Text (solo lectura)", "depende": null, "escribe": null, "lee": "Saludo.mensaje", "obligatorio": false, "validacion": null, "visibilidad": null},
+          {"campo": "Saludo definitivo", "catalogo": "`param_saludos`", "control": "Desplegable", "depende": null, "escribe": "mensaje", "lee": null, "obligatorio": true, "validacion": null, "visibilidad": null}
+        ],
+        "contrato": "ctr_revisar",
+        "familia_actores": null,
+        "familia_formularios": "FAM-revision",
+        "id": "frm_holaRevisar",
+        "mapping": "Svelte",
+        "tarea": "revisar",
+        "tipo": "Task form",
+        "titulo": "Revisar el saludo"
+      }
+    ]
+  },
+  "parametros_negocio": [
+    {"administra": "empleado", "citado_en": "frm_holaRevisar", "doble_control": true, "id": "param_saludos", "nombre": "Saludos", "origen": "Ejemplo de la plantilla", "padre": null, "tipo": "lista", "valores": "Hola; Buenos días; Bienvenida"}
+  ],
+  "bdm": {
+    "objetos": [
+      {
+        "atributos": [
+          {"longitud": 255, "multiple": false, "nombre": "mensaje", "obligatorio": true, "relacion": null, "tipo": "STRING"}
+        ],
+        "consultas": [],
+        "indices": [],
+        "nombre": "Saludo",
+        "unicos": []
+      }
+    ],
+    "paquete": "com.trycore.hola.model"
+  },
+  "organizacion": {
+    "actores": {"Empleado": {"grupo": "trycore", "rol": "empleado"}},
+    "contrasena": "bpm",
+    "grupos": ["trycore"],
+    "perfiles": [],
+    "roles": ["empleado"],
+    "usuarios": [{"grupo": "trycore", "nombre": "walter.bates", "rol": "empleado"}, {"grupo": "trycore", "nombre": "empleado1", "rol": "empleado"}, {"grupo": "trycore", "nombre": "empleado2", "rol": "empleado"}]
+  },
+  "procesos": [
+    {
+      "business_variables": [{"nombre": "saludo", "objeto": "Saludo"}],
+      "conectores": [],
+      "contratos": {
+        "(instanciacion)": {"inputs": [{"hijos": [], "multiple": false, "nombre": "mensaje", "obligatorio": true, "tipo": "TEXT"}], "restricciones": []},
+        "revisar": {"inputs": [{"hijos": [], "multiple": false, "nombre": "mensaje", "obligatorio": true, "tipo": "TEXT"}], "restricciones": []}
+      },
+      "iniciador": "Empleado",
+      "lanes": [{"actor": "Empleado", "nombre": "Empleado"}],
+      "nodos": [
+        {"anfitrion": null, "documentacion": "", "duracion": null, "id": "inicio", "interruptor": null, "lane": "Empleado", "llamado": null, "nombre": "Inicio", "tipo": "inicio"},
+        {"anfitrion": null, "documentacion": "Revisa el saludo inicial y escribe el mensaje definitivo.", "duracion": null, "id": "revisar", "interruptor": null, "lane": "Empleado", "llamado": null, "nombre": "Revisión", "tipo": "humana"},
+        {"anfitrion": null, "documentacion": "", "duracion": null, "id": "fin", "interruptor": null, "lane": "Empleado", "llamado": null, "nombre": "Fin", "tipo": "fin"}
+      ],
+      "nombre": "Hola",
+      "operaciones": {
+        "(instanciacion)": [{"destino": "saludo.mensaje", "expresion": {"tipo": "input", "valor": "mensaje"}}],
+        "revisar": [{"destino": "saludo.mensaje", "expresion": {"tipo": "input", "valor": "mensaje"}}]
+      },
+      "parametros": [],
+      "transiciones": [
+        {"defecto": false, "desde": "inicio", "expresion": null, "hacia": "revisar"},
+        {"defecto": false, "desde": "revisar", "expresion": null, "hacia": "fin"}
+      ],
+      "variables": [],
+      "version": "1.0"
+    }
+  ]
+}

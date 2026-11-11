@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>co.trycore.hubspot</groupId>
+    <artifactId>hubspot-bonita-parent</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <artifactId>hubspot-bonita</artifactId>
+  <name>hubspot-bonita</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.bonitasoft.engine</groupId>
+      <artifactId>bonita-common</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Sin una aplicación mapeada al perfil User, ese perfil no da permisos REST (sesión con conf=[] y 403
+         en API/bpm/process). La User Application de Bonita los aporta. -->
+    <dependency>
+      <groupId>org.bonitasoft.web.application</groupId>
+      <artifactId>bonita-user-application</artifactId>
+      <type>zip</type>
+      <classifier>application</classifier>
+      <scope>compile</scope>
+    </dependency>
+    <!-- Conector REST nativo de Bonita: el runtime no lo trae; el plugin descubre sus .def/.impl en esta
+         dependencia (bonita-dependencies.json) y mete en el .bar la implementación que mapea cada .conf.
+         Versión de versiones/<bonita>.json (conectores.rest). -->
+    <dependency>
+      <groupId>org.bonitasoft.connectors</groupId>
+      <artifactId>bonita-connector-rest</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-bdm-model</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Módulo de parámetros: la REST API extension `parametros` viaja en el application archive con
+         parametros-core dentro de su lib/; el jar del core va además al classpath del .bar, porque los scripts
+         del proceso lo llaman (ParametrosDeProceso). -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-parametros-api-extension</artifactId>
+      <version>${project.version}</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-parametros-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Adaptador del proceso al módulo (jar de proceso, como el core): lo usan los scripts del .proc y la API lo carga
+         por nombre (`usos.conteo.clase`). -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-parametros-adaptador</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- REST API extension de consultas del caso (`consultas/*`): viaja en el application archive. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-consultas-api-extension</artifactId>
+      <version>${project.version}</version>
+      <type>zip</type>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <executions>
+          <execution><id>bonita-project-properties</id><goals><goal>execute</goal></goals></execution>
+          <execution><id>generate-application-properties</id><goals><goal>execute</goal></goals></execution>
+          <execution><id>generate-classpath-assembly</id><goals><goal>execute</goal></goals></execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.bonitasoft.maven</groupId>
+        <artifactId>bonita-project-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process-bonita-artifacts</id>
+            <goals>
+              <goal>copy-provided-pages</goal>
+              <goal>business-archive</goal>
+              <goal>uid-page</goal>
+              <goal>merge-configuration</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Formularios Svelte: los custompage_*.zip que deja `npm run build:all` en ../../frontend/dist-zips viajan
+           en el artefacto. El assembly del application-archive recoge cualquier `*.zip` de
+           `${project.build.directory}/pages`, así que se copian ahí, en `prepare-package`: después de
+           `copy-provided-pages` y `uid-page` (el orden de las ejecuciones de una misma fase es el del POM) y
+           antes del `assembly:single`. Las páginas TÉCNICAS del manifiesto (`_semilla`, `_muestra`) no viajan.
+           El build de Bonita NO depende de Node: si `frontend/dist-zips` (en la raíz del proyecto, junto a
+           `bonita-project/`) no existe, Maven lo dice en INFO («skip non existing resourceDirectory …/dist-zips») y
+           sigue en verde, y el artefacto sale SIN páginas de formulario (medido en la tarea 11 del Plan 4). Por eso
+           `tools/run-journey.sh` construye el frontend antes y falla si falta el zip de un formulario de negocio. -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-form-pages</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/pages</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/../../frontend/dist-zips</directory>
+                  <includes>
+                    <include>custompage_*.zip</include>
+                  </includes>
+                  <excludes>
+                    <exclude>custompage_formInternoSemilla.zip</exclude>
+                    <exclude>custompage_formClienteMuestra.zip</exclude>
+                  </excludes>
+                  <filtering>false</filtering>
+                </resource>
+                <!-- La copia espejo del Studio (tools/arnes.sh studio): frontend/ dentro de la raíz del proyecto Bonita.
+                     En el proyecto no existe y Maven lo salta. -->
+                <resource>
+                  <directory>${project.basedir}/../frontend/dist-zips</directory>
+                  <includes>
+                    <include>custompage_*.zip</include>
+                  </includes>
+                  <excludes>
+                    <exclude>custompage_formInternoSemilla.zip</exclude>
+                    <exclude>custompage_formClienteMuestra.zip</exclude>
+                  </excludes>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution><id>application-archive</id><goals><goal>single</goal></goals></execution>
+          <execution><id>application-classpath</id><goals><goal>single</goal></goals></execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <!-- Bundle Tomcat + H2 nativo (mismo patrón que el proyecto piloto): `mvn install -Pbundle` deja
+         app/target/hubspot-bonita-<versión>-local-bundle.zip con la aplicación ya instalada. Sin Docker ni emulación. -->
+    <profile>
+      <id>bundle</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions><execution><id>prepare-bundle</id><goals><goal>unpack</goal></goals></execution></executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <executions><execution><id>configure-bundle</id><goals><goal>execute</goal></goals></execution></executions>
+          </plugin>
+          <!-- La copia de permisos (abajo) apunta a la carpeta del bundle Community. Con otro bundle (p. ej. el de
+               Subscription, otra carpeta) el build falla aquí en vez de empaquetar en silencio un bundle sin los
+               permisos REST. Después del unpack (process-resources) y antes de la copia (prepare-package). -->
+          <plugin>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>carpeta-del-bundle</id>
+                <phase>process-classes</phase>
+                <goals><goal>enforce</goal></goals>
+                <configuration>
+                  <rules>
+                    <requireFilesExist>
+                      <files>
+                        <file>${project.build.directory}/bundle/BonitaCommunity-${branding.version}/setup/platform_conf/initial/tenant_portal</file>
+                      </files>
+                      <message>El bundle desempaquetado no tiene BonitaCommunity-${branding.version}/setup/platform_conf/initial/tenant_portal: la copia de app/permisos/custom-permissions-mapping.properties (permisos REST del perfil User) no llegaría al bundle. Ajusta la ruta de la ejecución permisos-del-bundle a la carpeta de este bundle.</message>
+                    </requireFilesExist>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Permisos REST del proyecto (app/permisos/custom-permissions-mapping.properties, p. ej. los de la API de
+               parámetros para el perfil User) en la configuración inicial del tenant: la plataforma la aplica en
+               el primer arranque. Después del unpack (process-resources) y antes del assembly (package). -->
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>permisos-del-bundle</id>
+                <phase>prepare-package</phase>
+                <goals><goal>copy-resources</goal></goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/bundle/BonitaCommunity-${branding.version}/setup/platform_conf/initial/tenant_portal</outputDirectory>
+                  <overwrite>true</overwrite>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/permisos</directory>
+                      <includes><include>custom-permissions-mapping.properties</include></includes>
+                      <filtering>false</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions><execution><id>bundle-archive</id><goals><goal>single</goal></goals></execution></executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:process="http://www.bonitasoft.org/ns/bpm/process" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0" xmlns:expression="http://www.bonitasoft.org/ns/bpm/expression" xmlns:decision="http://www.bonitasoft.org/ns/bpm/process/decision" xmlns:parameter="http://www.bonitasoft.org/ns/bpm/parameter" xmlns:connectorconfiguration="http://www.bonitasoft.org/model/connector/configuration">
+  <process:MainProcess xmi:id="_h443d60500001" name="Hola" bonitaModelVersion="9">
+    <elements xmi:type="process:Pool" xmi:id="_h443d60500002" name="Hola" version="1.0">
+      <elements xmi:type="process:Lane" xmi:id="_h443d60500004" name="Empleado" actor="_h443d60500003">
+        <elements xmi:type="process:StartEvent" xmi:id="_h443d60500014" name="Inicio" outgoing="_h443d60500041">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h443d60500015" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h443d60500016" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h443d60500017" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:Task" xmi:id="_h443d60500018" documentation="Revisa el saludo inicial y escribe el mensaje definitivo." name="Revisión" overrideActorsOfTheLane="false" priority="1" incoming="_h443d60500041" outgoing="_h443d60500044">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h443d60500019" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h443d60500020" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h443d60500021" name="" content="" returnTypeFixed="true" />
+          <formMapping xmi:type="process:FormMapping" xmi:id="_h443d60500022" type="URL" url="/bonita/portal/resource/app/hola/frmHolaRevisar/content/">
+            <targetForm xmi:type="expression:Expression" xmi:id="_h443d60500023" name="/bonita/portal/resource/app/hola/frmHolaRevisar/content/" content="/bonita/portal/resource/app/hola/frmHolaRevisar/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+          </formMapping>
+          <contract xmi:type="process:Contract" xmi:id="_h443d60500024">
+            <inputs xmi:type="process:ContractInput" xmi:id="_h443d60500025" name="mensaje" type="TEXT" />
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h443d60500026" name="mandatory_mensaje" expression="mensaje != null" errorMessage="mensaje es obligatorio">
+              <inputNames>mensaje</inputNames>
+            </constraints>
+          </contract>
+          <operations xmi:type="expression:Operation" xmi:id="_h443d60500027">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h443d60500028" name="saludo" content="saludo" type="TYPE_VARIABLE" returnType="com.trycore.hola.model.Saludo">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h443d60500029" name="saludo" dataType="_h443d60500013" className="com.trycore.hola.model.Saludo" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h443d60500030" name="set_mensaje()" content="saludo.mensaje = mensaje&#10;return saludo" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="com.trycore.hola.model.Saludo">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h443d60500031" name="saludo" dataType="_h443d60500013" className="com.trycore.hola.model.Saludo" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h443d60500032" name="mensaje" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h443d60500033" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:EndEvent" xmi:id="_h443d60500034" name="Fin" incoming="_h443d60500044">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h443d60500035" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h443d60500036" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h443d60500037" name="" content="" returnTypeFixed="true" />
+        </elements>
+      </elements>
+      <data xmi:type="process:BusinessObjectData" xmi:id="_h443d60500038" name="saludo" dataType="_h443d60500013" className="com.trycore.hola.model.Saludo">
+        <defaultValue xmi:type="expression:Expression" xmi:id="_h443d60500039" name="init_saludo()" content="def saludo = new com.trycore.hola.model.Saludo()&#10;saludo.mensaje = mensaje&#10;return saludo" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="com.trycore.hola.model.Saludo" returnTypeFixed="true">
+          <referencedElements xmi:type="process:ContractInput" xmi:id="_h443d60500040" name="mensaje" type="TEXT" />
+        </defaultValue>
+      </data>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h443d60500041" target="_h443d60500018" source="_h443d60500014">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h443d60500042" />
+        <condition xmi:type="expression:Expression" xmi:id="_h443d60500043" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h443d60500044" target="_h443d60500034" source="_h443d60500018">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h443d60500045" />
+        <condition xmi:type="expression:Expression" xmi:id="_h443d60500046" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <formMapping xmi:type="process:FormMapping" xmi:id="_h443d60500047" type="NONE" />
+      <overviewFormMapping xmi:type="process:FormMapping" xmi:id="_h443d60500048" type="NONE" />
+      <actors xmi:type="process:Actor" xmi:id="_h443d60500003" name="Empleado" initiator="true" />
+      <configurations xmi:id="_h443d60500049" name="Qualification" version="9">
+        <actorMappings>
+          <actorMapping name="Empleado">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore</group>
+                <role>empleado</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+        </actorMappings>
+        <processDependencies id="CONNECTOR" />
+        <processDependencies id="ACTOR_FILTER" />
+        <processDependencies id="OTHER" />
+      </configurations>
+      <configurations xmi:id="_h443d60500050" name="Production" version="9">
+        <actorMappings>
+          <actorMapping name="Empleado">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore</group>
+                <role>empleado</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+        </actorMappings>
+        <processDependencies id="CONNECTOR" />
+        <processDependencies id="ACTOR_FILTER" />
+        <processDependencies id="OTHER" />
+      </configurations>
+      <contract xmi:type="process:Contract" xmi:id="_h443d60500051">
+        <inputs xmi:type="process:ContractInput" xmi:id="_h443d60500052" name="mensaje" type="TEXT" />
+        <constraints xmi:type="process:ContractConstraint" xmi:id="_h443d60500053" name="mandatory_mensaje" expression="mensaje != null" errorMessage="mensaje es obligatorio">
+          <inputNames>mensaje</inputNames>
+        </constraints>
+      </contract>
+    </elements>
+    <datatypes xmi:type="process:BooleanType" xmi:id="_h443d60500005" name="Boolean" />
+    <datatypes xmi:type="process:DateType" xmi:id="_h443d60500006" name="Date" />
+    <datatypes xmi:type="process:IntegerType" xmi:id="_h443d60500007" name="Integer" />
+    <datatypes xmi:type="process:LongType" xmi:id="_h443d60500008" name="Long" />
+    <datatypes xmi:type="process:DoubleType" xmi:id="_h443d60500009" name="Double" />
+    <datatypes xmi:type="process:StringType" xmi:id="_h443d60500010" name="Text" />
+    <datatypes xmi:type="process:JavaType" xmi:id="_h443d60500011" name="Java_object" />
+    <datatypes xmi:type="process:XMLType" xmi:id="_h443d60500012" name="XML" />
+    <datatypes xmi:type="process:BusinessObjectType" xmi:id="_h443d60500013" name="Business_Object" />
+  </process:MainProcess>
+  <notation:Diagram xmi:id="_h443d60500054" type="Process" element="_h443d60500001" name="Hola" measurementUnit="Pixel">
+    <children xmi:type="notation:Node" xmi:id="_h443d60500055" type="2007" element="_h443d60500002">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500056" type="5008" />
+      <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500057" type="7001">
+        <children xmi:type="notation:Node" xmi:id="_h443d60500058" type="3007" element="_h443d60500004">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500059" type="5007" />
+          <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500060" type="7002">
+            <children xmi:type="notation:Shape" xmi:id="_h443d60500061" type="3002" element="_h443d60500014">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500062" type="5024">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h443d60500063" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h443d60500064" x="109" y="55" width="30" height="30" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h443d60500065" type="3005" element="_h443d60500018" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500066" type="5005" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h443d60500067" x="240" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h443d60500068" type="3003" element="_h443d60500034">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500069" type="5025">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h443d60500070" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h443d60500071" x="469" y="55" width="30" height="30" />
+            </children>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h443d60500072" />
+          <styles xmi:type="notation:FontStyle" xmi:id="_h443d60500073" />
+          <styles xmi:type="notation:LineStyle" xmi:id="_h443d60500074" lineColor="12632256" />
+          <styles xmi:type="notation:FillStyle" xmi:id="_h443d60500075" />
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h443d60500076" width="529" height="140" />
+        </children>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_h443d60500077" />
+      <styles xmi:type="notation:FontStyle" xmi:id="_h443d60500078" />
+      <styles xmi:type="notation:LineStyle" xmi:id="_h443d60500079" lineColor="12632256" />
+      <styles xmi:type="notation:FillStyle" xmi:id="_h443d60500080" />
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h443d60500081" width="559" height="140" />
+    </children>
+    <styles xmi:type="notation:DiagramStyle" xmi:id="_h443d60500082" />
+    <edges xmi:type="notation:Connector" xmi:id="_h443d60500083" type="4001" element="_h443d60500041" source="_h443d60500061" target="_h443d60500065" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500084" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h443d60500085" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h443d60500086" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h443d60500087" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h443d60500088" type="4001" element="_h443d60500044" source="_h443d60500065" target="_h443d60500068" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h443d60500089" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h443d60500090" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h443d60500091" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h443d60500092" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+  </notation:Diagram>
+</xmi:XMI>

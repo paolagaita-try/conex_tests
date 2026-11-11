@@ -1,0 +1,150 @@
+{
+  "_fuente": "Manifiesto del paquete de parámetros (los 8 objetos Kp*), escrito a mano: NUNCA se genera desde el bom.xml ni genera el bom.xml (una prueba no toma su expectativa del artefacto que verifica ni de su generador).",
+  "paquete": "com.trycore.parametros.model",
+  "prefijo": "Kp",
+  "version": 1,
+  "entidades": {
+    "KpDefinicionParametro": {
+      "campos": {
+        "codigo": ["STRING", 100, false],
+        "nombre": ["STRING", 255, false],
+        "descripcion": ["TEXT", null, true],
+        "clase": ["STRING", 20, false],
+        "tipoDato": ["STRING", 20, false],
+        "unidad": ["STRING", 20, true],
+        "minimo": ["STRING", 50, true],
+        "maximo": ["STRING", 50, true],
+        "decimales": ["INTEGER", null, true],
+        "dependeDe": ["STRING", 100, false],
+        "impacto": ["STRING", 10, false],
+        "fallback": ["STRING", 255, true],
+        "origen": ["STRING", 20, false],
+        "procesoSemilla": ["STRING", 255, true],
+        "visibilidad": ["STRING", 10, false],
+        "activo": ["BOOLEAN", null, false]
+      },
+      "unicas": {"UK_KP_DEF_CODIGO": ["codigo"]},
+      "indices": {}
+    },
+    "KpValorParametro": {
+      "campos": {
+        "definicion": ["STRING", 100, false],
+        "proceso": ["STRING", 255, false],
+        "actividad": ["STRING", 255, false],
+        "codigoPadre": ["STRING", 100, false],
+        "codigo": ["STRING", 100, false],
+        "etiqueta": ["STRING", 255, true],
+        "ayuda": ["STRING", 255, true],
+        "orden": ["INTEGER", null, true],
+        "valor": ["TEXT", null, true],
+        "activo": ["BOOLEAN", null, false],
+        "copiadoDe": ["STRING", 255, false],
+        "codigosOrigen": ["TEXT", null, true]
+      },
+      "unicas": {"UK_KP_VALOR": ["definicion", "proceso", "actividad", "codigoPadre", "codigo"]},
+      "indices": {}
+    },
+    "KpPropuestaCambio": {
+      "campos": {
+        "definicion": ["STRING", 100, false],
+        "proceso": ["STRING", 255, false],
+        "actividad": ["STRING", 255, false],
+        "codigoPadre": ["STRING", 100, false],
+        "codigo": ["STRING", 100, false],
+        "accion": ["STRING", 40, false],
+        "valorAnterior": ["TEXT", null, true],
+        "valorPropuesto": ["TEXT", null, true],
+        "proponente": ["STRING", 255, false],
+        "motivo": ["TEXT", null, false],
+        "estado": ["STRING", 20, false],
+        "aprobador": ["STRING", 255, true],
+        "comentario": ["TEXT", null, true],
+        "creadaEn": ["OFFSETDATETIME", null, false],
+        "resueltaEn": ["OFFSETDATETIME", null, true],
+        "pendienteClave": ["STRING", 800, false]
+      },
+      "unicas": {"UK_KP_PROP_PEND": ["pendienteClave"]},
+      "indices": {}
+    },
+    "KpDelegacionParametro": {
+      "campos": {
+        "tipoSujeto": ["STRING", 20, false],
+        "sujetoUsuarioId": ["LONG", null, true],
+        "sujetoGrupoId": ["LONG", null, true],
+        "sujetoRolId": ["LONG", null, true],
+        "sujetoRuta": ["STRING", 255, true],
+        "incluyeSubgrupos": ["BOOLEAN", null, false],
+        "proceso": ["STRING", 255, false],
+        "actividades": ["TEXT", null, true],
+        "vigenteDesde": ["OFFSETDATETIME", null, true],
+        "vigenteHasta": ["OFFSETDATETIME", null, true],
+        "activo": ["BOOLEAN", null, false],
+        "otorgadoPor": ["STRING", 255, false],
+        "motivo": ["TEXT", null, false]
+      },
+      "unicas": {},
+      "indices": {"IX_KP_DELEG_PROC": ["proceso", "activo"]}
+    },
+    "KpTrazaParametro": {
+      "campos": {
+        "fechaHora": ["OFFSETDATETIME", null, false],
+        "usuario": ["STRING", 255, false],
+        "rolesVigentes": ["TEXT", null, true],
+        "accion": ["STRING", 40, false],
+        "claveNegocio": ["STRING", 800, false],
+        "valorAnterior": ["TEXT", null, true],
+        "valorNuevo": ["TEXT", null, true],
+        "motivo": ["TEXT", null, false],
+        "origen": ["STRING", 20, false],
+        "lote": ["STRING", 64, true],
+        "hashAnterior": ["STRING", 64, false],
+        "hash": ["STRING", 64, false]
+      },
+      "unicas": {},
+      "indices": {"IX_KP_TRAZA_CLAVE": ["claveNegocio"], "IX_KP_TRAZA_FECHA": ["fechaHora"]}
+    },
+    "KpIntentoRechazado": {
+      "campos": {
+        "fechaHora": ["OFFSETDATETIME", null, false],
+        "usuario": ["STRING", 255, false],
+        "rolesVigentes": ["TEXT", null, true],
+        "accion": ["STRING", 40, false],
+        "claveNegocio": ["STRING", 800, true],
+        "motivoRechazo": ["STRING", 20, false],
+        "detalle": ["TEXT", null, true]
+      },
+      "unicas": {},
+      "indices": {"IX_KP_INT_USR_FEC": ["usuario", "fechaHora"]}
+    },
+    "KpUsoParametro": {
+      "campos": {
+        "definicion": ["STRING", 100, false],
+        "proceso": ["STRING", 255, false],
+        "actividad": ["STRING", 255, false],
+        "campoORegla": ["STRING", 255, false],
+        "ultimoCodigo": ["STRING", 100, true],
+        "ultimoCaso": ["LONG", null, true],
+        "ultimoOrigen": ["STRING", 20, true],
+        "tipo": ["STRING", 20, true],
+        "ultimoUso": ["OFFSETDATETIME", null, true],
+        "contador": ["LONG", null, false],
+        "fallbacks": ["LONG", null, false]
+      },
+      "unicas": {"UK_KP_USO": ["definicion", "proceso", "actividad", "campoORegla"]},
+      "indices": {}
+    },
+    "KpCadenaTraza": {
+      "campos": {
+        "nombre": ["STRING", 50, false],
+        "ultimoHash": ["STRING", 64, false],
+        "ultimaFecha": ["OFFSETDATETIME", null, true],
+        "ultimaTrazaId": ["LONG", null, true],
+        "verificadoHastaId": ["LONG", null, true],
+        "verificadoHastaHash": ["STRING", 64, true],
+        "verificadoEn": ["OFFSETDATETIME", null, true]
+      },
+      "unicas": {"UK_KP_CADENA": ["nombre"]},
+      "indices": {}
+    }
+  }
+}
