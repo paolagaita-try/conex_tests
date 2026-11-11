@@ -36,7 +36,9 @@ case "$cmd" in
     accion=()
     case "$cmd" in cambios|linea-base) accion=("${1:-}"); [ $# -eq 0 ] || shift ;; *) set -- ;; esac
     # Sin __pycache__ dentro de tools/arnes/: no está en el manifiesto (uninstall no lo quitaría) y `git add -A` lo versionaría.
-    PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$ARNES" exec python3 -m generadores "$cmd" ${accion[@]+"${accion[@]}"} . "$@"
+    # Windows/MSYS: python3 nativo no entiende PYTHONPATH en formato /c/...; se convierte a C:/... con cygpath.
+    PP="$ARNES"; command -v cygpath >/dev/null 2>&1 && PP="$(cygpath -m "$ARNES")"
+    PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$PP" exec python3 -m generadores "$cmd" ${accion[@]+"${accion[@]}"} . "$@"
     ;;
   journey)
     cd "$RAIZ"
