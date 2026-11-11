@@ -29,6 +29,10 @@ NOMBRE=$(python3 -c 'import json; print(json.load(open(".trycore-bonita.json"))[
 PORT="${PORT:-8096}"; SHUTDOWN=$((PORT + 10000))
 BASE="http://localhost:$PORT/bonita"
 export JAVA_HOME="${BONITA_JAVA_HOME:-/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home}"
+# Windows/MSYS: el bundle de Bonita se arranca con sus scripts .bat (los .sh asumen Linux: classpath con ':' y rutas
+# unix que java.exe nativo no entiende). JAVA_HOME para los .bat va en formato Windows con backslashes.
+WIN=0; case "$(uname)" in MSYS*|MINGW*|CYGWIN*) WIN=1;; esac
+if [ "$WIN" = 1 ]; then JAVA_HOME_WIN="$(cygpath -w "$JAVA_HOME")"; fi
 
 # El puerto tiene que estar libre: si no, el journey hablaría con otro runtime y saldría verde midiendo otra cosa.
 for p in "$PORT" "$SHUTDOWN"; do
@@ -67,7 +71,10 @@ fi
 zips=(bonita-project/app/target/*-local-bundle.zip)
 [ "${#zips[@]}" = 1 ] && [ -f "${zips[0]}" ] || { echo "FALLA: se esperaba un solo *-local-bundle.zip"; exit 1; }
 
-WORK=$(mktemp -d "${TMPDIR:-/tmp}/$NOMBRE-bundle.XXXX")
+TMPBASE="${TMPDIR:-/tmp}"
+# En Windows evita el /tmp de MSYS (ruta con nombre corto ADMINI~1 que confunde a los .bat): usa %LOCALAPPDATA%\Temp.
+[ "$WIN" = 1 ] && [ -n "${LOCALAPPDATA:-}" ] && TMPBASE="$(cygpath -u "$LOCALAPPDATA")/Temp"
+WORK=$(mktemp -d "$TMPBASE/$NOMBRE-bundle.XXXX")
 unzip -q "${zips[0]}" -d "$WORK"
 START=$(find "$WORK" -maxdepth 2 -name start-bonita.sh | head -1)
 [ -n "$START" ] || { echo "FALLA: el bundle no trae start-bonita.sh"; exit 1; }
@@ -77,7 +84,8 @@ grep -q "port=\"$PORT\"" "$DIR/server/conf/server.xml" || { echo "FALLA: no pude
 
 parar() {
   if [ "$MANTENER" = 1 ]; then echo "runtime vivo en $BASE ($DIR)"; return; fi
-  (cd "$DIR" && bash stop-bonita.sh >/dev/null 2>&1) || true
+  if [ "$WIN" = 1 ]; then (cd "$DIR" && JAVA_HOME="$JAVA_HOME_WIN" cmd.exe /c "stop-bonita.bat" >/dev/null 2>&1) || true
+  else (cd "$DIR" && bash stop-bonita.sh >/dev/null 2>&1) || true; fi
   for _ in $(seq 1 30); do lsof -nP -iTCP:"$PORT" -sTCP:LISTEN -t >/dev/null 2>&1 || break; sleep 2; done
   pid=$(lsof -nP -iTCP:"$PORT" -sTCP:LISTEN -t 2>/dev/null || true)
   if [ -n "$pid" ] && ps -o command= -p "$pid" | grep -qF "$WORK"; then kill "$pid" || true; fi
@@ -92,8 +100,14 @@ DINAMICO=$(python3 tools/reglas.py --desarrollo --bundle "$(dirname "$START")/se
 [ "$DINAMICO" = true ] || DINAMICO=false
 
 inicio=$(date +%s)
-(cd "$DIR" && nohup env BONITA_RUNTIME_AUTHORIZATION_DYNAMICCHECK_ENABLED=$DINAMICO bash start-bonita.sh -Dh2.noconfirm \
-  > "$WORK/stdout.log" 2>&1 &)
+if [ "$WIN" = 1 ]; then
+  # cmd hereda el cwd ($DIR) y JAVA_HOME; no se pasan rutas Windows como argumento (MSYS las corrompería).
+  (cd "$DIR" && JAVA_HOME="$JAVA_HOME_WIN" BONITA_RUNTIME_AUTHORIZATION_DYNAMICCHECK_ENABLED=$DINAMICO \
+    cmd.exe /c "start-bonita.bat -Dh2.noconfirm" > "$WORK/stdout.log" 2>&1 &)
+else
+  (cd "$DIR" && nohup env BONITA_RUNTIME_AUTHORIZATION_DYNAMICCHECK_ENABLED=$DINAMICO bash start-bonita.sh -Dh2.noconfirm \
+    > "$WORK/stdout.log" 2>&1 &)
+fi
 tools/esperar-api.sh "$BASE" 300 || { tail -60 "$DIR/server/logs/bonita"*.log 2>/dev/null; exit 1; }
 echo "arranque del bundle: $(( $(date +%s) - inicio )) s"
 
