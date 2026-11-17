@@ -5,7 +5,7 @@ Puente entre HubSpot y Bonita para la integración de preventa. **Sin dependenci
 ## Qué hace
 
 1. **Entrada** — `POST /webhooks/ticket-created`: al crearse un ticket en HubSpot (webhook de app `ticket.creation`), instancia el caso en Bonita (`POST /API/bpm/process/{id}/instantiation` con `{ticketId}`). **Idempotente** por `ticketId` (store en `data/store.json`).
-2. **Espera** — `POST /webhooks/artifacts-loaded`: cuando cambian las propiedades del ticket, si los **4 campos de artefactos** (`concepto_viabilidad`, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`) tienen valor → completa la tarea `18_esperarArtefactos` con `resultado=entregado`; si el ticket está cerrado sin entregar → `cerrado`. Bonita entonces pasa el ticket a «Entregado a ventas».
+2. **Espera** — `POST /webhooks/artifacts-loaded`: los **4 campos de artefactos** viven en el **Negocio (Deal)** (sección «Definición Preventa»), no en el ticket; los llenan las consultoras manualmente. Al llegar un `deal.propertyChange`, si los 4 campos (`concepto_viabilidad` —selector—, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`) tienen valor, el middleware **busca el ticket asociado al Negocio** y completa la tarea de espera con `resultado=entregado`. Si llega un `ticket.propertyChange` con el ticket en stage cerrado → `cerrado`. Bonita entonces pasa el ticket a «Entregado a ventas».
 3. **Reconciliación** — job cada 24 h: compara casos Bonita vs tickets del pipeline y logea huérfanos/desincronizados.
 4. `GET /health` → `{ok:true}`.
 
@@ -32,9 +32,9 @@ curl -X POST localhost:3000/webhooks/artifacts-loaded -H 'Content-Type: applicat
 
 Decisión 2026-11-11: sin costo → **webhooks de app** (no Workflows nativos; estos exigen un plan de pago). En la app privada/pública de HubSpot se configuran dos **suscripciones de webhook**:
 - `ticket.creation` → `POST https://<host>/webhooks/ticket-created` (instancia el caso).
-- `ticket.propertyChange` sobre las 4 propiedades de artefactos (`concepto_viabilidad`, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`) y `hs_pipeline_stage` → `POST https://<host>/webhooks/artifacts-loaded` (dispara entrega o cierre).
+- `deal.propertyChange` sobre las 4 propiedades de artefactos del **Negocio** (`concepto_viabilidad`, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`) → `POST https://<host>/webhooks/artifacts-loaded` (dispara la entrega). Opcional: `ticket.propertyChange` sobre `hs_pipeline_stage` para el cierre sin entrega.
 
-Las suscripciones se pueden crear por la UI de la app o por API con el token. El token de Private App y el `HUBSPOT_APP_SECRET` van por variable de entorno, nunca en el repo.
+Las 4 propiedades **ya existen** en el objeto Negocio (grupo `dealinformation`); no hay que crearlas. El Negocio debe estar **asociado** al ticket (asociación Deal↔Ticket) para que el middleware resuelva el ticket. Las suscripciones se crean por la UI de la app o por API con el token. El token de Private App y el `HUBSPOT_APP_SECRET` van por variable de entorno, nunca en el repo.
 
 ## Seguridad
 

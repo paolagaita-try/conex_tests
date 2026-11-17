@@ -4,7 +4,7 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { instanciarCaso, completarEspera, getTicket, artefactosCompletos, casosActivos, ticketsDelPipeline } from './clients.js';
+import { instanciarCaso, completarEspera, getTicket, getDeal, ticketDeNegocio, artefactosCompletos, casosActivos, ticketsDelPipeline } from './clients.js';
 
 const PORT = Number(process.env.PORT || 3000);
 const APP_SECRET = process.env.HUBSPOT_APP_SECRET || '';
@@ -34,10 +34,18 @@ function firmaValida(req, rawBody) {
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 const json = (res, code, obj) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); };
 
-// HubSpot manda el ticketId como objectId del evento (webhook de app) o en el body del Workflow.
+// HubSpot manda el id del objeto como objectId del evento (webhook de app).
 function extraerTicketId(payload) {
   if (Array.isArray(payload)) return payload[0]?.objectId ?? null;
   return payload?.objectId ?? payload?.ticketId ?? payload?.properties?.hs_object_id ?? null;
+}
+
+// Evento generico: objectId + si viene de un ticket (subscriptionType "ticket.*") o de un Negocio.
+function extraerEvento(payload) {
+  const ev = Array.isArray(payload) ? payload[0] : payload;
+  const tipo = String(ev?.subscriptionType || ev?.objectType || '').toLowerCase();
+  const objectId = ev?.objectId ?? ev?.dealId ?? ev?.ticketId ?? ev?.properties?.hs_object_id ?? null;
+  return { objectId, esTicket: tipo.includes('ticket') };
 }
 
 // ----- handler: ticket.creation -> instanciar (idempotente) -----
@@ -52,19 +60,36 @@ async function onTicketCreated(payload) {
   return { caseId };
 }
 
-// ----- handler: artifacts-loaded -> completar 18_esperarArtefactos -----
+// ----- handler: artifacts-loaded -> completar la tarea de espera -----
+// Flujo real (Preventa): los 4 artefactos se llenan en el NEGOCIO (Deal). Al cambiar una de esas
+// 4 propiedades (deal.propertyChange) y estar las 4 con valor, se busca el ticket asociado al Deal
+// y se completa el caso con "entregado". Un cierre del ticket (ticket.propertyChange a stage cerrado)
+// completa con "cerrado".
 async function onArtifactsLoaded(payload) {
-  const ticketId = extraerTicketId(payload);
-  if (!ticketId) throw new Error('artifacts-loaded: sin ticketId');
+  const { objectId, esTicket } = extraerEvento(payload);
+  if (!objectId) throw new Error('artifacts-loaded: sin objectId en el payload');
+
+  if (esTicket) {
+    const ticket = await getTicket(objectId);
+    const cerrado = String(ticket?.properties?.hs_pipeline_stage) === String(process.env.STAGE_CLOSED || '4');
+    if (!cerrado) { log('ticket', objectId, 'cambio no relevante (no cerrado); ignorado'); return { ignorado: true }; }
+    const caseId = casoDe(objectId);
+    if (!caseId) throw new Error(`ticket ${objectId} cerrado sin caso asociado`);
+    await completarEspera(caseId, 'cerrado');
+    log('ticket', objectId, 'caso', caseId, '-> espera completada: cerrado');
+    return { resultado: 'cerrado', ticketId: objectId, caseId };
+  }
+
+  // deal.propertyChange: los 4 campos de artefactos viven en el Negocio
+  const deal = await getDeal(objectId);
+  if (!artefactosCompletos(deal)) { log('deal', objectId, 'aun sin los 4 artefactos; no se completa'); return { pendiente: true }; }
+  const ticketId = await ticketDeNegocio(objectId);
+  if (!ticketId) throw new Error(`deal ${objectId} sin ticket asociado`);
   const caseId = casoDe(ticketId);
-  if (!caseId) throw new Error(`artifacts-loaded: ticket ${ticketId} sin caso (no instanciado)`);
-  const ticket = await getTicket(ticketId);
-  const cerrado = String(ticket?.properties?.hs_pipeline_stage) === String(process.env.STAGE_CLOSED || '4');
-  const resultado = artefactosCompletos(ticket) ? 'entregado' : (cerrado ? 'cerrado' : null);
-  if (!resultado) { log('ticket', ticketId, 'aun sin los 4 artefactos y no cerrado; no se completa'); return { pendiente: true }; }
-  await completarEspera(caseId, resultado);
-  log('ticket', ticketId, 'caso', caseId, '-> espera completada:', resultado);
-  return { resultado };
+  if (!caseId) throw new Error(`ticket ${ticketId} (del deal ${objectId}) sin caso (no instanciado)`);
+  await completarEspera(caseId, 'entregado');
+  log('deal', objectId, '-> ticket', ticketId, 'caso', caseId, '-> espera completada: entregado');
+  return { resultado: 'entregado', dealId: objectId, ticketId, caseId };
 }
 
 // ----- reconciliacion diaria -----

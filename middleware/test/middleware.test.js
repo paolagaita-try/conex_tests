@@ -14,7 +14,8 @@ const port = (s) => s.address().port;
 
 // contadores para verificar que no se duplican llamadas
 const n = { instanciacion: 0, login: 0, assign: 0, execution: 0 };
-let ticketProps = {}; // lo que devuelve el HubSpot falso para el ticket
+let dealProps = {};   // propiedades que devuelve el HubSpot falso para el Negocio (Deal)
+let ticketProps = {}; // propiedades del ticket (para el caso "cerrado")
 
 let bonita, hubspot, store, mw;
 
@@ -37,10 +38,14 @@ before(async () => {
   });
   await listen(bonita);
 
-  // --- HubSpot falso ---
+  // --- HubSpot falso (enruta Deal, asociacion Deal->Ticket, y Ticket) ---
   hubspot = http.createServer((req, res) => {
+    const u = req.url;
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ id: 'T-1', properties: ticketProps }));
+    if (u.includes('/associations/tickets')) return res.end(JSON.stringify({ results: [{ toObjectId: 'T-1' }] }));
+    if (u.includes('/objects/deals/')) return res.end(JSON.stringify({ id: 'D-1', properties: dealProps }));
+    if (u.includes('/objects/tickets/')) return res.end(JSON.stringify({ id: 'T-1', properties: ticketProps }));
+    return res.end(JSON.stringify({}));
   });
   await listen(hubspot);
 
@@ -80,24 +85,34 @@ test('idempotencia: segundo ticket-created del mismo ticket no vuelve a instanci
   assert.equal(n.instanciacion, antes); // no incremento
 });
 
-test('artifacts-loaded con los 4 campos -> completa la espera como "entregado"', async () => {
-  ticketProps = {
-    concepto_viabilidad: 'Viable', estimacion_costos: '1200',
+test('deal.propertyChange con los 4 campos -> busca el ticket y completa "entregado"', async () => {
+  dealProps = {
+    concepto_viabilidad: 'Aprobado (Viable)', estimacion_costos: '1200',
     url_ppta_preventa: 'https://ppta', link_repo_preventa: 'https://repo',
-    hs_pipeline_stage: '2', subject: 'X',
   };
-  const r = await mw.onArtifactsLoaded({ objectId: 'T-1' });
+  const r = await mw.onArtifactsLoaded({ subscriptionType: 'deal.propertyChange', objectId: 'D-1' });
   assert.equal(r.resultado, 'entregado');
+  assert.equal(r.ticketId, 'T-1');  // resolvio el ticket asociado al Negocio
+  assert.equal(r.caseId, 500);
   assert.equal(n.assign, 1);     // se asigno la tarea
   assert.equal(n.execution, 1);  // se ejecuto la tarea
 });
 
-test('artifacts-loaded sin los 4 campos y no cerrado -> queda pendiente, no completa', async () => {
-  ticketProps = { concepto_viabilidad: '', estimacion_costos: '', url_ppta_preventa: '', link_repo_preventa: '', hs_pipeline_stage: '2' };
+test('deal.propertyChange sin los 4 campos -> queda pendiente, no completa', async () => {
+  dealProps = { concepto_viabilidad: '', estimacion_costos: '', url_ppta_preventa: '', link_repo_preventa: '' };
   const ejecAntes = n.execution;
-  const r = await mw.onArtifactsLoaded({ objectId: 'T-1' });
+  const r = await mw.onArtifactsLoaded({ subscriptionType: 'deal.propertyChange', objectId: 'D-1' });
   assert.equal(r.pendiente, true);
   assert.equal(n.execution, ejecAntes); // no se ejecuto nada
+});
+
+test('ticket.propertyChange a stage cerrado -> completa "cerrado"', async () => {
+  ticketProps = { hs_pipeline_stage: '4' }; // STAGE_CLOSED
+  const ejecAntes = n.execution;
+  const r = await mw.onArtifactsLoaded({ subscriptionType: 'ticket.propertyChange', objectId: 'T-1' });
+  assert.equal(r.resultado, 'cerrado');
+  assert.equal(r.caseId, 500);
+  assert.equal(n.execution, ejecAntes + 1);
 });
 
 test('firma invalida -> 401 por el servidor HTTP', async () => {

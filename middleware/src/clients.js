@@ -130,10 +130,26 @@ async function hs(path, { method = 'GET', body } = {}) {
   return t ? JSON.parse(t) : null;
 }
 
-// Lee un ticket con los 4 campos de artefactos (+ stage). Para decidir entregado/cerrado.
+// Lee un ticket (stage/subject). Para decidir el cierre sin entrega (resultado "cerrado").
 export async function getTicket(ticketId) {
-  const props = [...ARTEFACTO_PROPS, 'hs_pipeline_stage', 'subject'].join(',');
+  const props = ['hs_pipeline_stage', 'subject'].join(',');
   return hs(`/crm/v3/objects/tickets/${ticketId}?properties=${props}`);
+}
+
+// Lee un Negocio (Deal) con los 4 campos de artefactos (seccion "Definicion Preventa" del Deal,
+// confirmado con Preventa: los artefactos viven en el Negocio, NO en el ticket).
+export async function getDeal(dealId) {
+  const props = ARTEFACTO_PROPS.join(',');
+  return hs(`/crm/v3/objects/deals/${dealId}?properties=${props}`);
+}
+
+// Ticket asociado a un Negocio (Deal), via asociaciones v4. Devuelve el primer ticketId o null.
+export async function ticketDeNegocio(dealId) {
+  const r = await hs(`/crm/v4/objects/deals/${dealId}/associations/tickets?limit=1`);
+  const res = r?.results || [];
+  if (!res.length) return null;
+  const t = res[0];
+  return String(t.toObjectId ?? t.id ?? t.to?.id ?? '');
 }
 
 // true si los 4 campos de artefactos tienen valor no vacio.
