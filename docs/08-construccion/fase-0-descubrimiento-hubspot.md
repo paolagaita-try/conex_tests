@@ -54,6 +54,9 @@ Se descubrieron **18 owners** (sin paginación pendiente). Los IDs sirven para `
 
 > Los correos de cada owner están disponibles en la API (`GET /crm/v3/owners`) si se necesitan; se omiten aquí para no fijar datos personales en el repo.
 
+> **Verificado en vivo 2026-11-11** contra `api.hubapi.com` (token de pruebas, luego rotado): pipeline y los 6 `stageId` coinciden exactamente con §1; `GET /crm/v3/owners` devuelve **18 owners**.
+> ⚠️ **Round robin:** el owner `88449388` ("Trynion") es un **bot de HubSpot** (correo `...@aichatbot.na1.hubspot.com`) — **excluirlo** de la lista de candidatos del round robin. Definir también si se incluyen/excluyen owners inactivos (`archived=true`).
+
 ---
 
 ## 3. Propiedades del ticket
@@ -118,3 +121,43 @@ Candidatas a entrar en el BDM / contrato de instanciación cuando llegue el fluj
 - **Process ID de Bonita:** no existe todavía (sale tras construir el proceso en U1).
 - **Escritura `PATCH` a HubSpot:** documentada, **no ejecutada** (Fase 0 es solo lectura).
 
+
+---
+
+## 6. Verificación en vivo del 2026-11-12 (solo lectura)
+
+Ejecutada contra `api.hubapi.com` con el token de Private App entregado por el usuario (guardado fuera del repositorio).
+No se escribió nada en HubSpot. No se imprimió ni se guardó contenido de tickets o negocios, solo conteos y nombres de
+propiedades.
+
+| Comprobación | Resultado |
+|---|---|
+| `GET /crm/v3/objects/tickets` | 200 |
+| `GET /crm/objects/2026-09/tickets` (ruta con versión por fecha) | 200 |
+| `POST /crm/v3/objects/tickets/search` filtrando `hs_pipeline` = `0`, `hubspot_owner_id` = owner y `hs_pipeline_stage` en (`2`, `3`) | 200; owner `89450376` → 0 tickets; owner `89450377` → 1 ticket (en stage `2`) |
+| Tickets del pipeline `0` en stage `1` («Solicitud recibida») | 200; 0 en ese momento |
+| Tickets con negocio asociado (`associations=deals`, muestra de 5) | 5 de 5 |
+
+La búsqueda de la segunda fila es la que mide la carga de cada consultora para la asignación; su resultado coincide con
+lo que se dijo en la reunión de socialización («Viviana tiene uno, Linda no tiene ninguno»).
+
+### 6.1 Propiedades del negocio donde se cargan los artefactos
+
+La reunión las llama «definición de preventa». Nombres internos reales (objeto negocio, grupo `dealinformation`,
+creadas por el usuario):
+
+| `name` | Etiqueta | Tipo | Artefacto |
+|---|---|---|---|
+| `concepto_viabilidad` | Concepto viabilidad por Preventa | enumeration/select | viable o no viable |
+| `estimacion_costos` | Estimación fábrica | string/text | enlace de la calculadora (estimación) |
+| `url_ppta_preventa` | URL propuesta Preventa - Slide | string/text | enlace de la presentación |
+| `link_repo_preventa` | Link repositorio Preventa | string/text | enlace del repositorio |
+
+Otras propiedades del negocio relacionadas, que hoy no se usan: `preventa_asignado` (Preventa asignado,
+enumeration/select), `meddpicc` (MEDDPICC, string/text), `link_repositorio_comercial`.
+
+### 6.2 Sigue sin verificar
+
+- La escritura `PATCH /crm/v3/objects/tickets/{id}` (cambia datos reales).
+- Qué evento de HubSpot avisa del cambio de las cuatro propiedades del negocio, y si el plan contratado lo permite.
+- Los scopes exactos que la Private App necesita para leer negocios desde el middleware (esta lectura respondió 200).

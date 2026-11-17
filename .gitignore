@@ -40,3 +40,19 @@ frontend/.env.local
 .claude/state/heartbeat-status.json
 .claude/state/happy-path/
 # ── /trycore-bonita-harness ──────────────────────
+
+# ── trycore-build-harness (auto) ───────────────────────
+.claude/state/build-state.json
+.claude/state/runtime.credentials
+.claude/state/context.lock
+.claude/state/runtime-projection.json
+.claude/state/.runtime-http-status
+.claude/state/outbox/
+.claude/state/epic-proposals.json
+.claude/state/graph-status.json
+.claude/state/graph-sync-proposals.json
+.claude/state/heartbeat.pid
+.claude/state/heartbeat-sessions.json
+.claude/state/heartbeat-status.json
+.claude/state/happy-path/
+# ── /trycore-build-harness ──────────────────────

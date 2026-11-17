@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0">
+  <implementationId>hubspot-consultores-menor-carga-impl</implementationId>
+  <implementationVersion>1.0.0</implementationVersion>
+  <definitionId>hubspot-consultores-menor-carga</definitionId>
+  <definitionVersion>1.0.0</definitionVersion>
+  <implementationClassname>co.trycore.preventa.conectores.HubspotConsultoresMenorCarga</implementationClassname>
+  <hasSources>false</hasSources>
+  <description>Elige el owner con menos tickets en los stages de trabajo (balance de carga, con desempate circular).</description>
+  <jarDependencies>
+    <jarDependency>${project.artifactId}-${project.version}.jar</jarDependency>
+  </jarDependencies>
+</implementation:connectorImplementation>

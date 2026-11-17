@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-new-change/SKILL.md (copia literal) -->
 
 Start a new change using the experimental artifact-driven approach.
 

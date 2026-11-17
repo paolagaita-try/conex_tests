@@ -4,7 +4,6 @@ description: Start a new change using the experimental artifact workflow (OPSX)
 category: Workflow
 tags: [workflow, artifacts, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/new.md (copia literal) -->
 
 Start a new change using the experimental artifact-driven approach.
 

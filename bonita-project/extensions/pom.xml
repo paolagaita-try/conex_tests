@@ -14,5 +14,6 @@
     <module>parametros-adaptador</module>
     <module>parametros-api-extension</module>
     <module>consultas-api-extension</module>
+    <module>preventa-conectores</module>
   </modules>
 </project>

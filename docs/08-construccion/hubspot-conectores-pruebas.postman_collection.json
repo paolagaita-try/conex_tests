@@ -1,0 +1,107 @@
+{
+  "info": {
+    "name": "HubSpot - conectores Preventa (Bonita)",
+    "description": "Las llamadas reales que hacen los 3 conectores de bonita-project/extensions/preventa-conectores contra la API de HubSpot. Configura la variable 'token' (Private App) y 'ticketId'. Pipeline 'Mesa de preventa' id=0; stages 2=En validacion, 3=Asignado/En diseno, 1425810258=Entregado a ventas; owners 89450376=Linda, 89450377=Viviana.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base", "value": "https://api.hubapi.com" },
+    { "key": "token", "value": "" },
+    { "key": "ticketId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. conn_hubspotLeer - GET ticket (3_consultarTicket)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/crm/v3/objects/tickets/{{ticketId}}?properties=subject",
+          "host": ["{{base}}"],
+          "path": ["crm", "v3", "objects", "tickets", "{{ticketId}}"],
+          "query": [{ "key": "properties", "value": "subject" }]
+        }
+      }
+    },
+    {
+      "name": "2. conn_hubspotCarga - search carga (4_verificarDisponibilidad)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"filterGroups\": [{ \"filters\": [\n    { \"propertyName\": \"hs_pipeline\", \"operator\": \"EQ\", \"value\": \"0\" },\n    { \"propertyName\": \"hs_pipeline_stage\", \"operator\": \"IN\", \"values\": [\"2\", \"3\"] }\n  ]}],\n  \"properties\": [\"hubspot_owner_id\", \"subject\"],\n  \"limit\": 100\n}"
+        },
+        "url": {
+          "raw": "{{base}}/crm/v3/objects/tickets/search",
+          "host": ["{{base}}"],
+          "path": ["crm", "v3", "objects", "tickets", "search"]
+        }
+      }
+    },
+    {
+      "name": "3. conn_hubspotActualizar - asignar (6_actualizarTicket)",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"properties\": { \"hs_pipeline_stage\": \"2\", \"hubspot_owner_id\": \"89450376\" } }"
+        },
+        "url": {
+          "raw": "{{base}}/crm/v3/objects/tickets/{{ticketId}}",
+          "host": ["{{base}}"],
+          "path": ["crm", "v3", "objects", "tickets", "{{ticketId}}"]
+        }
+      }
+    },
+    {
+      "name": "4. conn_hubspotActualizar - entregar a ventas (40_entregarAVentas)",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"properties\": { \"hs_pipeline_stage\": \"1425810258\" } }"
+        },
+        "url": {
+          "raw": "{{base}}/crm/v3/objects/tickets/{{ticketId}}",
+          "host": ["{{base}}"],
+          "path": ["crm", "v3", "objects", "tickets", "{{ticketId}}"]
+        }
+      }
+    },
+    {
+      "name": "5. (aux) crear ticket de prueba",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"properties\": { \"subject\": \"PRUEBA Bonita - BORRAR\", \"hs_pipeline\": \"0\", \"hs_pipeline_stage\": \"1\" } }"
+        },
+        "url": {
+          "raw": "{{base}}/crm/v3/objects/tickets",
+          "host": ["{{base}}"],
+          "path": ["crm", "v3", "objects", "tickets"]
+        }
+      }
+    },
+    {
+      "name": "6. (aux) borrar ticket de prueba",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base}}/crm/v3/objects/tickets/{{ticketId}}",
+          "host": ["{{base}}"],
+          "path": ["crm", "v3", "objects", "tickets", "{{ticketId}}"]
+        }
+      }
+    }
+  ]
+}

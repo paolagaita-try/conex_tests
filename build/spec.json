@@ -1,0 +1,792 @@
+{
+  "bdm": {
+    "objetos": [
+      {
+        "atributos": [
+          {
+            "longitud": 50,
+            "multiple": false,
+            "nombre": "ticketId",
+            "obligatorio": true,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": 40,
+            "multiple": false,
+            "nombre": "estado",
+            "obligatorio": true,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": 255,
+            "multiple": false,
+            "nombre": "asunto",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": 100,
+            "multiple": false,
+            "nombre": "consultor",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": 50,
+            "multiple": false,
+            "nombre": "consultorOwnerId",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          }
+        ],
+        "consultas": [
+          {
+            "devuelve": "lista",
+            "jpql": "SELECT p FROM Preventa p WHERE p.consultorOwnerId IS NOT NULL ORDER BY p.persistenceId DESC",
+            "nombre": "findAsignadasRecientes",
+            "parametros": []
+          }
+        ],
+        "indices": [
+          [
+            "estado"
+          ],
+          [
+            "consultorOwnerId"
+          ]
+        ],
+        "nombre": "Preventa",
+        "unicos": [
+          [
+            "ticketId"
+          ]
+        ]
+      }
+    ],
+    "paquete": "co.trycore.preventa.model"
+  },
+  "caminos": [
+    {
+      "esperado": {
+        "preventa.asunto": "Preventa cliente ACME",
+        "preventa.consultor": "Linda",
+        "preventa.consultorOwnerId": "89450376",
+        "preventa.estado": "entregadaAVentas"
+      },
+      "fin": "fin_entregada",
+      "id": "entregada",
+      "pasos": [
+        {
+          "evento": null,
+          "payload": {
+            "ticketId": "T-001"
+          },
+          "tarea": "(instanciacion)",
+          "usuario": "ofelia.bot"
+        },
+        {
+          "evento": null,
+          "payload": {
+            "resultado": "entregado"
+          },
+          "tarea": "18_esperarArtefactos",
+          "usuario": "ofelia.bot"
+        }
+      ],
+      "salidas": [
+        "gwXor_1→40_entregarAVentas"
+      ]
+    },
+    {
+      "esperado": {
+        "preventa.consultor": "Linda",
+        "preventa.consultorOwnerId": "89450376",
+        "preventa.estado": "cerrada"
+      },
+      "fin": "fin_cerrada",
+      "id": "cerrada",
+      "pasos": [
+        {
+          "evento": null,
+          "payload": {
+            "ticketId": "T-002"
+          },
+          "tarea": "(instanciacion)",
+          "usuario": "ofelia.bot"
+        },
+        {
+          "evento": null,
+          "payload": {
+            "resultado": "cerrado"
+          },
+          "tarea": "18_esperarArtefactos",
+          "usuario": "ofelia.bot"
+        }
+      ],
+      "salidas": [
+        "gwXor_1→fin_cerrada"
+      ]
+    }
+  ],
+  "extensiones": {
+    "definiciones": {
+      "hubspot-consultores-menor-carga": {
+        "entradas": [
+          {
+            "nombre": "urlBase",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaTickets",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "pipelineId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ownerIds",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "stages",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ultimoOwnerId",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "hubspot-consultores-menor-carga-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [
+          {
+            "nombre": "ownerElegido",
+            "tipo": "java.lang.String"
+          }
+        ],
+        "tipo": "conector",
+        "version": "1.0.0"
+      },
+      "hubspot-ticket-actualizar": {
+        "entradas": [
+          {
+            "nombre": "urlBase",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaTickets",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "stageId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ownerId",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "hubspot-ticket-actualizar-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [],
+        "tipo": "conector",
+        "version": "1.0.0"
+      },
+      "hubspot-ticket-leer": {
+        "entradas": [
+          {
+            "nombre": "urlBase",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaTickets",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "hubspot-ticket-leer-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [
+          {
+            "nombre": "asunto",
+            "tipo": "java.lang.String"
+          }
+        ],
+        "tipo": "conector",
+        "version": "1.0.0"
+      }
+    }
+  },
+  "formularios": {
+    "aplicaciones": [
+      {
+        "familia_actores": null,
+        "nombre": "hubspot-bonita",
+        "perfiles": [],
+        "token": "hubspotBonita"
+      }
+    ],
+    "formularios": [
+      {
+        "acciones": "",
+        "actor": null,
+        "campos": [],
+        "contrato": "ctr_instanciacion",
+        "familia_actores": null,
+        "familia_formularios": null,
+        "id": "frm_instanciacion",
+        "mapping": "No form",
+        "tarea": "(inicio)",
+        "tipo": "Instantiation form",
+        "titulo": null
+      },
+      {
+        "acciones": "",
+        "actor": null,
+        "campos": [],
+        "contrato": "ctr_18_esperarArtefactos",
+        "familia_actores": null,
+        "familia_formularios": null,
+        "id": "frm_18_esperarArtefactos",
+        "mapping": "No form",
+        "tarea": "18_esperarArtefactos",
+        "tipo": "Task form",
+        "titulo": null
+      },
+      {
+        "acciones": "",
+        "actor": null,
+        "campos": [],
+        "contrato": null,
+        "familia_actores": null,
+        "familia_formularios": null,
+        "id": "frm_overview",
+        "mapping": "No form",
+        "tarea": "(pool)",
+        "tipo": "Case overview",
+        "titulo": null
+      }
+    ]
+  },
+  "organizacion": {
+    "actores": {
+      "Orquestador": {
+        "grupo": "trycore/integracion",
+        "rol": "integracion"
+      }
+    },
+    "contrasena": "bpm",
+    "grupos": [
+      "trycore",
+      "trycore/integracion"
+    ],
+    "membresias": [],
+    "perfiles": [],
+    "roles": [
+      "integracion"
+    ],
+    "usuarios": [
+      {
+        "grupo": "trycore/integracion",
+        "nombre": "ofelia.bot",
+        "rol": "integracion"
+      }
+    ]
+  },
+  "parametros_negocio": [],
+  "procesos": [
+    {
+      "business_variables": [
+        {
+          "nombre": "preventa",
+          "objeto": "Preventa"
+        }
+      ],
+      "conectores": [
+        {
+          "definicion": "hubspot-ticket-leer",
+          "entradas": {
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotLeer",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [
+            {
+              "destino": "preventa.asunto",
+              "salida": "asunto"
+            }
+          ],
+          "tarea": "3_consultarTicket",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-consultores-menor-carga",
+          "entradas": {
+            "ownerIds": "def owners = []; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\",2); if (kv.length != 2) throw new RuntimeException(\"param_consultores mal formado\"); if (kv[0].isEmpty()) throw new RuntimeException(\"param_consultores mal formado\"); if (owners.contains(kv[0])) throw new RuntimeException(\"param_consultores mal formado\"); owners.add(kv[0]) }; return owners.join(\",\")",
+            "pipelineId": "return param_pipelineTickets",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "stages": "return param_stageEnValidacion + \",\" + param_stageEnDiseno",
+            "ultimoOwnerId": "def r = preventaDAO.findAsignadasRecientes(0, 1); return (!r) ? \"\" : (r[0].consultorOwnerId ?: \"\")",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotCarga",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [
+            {
+              "destino": "ownerElegido",
+              "salida": "ownerElegido"
+            }
+          ],
+          "tarea": "4_verificarDisponibilidad",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-ticket-actualizar",
+          "entradas": {
+            "ownerId": "if (!preventa.consultorOwnerId?.trim()) throw new RuntimeException(\"el caso no tiene consultor asignado\"); return preventa.consultorOwnerId",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "stageId": "return param_stageEnValidacion",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotActualizar",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "6_actualizarTicket",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-ticket-actualizar",
+          "entradas": {
+            "ownerId": "return \"\"",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "stageId": "return param_stageEntregado",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotActualizar",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "40_entregarAVentas",
+          "tipo": "propio"
+        }
+      ],
+      "contratos": {
+        "(instanciacion)": {
+          "inputs": [
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "ticketId",
+              "obligatorio": true,
+              "tipo": "TEXT"
+            }
+          ],
+          "restricciones": [
+            {
+              "groovy": "return ticketId != null && !ticketId.trim().isEmpty()",
+              "mensaje": "El identificador del ticket es obligatorio",
+              "nombre": "ticketId_presente"
+            }
+          ]
+        },
+        "18_esperarArtefactos": {
+          "inputs": [
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "resultado",
+              "obligatorio": true,
+              "tipo": "TEXT"
+            }
+          ],
+          "restricciones": [
+            {
+              "groovy": "return [\"entregado\",\"cerrado\"].contains(resultado)",
+              "mensaje": "El resultado debe ser entregado o cerrado",
+              "nombre": "resultado_valido"
+            }
+          ]
+        }
+      },
+      "iniciador": "Orquestador",
+      "lanes": [
+        {
+          "actor": "Orquestador",
+          "actor_bonita": "orquestador",
+          "nombre": "Orquestador"
+        }
+      ],
+      "nodos": [
+        {
+          "anfitrion": null,
+          "documentacion": "instanciación por el actor Orquestador al crearse el ticket en HubSpot (ctr_instanciacion)",
+          "duracion": null,
+          "id": "inicio",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "inicio",
+          "tipo": "inicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Comprueba que el ticket existe y lee su asunto",
+          "duracion": null,
+          "id": "3_consultarTicket",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Consultar el ticket de preventa en HubSpot",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Cuenta en HubSpot los tickets de cada consultor de param_consultores en los stages «En validación» y «Asignado/En diseño» y devuelve el elegido (regla completa bajo la tabla de conectores)",
+          "duracion": null,
+          "id": "4_verificarDisponibilidad",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Verificar la carga de los consultores",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Guarda en el caso al consultor que eligió 4_verificarDisponibilidad",
+          "duracion": null,
+          "id": "5_asignarConsultor",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Asignar consultor preventa",
+          "tipo": "script"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Fija el propietario y pasa el ticket a «En validación»",
+          "duracion": null,
+          "id": "6_actualizarTicket",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Actualizar estado y propietario del ticket en HubSpot",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Tarea añadida por el diseño (en el insumo A18 la hace la consultora en HubSpot, no el orquestador). No la abre una persona: la completa el middleware por la API cuando HubSpot avisa. Es la espera del caso. Sin temporizador a propósito (nota bajo Eventos)",
+          "duracion": null,
+          "id": "18_esperarArtefactos",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Esperar la carga de artefactos en el negocio",
+          "tipo": "humana"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "No cambia el propietario",
+          "duracion": null,
+          "id": "40_entregarAVentas",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Cambiar estado del ticket a «Entregado a ventas»",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Decide: resultadoPreventa (process variable, de ctr_18_esperarArtefactos)",
+          "duracion": null,
+          "id": "gwXor_1",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "gwXor_1",
+          "tipo": "xor"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "",
+          "duracion": null,
+          "id": "fin_entregada",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "fin_entregada",
+          "tipo": "fin"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "",
+          "duracion": null,
+          "id": "fin_cerrada",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "fin_cerrada",
+          "tipo": "fin"
+        }
+      ],
+      "nombre": "GestionPreventa",
+      "operaciones": {
+        "(instanciacion)": [
+          {
+            "destino": "preventa.ticketId",
+            "expresion": {
+              "tipo": "input",
+              "valor": "ticketId"
+            }
+          },
+          {
+            "destino": "preventa.estado",
+            "expresion": {
+              "tipo": "literal",
+              "valor": "recibida"
+            }
+          }
+        ],
+        "18_esperarArtefactos": [
+          {
+            "destino": "resultadoPreventa",
+            "expresion": {
+              "tipo": "input",
+              "valor": "resultado"
+            }
+          },
+          {
+            "destino": "preventa.estado",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return resultado == \"entregado\" ? \"artefactosCargados\" : \"cerrada\""
+            }
+          }
+        ],
+        "3_consultarTicket": [],
+        "40_entregarAVentas": [
+          {
+            "destino": "preventa.estado",
+            "expresion": {
+              "tipo": "literal",
+              "valor": "entregadaAVentas"
+            }
+          }
+        ],
+        "4_verificarDisponibilidad": [],
+        "5_asignarConsultor": [
+          {
+            "destino": "preventa.estado",
+            "expresion": {
+              "tipo": "literal",
+              "valor": "asignada"
+            }
+          },
+          {
+            "destino": "preventa.consultorOwnerId",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return ownerElegido"
+            }
+          },
+          {
+            "destino": "preventa.consultor",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "def nombre = \"\"; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\",2); if (kv.length == 2 && kv[0] == ownerElegido) nombre = kv[1] }; return nombre"
+            }
+          }
+        ],
+        "6_actualizarTicket": []
+      },
+      "parametros": [
+        {
+          "nombre": "param_hubspotUrlBase",
+          "tipo": "String",
+          "valores": {
+            "Local": "http://localhost:8099/hubspot",
+            "Production": "https://api.hubapi.com",
+            "Qualification": "https://api.hubapi.com"
+          }
+        },
+        {
+          "nombre": "param_hubspotRutaTickets",
+          "tipo": "String",
+          "valores": {
+            "Local": "/crm/v3/objects/tickets",
+            "Production": "/crm/v3/objects/tickets",
+            "Qualification": "/crm/v3/objects/tickets"
+          }
+        },
+        {
+          "nombre": "param_stageEnValidacion",
+          "tipo": "String",
+          "valores": {
+            "Local": "2",
+            "Production": "2",
+            "Qualification": "2"
+          }
+        },
+        {
+          "nombre": "param_stageEnDiseno",
+          "tipo": "String",
+          "valores": {
+            "Local": "3",
+            "Production": "3",
+            "Qualification": "3"
+          }
+        },
+        {
+          "nombre": "param_stageEntregado",
+          "tipo": "String",
+          "valores": {
+            "Local": "1425810258",
+            "Production": "1425810258",
+            "Qualification": "1425810258"
+          }
+        },
+        {
+          "nombre": "param_consultores",
+          "tipo": "String",
+          "valores": {
+            "Local": "89450376:Linda;89450377:Viviana",
+            "Production": "89450376:Linda;89450377:Viviana",
+            "Qualification": "89450376:Linda;89450377:Viviana"
+          }
+        },
+        {
+          "nombre": "param_pipelineTickets",
+          "tipo": "String",
+          "valores": {
+            "Local": "0",
+            "Production": "0",
+            "Qualification": "0"
+          }
+        }
+      ],
+      "transiciones": [
+        {
+          "defecto": false,
+          "desde": "inicio",
+          "expresion": null,
+          "hacia": "3_consultarTicket"
+        },
+        {
+          "defecto": false,
+          "desde": "3_consultarTicket",
+          "expresion": null,
+          "hacia": "4_verificarDisponibilidad"
+        },
+        {
+          "defecto": false,
+          "desde": "4_verificarDisponibilidad",
+          "expresion": null,
+          "hacia": "5_asignarConsultor"
+        },
+        {
+          "defecto": false,
+          "desde": "5_asignarConsultor",
+          "expresion": null,
+          "hacia": "6_actualizarTicket"
+        },
+        {
+          "defecto": false,
+          "desde": "6_actualizarTicket",
+          "expresion": null,
+          "hacia": "18_esperarArtefactos"
+        },
+        {
+          "defecto": false,
+          "desde": "18_esperarArtefactos",
+          "expresion": null,
+          "hacia": "gwXor_1"
+        },
+        {
+          "defecto": false,
+          "desde": "gwXor_1",
+          "expresion": "return resultadoPreventa == \"entregado\"",
+          "hacia": "40_entregarAVentas"
+        },
+        {
+          "defecto": true,
+          "desde": "gwXor_1",
+          "expresion": null,
+          "hacia": "fin_cerrada"
+        },
+        {
+          "defecto": false,
+          "desde": "40_entregarAVentas",
+          "expresion": null,
+          "hacia": "fin_entregada"
+        }
+      ],
+      "variables": [
+        {
+          "defecto": null,
+          "nombre": "ownerElegido",
+          "tipo": "TEXT",
+          "transitoria": false
+        },
+        {
+          "defecto": null,
+          "nombre": "resultadoPreventa",
+          "tipo": "TEXT",
+          "transitoria": false
+        }
+      ],
+      "version": "1.0"
+    }
+  ],
+  "proyecto": {
+    "edicion_destino": "community",
+    "grupo": "co.trycore.hubspot",
+    "nombre": "hubspot-bonita",
+    "version_bonita": "2026.2"
+  }
+}

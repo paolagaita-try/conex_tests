@@ -4,7 +4,6 @@ description: Sync delta specs from a change to main specs
 category: Workflow
 tags: [workflow, specs, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/sync.md (copia literal) -->
 
 Sync delta specs from a change to main specs.
 

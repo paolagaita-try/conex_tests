@@ -4,7 +4,6 @@ description: Archive a completed change in the experimental workflow
 category: Workflow
 tags: [workflow, archive, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/archive.md (adaptado: la llamada a slice-ops.sh archive usa .claude/hooks/bonita/) -->
 
 Archive a completed change in the experimental workflow.
 
@@ -79,19 +78,19 @@ Archive a completed change in the experimental workflow.
    mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
    ```
 
-5-bis. **Report the archived slice (Bonita build harness)**
+5-bis. **Report the archived slice (build harness)**
 
-   When the change belongs to a unit driven by the Bonita build harness, report the domain
+   When the change belongs to an epic slice driven by the build harness, report the domain
    transition — the runtime owns the slice history, not the local file:
 
    ```bash
-   [ -x .claude/hooks/bonita/slice-ops.sh ] && \
-     bash .claude/hooks/bonita/slice-ops.sh archive \
-       --openspec-change "<change-name>" --pr-url "<PR URL>"
+   [ -x .claude/hooks/build/slice-ops.sh ] && \
+     bash .claude/hooks/build/slice-ops.sh archive \
+       --epic "<EP-XXX>" --openspec-change "<change-name>" --pr-url "<PR URL>"
    ```
 
    It is queued and idempotent (protected from the outbox cap), so it survives an offline
-   archive; the command takes the unit from the claim, so `--openspec-change` and `--pr-url` are accepted but do not travel (`rc 4` means no unit is claimed in this tree; it is not an error for the archive). Never block the
+   archive; `rc 3` simply means legacy mode (the file protocol applies). Never block the
    archive on this step. If the pipeline ran without phase reports, the command catches up
    by itself: it emits the missing `phase_advanced` chain up to `pr` before the archive
    event (the hub rejects `slice_archived` on any earlier phase) and prints a `⚠ … server-side`

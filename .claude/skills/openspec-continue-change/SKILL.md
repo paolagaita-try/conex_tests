@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-continue-change/SKILL.md (copia literal) -->
 
 Continue working on a change by creating the next artifact.
 

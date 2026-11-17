@@ -1,0 +1,39 @@
+{
+  "proyecto": "hubspot-bonita",
+  "actualizado": "2026-11-13",
+  "nota": "Capas 0-3 cerradas tras auditoria adversarial independiente en dos pasadas. Alcance: Bonita automatiza solo el carril del orquestador (docs/07-bonita/insumo-preventa/reunion-socializacion.md).",
+  "gates": {
+    "bonita": {
+      "entrada": {
+        "estado": "pasa",
+        "fecha": "2026-11-11",
+        "por": "agent01",
+        "evidencia": "docs/07-bonita/handoff.md, docs/08-construccion/fase-0-descubrimiento-hubspot.md"
+      },
+      "capa-0": {
+        "estado": "pasa",
+        "fecha": "2026-11-13",
+        "por": "auditor independiente (subagente, contexto virgen)",
+        "evidencia": "docs/07-bonita/bdm.md, docs/.reviews/2026-11-13-auditoria-capas-0-3.md"
+      },
+      "capa-1": {
+        "estado": "pasa",
+        "fecha": "2026-11-13",
+        "por": "auditor independiente (subagente, contexto virgen)",
+        "evidencia": "docs/07-bonita/bpmn.md, docs/.reviews/2026-11-13-auditoria-capas-0-3.md"
+      },
+      "capa-2": {
+        "estado": "pasa",
+        "fecha": "2026-11-13",
+        "por": "auditor independiente (subagente, contexto virgen)",
+        "evidencia": "docs/07-bonita/contratos.md, docs/.reviews/2026-11-13-auditoria-capas-0-3.md"
+      },
+      "capa-3": {
+        "estado": "pasa",
+        "fecha": "2026-11-13",
+        "por": "auditor independiente (subagente, contexto virgen)",
+        "evidencia": "docs/07-bonita/matriz-formularios.md, docs/.reviews/2026-11-13-auditoria-capas-0-3.md"
+      }
+    }
+  }
+}

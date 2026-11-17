@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-ff-change/SKILL.md (copia literal) -->
 
 Fast-forward through artifact creation - generate everything needed to start implementation in one go.
 

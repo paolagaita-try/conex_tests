@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-sync-specs/SKILL.md (copia literal) -->
 
 Sync delta specs from a change to main specs.
 

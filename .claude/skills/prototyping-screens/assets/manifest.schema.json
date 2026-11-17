@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trycore-build/prototype-manifest",
+  "title": "Manifest del prototipo de referencia (docs/05-prototipo/manifest.json)",
+  "description": "Mapa determinista pantalla ↔ épica/HU ↔ archivo HTML ↔ estado. Solo las pantallas con estado 'aprobada' son fuente de verdad visual (las lee ux-fidelity-reviewer y resuelven el puntero por-slice de la DoR).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "pantallas"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "Versión del formato del manifest (hoy: 1)."
+    },
+    "pantallas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/pantalla" }
+    }
+  },
+  "$defs": {
+    "pantalla": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "archivo", "estado"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+          "description": "Identificador kebab-case de la pantalla. Las variantes de estado usan sufijo doble guion (p.ej. <slug>--vacio)."
+        },
+        "archivo": {
+          "type": "string",
+          "description": "Ruta relativa al directorio del prototipo (p.ej. pantallas/<slug>.html)."
+        },
+        "epica": {
+          "type": "string",
+          "pattern": "^EP-[0-9]{3}$",
+          "description": "Épica a la que pertenece la pantalla (puntero por-slice de la DoR)."
+        },
+        "historias": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^HU-[0-9]{3}$" },
+          "description": "Historias de usuario que la pantalla cubre."
+        },
+        "estado": {
+          "type": "string",
+          "enum": ["borrador", "aprobada"],
+          "description": "borrador = generada, pendiente de aprobación humana; aprobada = fuente de verdad visual (la aprobación es SIEMPRE humana)."
+        },
+        "generada_en": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Cuándo se generó/regeneró (ISO-8601 UTC)."
+        },
+        "viewports_verificados": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["desktop", "tablet", "mobile"] },
+          "description": "Viewports en los que el self-check renderizó y verificó la pantalla."
+        },
+        "variante_de": {
+          "type": "string",
+          "description": "Slug de la pantalla base si esta entrada es una variante de estado (vacío, error, cargando…)."
+        },
+        "notas": {
+          "type": "string",
+          "description": "Nota libre (p.ej. desviaciones intencionales aceptadas por el humano)."
+        }
+      }
+    }
+  }
+}

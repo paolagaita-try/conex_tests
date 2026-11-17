@@ -7,8 +7,7 @@
       <groups />
       <memberships />
       <roles>
-        <role>empleado</role>
-        <role>superAdministradorParametros</role>
+        <role>integracion</role>
         <role>administrador</role>
       </roles>
     </profileMapping>

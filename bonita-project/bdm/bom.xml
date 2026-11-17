@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <businessObjectModel xmlns="http://documentation.bonitasoft.com/bdm-xml-schema/1.0" modelVersion="1.0">
   <businessObjects>
-    <businessObject qualifiedName="com.trycore.hola.model.Saludo">
+    <businessObject qualifiedName="co.trycore.preventa.model.Preventa">
       <fields>
-        <field type="STRING" length="255" name="mensaje" nullable="false" collection="false" />
+        <field type="STRING" length="50" name="ticketId" nullable="false" collection="false" />
+        <field type="STRING" length="40" name="estado" nullable="false" collection="false" />
+        <field type="STRING" length="255" name="asunto" nullable="true" collection="false" />
+        <field type="STRING" length="100" name="consultor" nullable="true" collection="false" />
+        <field type="STRING" length="50" name="consultorOwnerId" nullable="true" collection="false" />
       </fields>
-      <uniqueConstraints />
-      <queries />
-      <indexes />
+      <uniqueConstraints>
+        <uniqueConstraint name="UK_PREVENTA_TICKETID">
+          <fieldNames>
+            <fieldName>ticketId</fieldName>
+          </fieldNames>
+        </uniqueConstraint>
+      </uniqueConstraints>
+      <queries>
+        <query name="findAsignadasRecientes" content="SELECT p FROM Preventa p WHERE p.consultorOwnerId IS NOT NULL ORDER BY p.persistenceId DESC" returnType="java.util.List" />
+      </queries>
+      <indexes>
+        <index name="IX_PREVENTA_ESTADO">
+          <fieldNames>
+            <fieldName>estado</fieldName>
+          </fieldNames>
+        </index>
+        <index name="IX_PREVENTA_CONSULT_030658">
+          <fieldNames>
+            <fieldName>consultorOwnerId</fieldName>
+          </fieldNames>
+        </index>
+      </indexes>
     </businessObject>
     <businessObject qualifiedName="com.trycore.parametros.model.KpDefinicionParametro">
       <fields>

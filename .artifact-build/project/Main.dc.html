@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./doc-page.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Karla:wght@400;500;600;700&display=swap">
+<style>body{margin:0}doc-page:not(:defined){visibility:hidden}</style>
+</helmet>
+<doc-page margin="0.75in">
+
+<div slot="header" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24pt;padding-bottom:11pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif">
+<img src="./assets/logo-trycore.png" alt="Trycore" style="height:16pt">
+<span style="font-size:8pt;font-weight:600;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Propuesta técnica · Integración de sistemas</span>
+</div>
+<div slot="footer" style="padding-top:14pt">
+<img src="./assets/pie-sedes-docs.png" alt="Sedes Trycore: Bogotá, Colombia · Santo Domingo, República Dominicana · San José, Costa Rica" style="display:block;width:100%">
+</div>
+
+<p style="font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#00A19A;margin:16pt 0 0">Propuesta técnica · Noviembre 2026</p>
+<h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22pt;line-height:1.2;letter-spacing:-0.01em;color:#1D2751;margin:12pt 0 0;max-width:26em">Integración HubSpot &#8596; Bonita</h1>
+<p style="font-family:'Karla',sans-serif;font-size:11pt;line-height:1.4;color:#6B7280;margin:8pt 0 0;max-width:40em">Automatización del flujo de tickets a casos, asignación round robin y sincronización de estados.</p>
+<div style="width:64pt;height:2pt;background:#00A19A;margin:20pt 0 0"></div>
+
+<table style="width:100%;border-collapse:collapse;margin:28pt 0 0;font-family:'Karla',sans-serif;font-size:9pt;color:#333333">
+<tbody>
+<tr>
+<td style="padding:0 18pt 0 0;vertical-align:top;width:25%"><span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280;margin-bottom:3pt">Preparado por</span>Angie Paola &#183; Trycore</td>
+<td style="padding:0 18pt;vertical-align:top;width:25%"><span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280;margin-bottom:3pt">Dirigido a</span>Responsable del proyecto</td>
+<td style="padding:0 18pt;vertical-align:top;width:25%"><span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280;margin-bottom:3pt">Alcance</span>Tickets HubSpot &#8594; Casos Bonita</td>
+<td style="padding:0 0 0 18pt;vertical-align:top;width:25%"><span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280;margin-bottom:3pt">Versión</span>1.0 · 10/11/2026</td>
+</tr>
+</tbody>
+</table>
+
+<p style="font-family:'Karla',sans-serif;font-size:12pt;line-height:1.5;color:#1D2751;margin:32pt 0 0;max-width:52em">Esta propuesta automatiza, sin intervención humana, el flujo hoy manual entre HubSpot y Bonita: al crearse un ticket se abre el caso en Bonita, se asigna por round robin y cada cambio de estado se refleja de vuelta en HubSpot. El diseño minimiza la infraestructura nueva — un único componente a construir — y la API de HubSpot cubre el 100&#37; del flujo de forma gratuita. El plan contratado solo decide cuánto se simplifica la arquitectura.</p>
+<p style="margin:18pt 0 0"><a href="FlujoSolucion.dc.html" style="display:inline-block;padding:9pt 18pt;background:#007F7A;color:#ffffff;font-family:'Poppins',sans-serif;font-size:10pt;font-weight:600;text-decoration:none;border-radius:4px">Ver flujo de solución &#8594;</a></p>
+
+<table style="width:100%;border-collapse:collapse;margin:26pt 0 0;table-layout:fixed">
+<tbody>
+<tr>
+<td style="padding:12pt 14pt 12pt 0;border-top:0.75pt solid #D8DCE5;vertical-align:top">
+<span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Componente nuevo</span>
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:700;font-size:30pt;line-height:1;letter-spacing:-0.03em;color:#1D2751;margin-top:8pt">1</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:5pt">middleware de entrada</span>
+</td>
+<td style="padding:12pt 14pt;border-top:0.75pt solid #D8DCE5;vertical-align:top">
+<span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Flujo cubierto por la API</span>
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:700;font-size:30pt;line-height:1;letter-spacing:-0.03em;color:#1D2751;margin-top:8pt">100%</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:5pt">tickets, estados, owners</span>
+</td>
+<td style="padding:12pt 14pt;border-top:0.75pt solid #D8DCE5;vertical-align:top">
+<span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Costo de la API</span>
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:700;font-size:30pt;line-height:1;letter-spacing:-0.03em;color:#00A19A;margin-top:8pt">$0</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:5pt">disponible en plan Free</span>
+</td>
+<td style="padding:12pt 0 12pt 14pt;border-top:0.75pt solid #D8DCE5;vertical-align:top">
+<span style="display:block;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Fases</span>
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:700;font-size:30pt;line-height:1;letter-spacing:-0.03em;color:#1D2751;margin-top:8pt">5</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:5pt">de implementación</span>
+</td>
+</tr>
+</tbody>
+</table>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">1 &#183; Objetivo y situación actual</h2>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:10pt 0 0;max-width:68em">El objetivo es automatizar por completo el flujo hoy manual: creación del caso en Bonita al recibir un ticket nuevo, asignación automática del responsable por round robin y sincronización fiel de todos los estados entre ambos sistemas, incluyendo los retornos del flujo.</p>
+<ul style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:12pt 0 0;padding-left:16pt;max-width:68em">
+<li style="margin-bottom:6pt">Bonita solo trae asignación manual por defecto; <strong style="font-weight:600;color:#1D2751">no existe un filtro de actor round robin nativo</strong>, requiere desarrollo propio.</li>
+<li style="margin-bottom:6pt">El tablero de estados y el campo <strong style="font-weight:600;color:#1D2751">responsable asignado</strong> ya existen en HubSpot (en diseño, en validación, en espera de información del lead, entregado a ventas, caso cerrado). No hay que crearlos, solo mapearlos.</li>
+<li>El flujo tiene <strong style="font-weight:600;color:#1D2751">rutas de retorno</strong>: desde «entregado a ventas» se puede volver a «en diseño» por solicitud de cambios del cliente o por falta de asignación de cita.</li>
+</ul>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">2 &#183; Arquitectura propuesta</h2>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:10pt 0 0;max-width:68em">Todo el flujo se resuelve con un único componente nuevo — el middleware de entrada. La asignación y la sincronización viven dentro de Bonita, usando sus conectores REST nativos hacia HubSpot.</p>
+
+<figure style="margin:22pt 0 0;break-inside:avoid">
+<div style="max-width:360pt;margin:0 auto">
+<div style="border:0.75pt solid #D8DCE5;border-radius:4px;padding:11pt 14pt;text-align:center;break-inside:avoid">
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751">HubSpot</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:3pt">Webhook de app · trigger: ticket creado</span>
+</div>
+<div style="text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:12pt;color:#00A19A;margin:5pt 0">&#8595; <span style="font-family:'Karla',sans-serif;font-size:8.5pt;font-weight:400;color:#6B7280">webhook</span></div>
+<div style="border:1.25pt solid #00A19A;background:#ECF7F6;border-radius:4px;padding:11pt 14pt;text-align:center;break-inside:avoid">
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751">Middleware · único componente nuevo</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:3pt">Recibe el webhook, abre sesión con Bonita y crea el caso</span>
+</div>
+<div style="text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:12pt;color:#00A19A;margin:5pt 0">&#8595;</div>
+<div style="border:0.75pt solid #D8DCE5;border-radius:4px;padding:11pt 14pt;text-align:center;break-inside:avoid">
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751">Bonita · caso creado</span>
+</div>
+<div style="text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:12pt;color:#00A19A;margin:5pt 0">&#8595;</div>
+<div style="border:0.75pt solid #D8DCE5;border-radius:4px;padding:11pt 14pt;text-align:center;break-inside:avoid">
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751">Service task interno · Round Robin</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:3pt">Contador persistente en Bonita, sin infraestructura externa</span>
+</div>
+<div style="text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:12pt;color:#00A19A;margin:5pt 0">&#8595;</div>
+<div style="border:0.75pt solid #D8DCE5;border-radius:4px;padding:11pt 14pt;text-align:center;break-inside:avoid">
+<span style="display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751">Conectores REST nativos de Bonita &#8594; HubSpot</span>
+<span style="display:block;font-family:'Karla',sans-serif;font-size:9pt;color:#6B7280;margin-top:3pt">Actualizan «en validación» + responsable, y cada transición posterior, incluidos los dos retornos</span>
+</div>
+</div>
+<figcaption style="font-family:'Karla',sans-serif;font-size:9pt;line-height:1.45;color:#6B7280;margin:10pt 0 0;text-align:center"><strong style="font-family:'Poppins',sans-serif;font-weight:600;color:#1D2751">Figura 1.</strong> Arquitectura de la solución: un solo componente nuevo; el resto vive dentro de Bonita.</figcaption>
+</figure>
+
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:16pt 0 0;max-width:68em"><strong style="font-family:'Poppins',sans-serif;font-weight:600;color:#1D2751">Decisión clave.</strong> Solo se construye un componente nuevo. La asignación automática y toda la sincronización de estados se resuelven con los conectores REST que Bonita ya trae incorporados, evitando duplicar infraestructura y puntos de falla.</p>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:10pt 0 0;max-width:68em"><strong style="font-family:'Poppins',sans-serif;font-weight:600;color:#1D2751">Riesgo de bucles: bajo.</strong> Al ser dos flujos independientes (HubSpot&#8594;Bonita solo al crear el ticket; Bonita&#8594;HubSpot solo para reportar estado), no hay un ciclo de ida y vuelta constante.</p>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">3 &#183; Alternativas según el plan y recomendación</h2>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:10pt 0 0;max-width:68em">La solución base funciona en cualquier plan de HubSpot. Las herramientas del portal de desarrolladores pueden simplificarla; su disponibilidad depende del nivel contratado.</p>
+
+<h3 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:11.5pt;line-height:1.2;color:#5C82F2;margin:20pt 0 0">Herramientas disponibles</h3>
+<table style="width:100%;border-collapse:collapse;margin:10pt 0 0;font-family:'Karla',sans-serif;font-size:9.5pt;color:#333333">
+<thead>
+<tr>
+<th style="text-align:left;padding:0 10pt 7pt 0;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Herramienta</th>
+<th style="text-align:left;padding:0 10pt 7pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Qué mejora</th>
+<th style="text-align:left;padding:0 0 7pt 10pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">HubSpot CLI</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Construir y desplegar el código con control de versiones</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;color:#15803D">Gratis</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Custom code action</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Serverless dentro del workflow; el middleware deja de ser un servidor externo</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Ops Hub Pro+</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Serverless function</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Endpoint HTTP alojado por HubSpot; elimina el servidor externo</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Enterprise</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">UI extension (app card)</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Tarjeta dentro del ticket con el estado del caso en Bonita</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Enterprise</td>
+</tr>
+</tbody>
+</table>
+
+<h3 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:11.5pt;line-height:1.2;color:#5C82F2;margin:24pt 0 0">Caminos según el plan</h3>
+<table style="width:100%;border-collapse:collapse;margin:10pt 0 0;font-family:'Karla',sans-serif;font-size:9.5pt;color:#333333">
+<thead>
+<tr>
+<th style="text-align:left;padding:0 10pt 7pt 0;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Plan</th>
+<th style="text-align:left;padding:0 10pt 7pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Arquitectura</th>
+<th style="text-align:left;padding:0 0 7pt 10pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Cuándo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;color:#007F7A;font-weight:600">Free / Starter &#9733;</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Middleware externo propio; API gratis + webhooks vía app</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Sin costo adicional (recomendado)</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Operations Hub Pro+</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Middleware dentro de HubSpot (custom code action)</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Mejora opcional, si hay presupuesto</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Enterprise</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Lo anterior + tarjeta en el ticket (UI extension)</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Si se requiere visibilidad en HubSpot</td>
+</tr>
+</tbody>
+</table>
+
+<div style="background:#F4F6F9;border-radius:4px;padding:14pt 16pt;margin:18pt 0 0;break-inside:avoid">
+<p style="font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751;margin:0">Recomendación</p>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Dado que el proyecto debe realizarse <strong style="font-weight:600;color:#007F7A">sin costo</strong>, se recomienda el camino <strong style="font-weight:600;color:#007F7A">Free/Starter</strong>: la API de HubSpot es gratuita y el disparo se resuelve con una suscripción de webhooks de app; el middleware se aloja en infraestructura propia. Operations Hub Professional (middleware dentro de HubSpot) y Enterprise (tarjeta en el ticket) quedan como mejoras opcionales si más adelante se aprueba presupuesto.</p>
+</div>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">4 &#183; Plan de implementación</h2>
+<table style="width:100%;border-collapse:collapse;margin:10pt 0 0;font-family:'Karla',sans-serif;font-size:9.5pt;color:#333333">
+<thead>
+<tr>
+<th style="text-align:left;padding:0 10pt 7pt 0;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280;width:26%">Fase</th>
+<th style="text-align:left;padding:0 10pt 7pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Qué se construye</th>
+<th style="text-align:left;padding:0 0 7pt 10pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Criterio de aceptación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">0 · Descubrimiento de IDs</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">IDs internos de cada etapa del pipeline y nombre interno del campo responsable</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Tabla de mapeo estado &#8596; ID lista (requiere acceso API)</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">1 · Conexión inicial</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Webhook de app + middleware (login a Bonita + creación automática del caso)</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Un ticket de prueba crea el caso solo, sin duplicados aunque el webhook reintente</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">2 · Asignación round robin</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Contador persistente + tarea de servicio + actualización de «en validación» y responsable en HubSpot</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">El caso se asigna sin intervención humana y HubSpot refleja el cambio</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">3 · Sincronización de estados y retornos</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Conector de actualización en cada transición, incluidos los dos retornos con su motivo</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Cada estado y retorno se refleja en HubSpot con el motivo identificado</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">4 · Pruebas y red de seguridad</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Pruebas de concurrencia y de reintento del webhook + reconciliación diaria Bonita&#8596;HubSpot</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Cero duplicados o desbalance en pruebas de carga</td>
+</tr>
+</tbody>
+</table>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">5 &#183; Requisitos, supuestos y riesgos</h2>
+
+<h3 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:11.5pt;line-height:1.2;color:#5C82F2;margin:16pt 0 0">Insumos necesarios</h3>
+<ul style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:10pt 0 0;padding-left:16pt;max-width:68em">
+<li style="margin-bottom:6pt"><strong style="font-weight:600;color:#1D2751">Super Admin del portal HubSpot</strong> para crear la Private App y generar el token — bloqueo real de arranque.</li>
+<li style="margin-bottom:6pt">Scopes <strong style="font-weight:600;color:#1D2751">tickets</strong> y <strong style="font-weight:600;color:#1D2751">crm.objects.owners.read</strong>; credenciales guardadas en el vault como fuente de verdad.</li>
+<li style="margin-bottom:6pt">IDs de etapas del pipeline y nombre interno del campo responsable (Fase 0).</li>
+<li>Acceso REST a Bonita (usuario técnico / endpoint) para crear y actualizar casos.</li>
+</ul>
+
+<h3 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:11.5pt;line-height:1.2;color:#5C82F2;margin:20pt 0 0">Supuestos</h3>
+<ul style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:10pt 0 0;padding-left:16pt;max-width:68em">
+<li style="margin-bottom:6pt">Los retornos del flujo nacen dentro de Bonita. Si un cambio se registrara manualmente en HubSpot, haría falta una vía de entrada adicional (pendiente de confirmar con el diseño de preventa).</li>
+<li>El portal de HubSpot admite Private Apps (algunas cuentas Free antiguas no las muestran).</li>
+</ul>
+
+<h3 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:11.5pt;line-height:1.2;color:#5C82F2;margin:20pt 0 0">Riesgos y mitigaciones</h3>
+<table style="width:100%;border-collapse:collapse;margin:10pt 0 0;font-family:'Karla',sans-serif;font-size:9.5pt;color:#333333">
+<thead>
+<tr>
+<th style="text-align:left;padding:0 10pt 7pt 0;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Riesgo</th>
+<th style="text-align:left;padding:0 10pt 7pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Impacto</th>
+<th style="text-align:left;padding:0 0 7pt 10pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Mitigación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Endpoint del middleware expuesto</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top;color:#B45309">Casos falsos por terceros</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Validar la firma del webhook de HubSpot</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Fallos en los PATCH Bonita&#8594;HubSpot (429/5xx)</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top;color:#B45309">Estados desincronizados</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Reintento + registro de fallo</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Pérdida de eventos de webhook</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top;color:#B45309">Tickets sin caso asociado</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Reconciliación diaria (Fase 4)</td>
+</tr>
+</tbody>
+</table>
+
+<div style="background:#F4F6F9;border-radius:4px;padding:14pt 16pt;margin:22pt 0 0;break-inside:avoid">
+<p style="font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751;margin:0">Decisión solicitada</p>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Gestionar con Laura el <strong style="font-weight:600;color:#1D2751">token de la Private App</strong> (acceso Super Admin) y la confirmación del plan sin generar costo. Sin ese acceso, el proyecto queda bloqueado en la Fase 0, cuyo arranque depende además del flujo de diseño de soluciones (se entrega mañana).</p>
+</div>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">6 &#183; Próximos pasos</h2>
+<table style="width:100%;border-collapse:collapse;margin:10pt 0 0;font-family:'Karla',sans-serif;font-size:9.5pt;color:#333333">
+<thead>
+<tr>
+<th style="text-align:left;padding:0 10pt 7pt 0;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Acción</th>
+<th style="text-align:left;padding:0 10pt 7pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Responsable</th>
+<th style="text-align:left;padding:0 0 7pt 10pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Desarrollo de la integración</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Angie Paola</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;color:#15803D">Asignado</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Obtener acceso API (token Private App + scopes)</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Laura</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;color:#B45309">Solicitado</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Confirmar el plan de HubSpot (sin generar costo)</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Laura</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;color:#B45309">En gestión</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5">Ejecutar la Fase 0 (descubrimiento de IDs)</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Angie Paola</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5">Inicia mañana (con el flujo de diseño de soluciones)</td>
+</tr>
+</tbody>
+</table>
+
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":864,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -4,7 +4,6 @@ description: Implement tasks from an OpenSpec change (Experimental)
 category: Workflow
 tags: [workflow, artifacts, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/apply.md (copia literal) -->
 
 Implement tasks from an OpenSpec change.
 

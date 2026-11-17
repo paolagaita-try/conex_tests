@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition:ConnectorDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1">
+  <id>hubspot-consultores-menor-carga</id>
+  <version>1.0.0</version>
+  <input name="urlBase" type="java.lang.String" mandatory="true"/>
+  <input name="rutaTickets" type="java.lang.String" mandatory="true"/>
+  <input name="pipelineId" type="java.lang.String" mandatory="true"/>
+  <input name="ownerIds" type="java.lang.String" mandatory="true"/>
+  <input name="stages" type="java.lang.String" mandatory="true"/>
+  <input name="ultimoOwnerId" type="java.lang.String" mandatory="false"/>
+  <output name="ownerElegido" type="java.lang.String"/>
+</definition:ConnectorDefinition>

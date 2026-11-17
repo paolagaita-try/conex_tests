@@ -4,7 +4,6 @@ description: Verify implementation matches change artifacts before archiving
 category: Workflow
 tags: [workflow, verify, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/verify.md (copia literal) -->
 
 Verify that an implementation matches the change artifacts (specs, tasks, design).
 

@@ -4,7 +4,6 @@ description: Guided onboarding - walk through a complete OpenSpec workflow cycle
 category: Workflow
 tags: [workflow, onboarding, tutorial, learning]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/onboard.md (copia literal) -->
 
 Guide the user through their first complete OpenSpec workflow cycle. This is a teaching experience—you'll do real work in their codebase while explaining each step.
 

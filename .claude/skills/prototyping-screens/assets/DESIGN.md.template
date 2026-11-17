@@ -1,0 +1,55 @@
+# DESIGN.md — reglas visuales del producto
+
+> Fuente de verdad **en prosa** de la identidad visual. Los mismos valores viven como CSS custom
+> properties en `tokens.css` (fuente única que importan todos los prototipos). Si este archivo y
+> `tokens.css` divergen, gana `tokens.css` y la divergencia se reporta como drift.
+
+## Identidad
+
+{{DIRECCION_ELEGIDA}} — dirección visual elegida y por qué (elección humana, ver Procedencia).
+
+## Paleta
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--color-primary` | {{HEX}} | {{USO}} |
+| `--color-surface` | {{HEX}} | {{USO}} |
+| `--color-text` | {{HEX}} | {{USO}} |
+| … | … | … |
+
+## Tipografía
+
+- **Familias**: {{FAMILIA_TITULARES}} (titulares) · {{FAMILIA_CUERPO}} (cuerpo).
+- **Escala**: {{ESCALA}} (p.ej. 12/14/16/20/24/32).
+- **Pesos**: {{PESOS}} y dónde se usa cada uno.
+
+## Espaciado y radios
+
+- **Spacing scale**: {{SPACING_SCALE}} (todos los márgenes/paddings son múltiplos de la escala).
+- **Radios**: {{RADIOS}} por tipo de componente.
+
+## Sombras
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--shadow-1` | {{VALOR}} | {{USO}} |
+
+## Componentes
+
+Reglas por componente (densidad, alineación, jerarquía) que los prototipos deben respetar:
+
+- {{COMPONENTE}}: {{REGLA}}
+
+## Don'ts (lista explícita)
+
+- No inventar colores, fuentes, spacing ni radios fuera de los tokens.
+- No introducir dependencias externas en los prototipos (CDNs, frameworks, fuentes remotas).
+- No "interpretar" el diseño al construir: copiar valores exactos.
+- {{DONT_ESPECIFICO_DEL_PRODUCTO}}
+
+## Procedencia
+
+- **Origen de los tokens**: {{ORIGEN}} (manual de marca / extracción viva de la app / dirección
+  elegida por el humano entre variantes).
+- **Fecha**: {{FECHA_ISO}}.
+- **Reconciliaciones**: {{NOTAS_DE_DRIFT}} (cuándo la app real corrigió lo declarado).

@@ -4,7 +4,6 @@ description: Archive multiple completed changes at once
 category: Workflow
 tags: [workflow, archive, experimental, bulk]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/bulk-archive.md (adaptado: la llamada a slice-ops.sh archive usa .claude/hooks/bonita/) -->
 
 Archive multiple completed changes in a single operation.
 

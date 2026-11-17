@@ -4,7 +4,6 @@ description: Continue working on a change - create the next artifact (Experiment
 category: Workflow
 tags: [workflow, artifacts, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/continue.md (copia literal) -->
 
 Continue working on a change by creating the next artifact.
 

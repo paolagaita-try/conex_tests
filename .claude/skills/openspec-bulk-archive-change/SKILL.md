@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-bulk-archive-change/SKILL.md (adaptado: la llamada a slice-ops.sh archive usa .claude/hooks/bonita/) -->
 
 Archive multiple completed changes in a single operation.
 

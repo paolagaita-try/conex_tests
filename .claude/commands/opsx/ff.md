@@ -4,7 +4,6 @@ description: Create a change and generate all artifacts needed for implementatio
 category: Workflow
 tags: [workflow, artifacts, experimental]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/ff.md (copia literal) -->
 
 Fast-forward through artifact creation - generate everything needed to start implementation.
 

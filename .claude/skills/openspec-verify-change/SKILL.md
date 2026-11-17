@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-verify-change/SKILL.md (copia literal) -->
 
 Verify that an implementation matches the change artifacts (specs, tasks, design).
 

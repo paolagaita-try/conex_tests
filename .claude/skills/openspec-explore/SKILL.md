@@ -8,7 +8,6 @@ metadata:
   version: "1.0"
   generatedBy: "1.0.2"
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd skills/openspec-explore/SKILL.md (copia literal) -->
 
 Enter explore mode. Visualize freely. Follow the conversation wherever it goes.
 

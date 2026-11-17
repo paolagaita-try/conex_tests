@@ -4,7 +4,6 @@ description: "Enter explore mode - think through ideas, investigate problems, cl
 category: Workflow
 tags: [workflow, explore, experimental, thinking]
 ---
-<!-- Origen: trycore-spec-build-harness@062c6fd commands/opsx/explore.md (copia literal) -->
 
 Enter explore mode. Visualize freely. Follow the conversation wherever it goes.
 

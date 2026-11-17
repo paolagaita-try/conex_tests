@@ -71,6 +71,13 @@
       <version>${project.version}</version>
       <type>zip</type>
     </dependency>
+    <!-- Extensión del proyecto «preventa-conectores» (herramientas/registrar_extension.py): sus .def/.impl
+         entran al .bar con su jar. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-preventa-conectores</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

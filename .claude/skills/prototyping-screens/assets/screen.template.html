@@ -1,0 +1,34 @@
+<!doctype html>
+<!--
+  Prototipo de referencia — pantalla {{SLUG}}
+  Reglas duras del artefacto (NO negociables):
+  - AUTOCONTENIDO: cero dependencias externas (sin CDNs, sin frameworks, sin fetch, sin JS).
+    Única importación permitida: ../tokens.css. Debe renderizar en file:// indefinidamente.
+  - TOKENS: todo color, fuente, spacing, radio y sombra sale de las custom properties de
+    ../tokens.css. Cero valores mágicos fuera de tokens.
+  - DATOS ILUSTRATIVOS ESTÁTICOS: contenido de ejemplo neutro, embebido en el HTML.
+  - ESTADOS: los estados relevantes (vacío, error, cargando) que la HU exija son VARIANTES
+    de pantalla en archivos propios ({{SLUG}}--<estado>.html), no interacciones.
+  Trazabilidad: épica {{EPICA}} · historias {{HISTORIAS}} · registrada en ../manifest.json
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITULO_PANTALLA}} — prototipo</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    /* Estilos propios de esta pantalla: SOLO composición/layout.
+       Valores visuales (color, fuente, spacing, radio, sombra) → var(--token). */
+  </style>
+</head>
+<body>
+  <!-- región: navegación / cabecera -->
+
+  <!-- región: contenido principal (composición según la HU y el patrón de layout del sistema) -->
+
+  <!-- región: paneles secundarios / laterales (si el diseño los declara) -->
+
+  <!-- región: pie / acciones globales (si el diseño lo declara) -->
+</body>
+</html>
