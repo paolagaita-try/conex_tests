@@ -4,7 +4,7 @@ Puente entre HubSpot y Bonita para la integración de preventa. **Sin dependenci
 
 ## Qué hace
 
-1. **Entrada** — `POST /webhooks/ticket-created`: al crearse un ticket en HubSpot (Workflow nativo → webhook), instancia el caso en Bonita (`POST /API/bpm/process/{id}/instantiation` con `{ticketId}`). **Idempotente** por `ticketId` (store en `data/store.json`).
+1. **Entrada** — `POST /webhooks/ticket-created`: al crearse un ticket en HubSpot (webhook de app `ticket.creation`), instancia el caso en Bonita (`POST /API/bpm/process/{id}/instantiation` con `{ticketId}`). **Idempotente** por `ticketId` (store en `data/store.json`).
 2. **Espera** — `POST /webhooks/artifacts-loaded`: cuando cambian las propiedades del ticket, si los **4 campos de artefactos** (`concepto_viabilidad`, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`) tienen valor → completa la tarea `18_esperarArtefactos` con `resultado=entregado`; si el ticket está cerrado sin entregar → `cerrado`. Bonita entonces pasa el ticket a «Entregado a ventas».
 3. **Reconciliación** — job cada 24 h: compara casos Bonita vs tickets del pipeline y logea huérfanos/desincronizados.
 4. `GET /health` → `{ok:true}`.
@@ -28,13 +28,13 @@ curl -X POST localhost:3000/webhooks/artifacts-loaded -H 'Content-Type: applicat
 
 > Con `HUBSPOT_APP_SECRET` vacío no se valida la firma (dev). En producción, configúralo para validar `X-HubSpot-Signature-v3`.
 
-## Configurar en HubSpot (Sales Hub Pro)
+## Configurar en HubSpot (Free/Starter — sin costo)
 
-Dos **Workflows nativos** con acción *webhook*:
-- Trigger «ticket creado» en el pipeline «Mesa de preventa» → `POST https://<host>/webhooks/ticket-created`.
-- Trigger «cambió alguna de las 4 propiedades de artefactos» (o «ticket cerrado») → `POST https://<host>/webhooks/artifacts-loaded`.
+Decisión 2026-11-11: sin costo → **webhooks de app** (no Workflows nativos; estos exigen un plan de pago). En la app privada/pública de HubSpot se configuran dos **suscripciones de webhook**:
+- `ticket.creation` → `POST https://<host>/webhooks/ticket-created` (instancia el caso).
+- `ticket.propertyChange` sobre las 4 propiedades de artefactos (`concepto_viabilidad`, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`) y `hs_pipeline_stage` → `POST https://<host>/webhooks/artifacts-loaded` (dispara entrega o cierre).
 
-El token de Private App y el app-secret van por entorno, nunca en el repo.
+Las suscripciones se pueden crear por la UI de la app o por API con el token. El token de Private App y el `HUBSPOT_APP_SECRET` van por variable de entorno, nunca en el repo.
 
 ## Seguridad
 
