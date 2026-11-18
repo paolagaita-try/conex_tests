@@ -14,8 +14,12 @@ const HS_BASE = (process.env.HUBSPOT_BASE || 'https://api.hubapi.com').replace(/
 const HS_TOKEN = process.env.HUBSPOT_PRIVATE_APP_TOKEN || '';
 const PIPELINE = process.env.HUBSPOT_PIPELINE || '0';
 
-// Los 4 campos de negocio cuyo valor no vacio marca "artefactos cargados" (reunion de socializacion, confirmado).
-export const ARTEFACTO_PROPS = ['concepto_viabilidad', 'estimacion_costos', 'url_ppta_preventa', 'link_repo_preventa'];
+// Los 4 campos del NEGOCIO (seccion «Definición Preventa») cuyo valor no vacio marca "artefactos
+// cargados". Nombres internos reales confirmados en HubSpot (2026-11-18): la 4ª es «Valoración
+// Operaciones» = valoracion_operaciones (NO estimacion_costos). Configurable por entorno.
+export const ARTEFACTO_PROPS = (process.env.ARTEFACTO_PROPS
+  || 'concepto_viabilidad,valoracion_operaciones,url_ppta_preventa,link_repo_preventa')
+  .split(',').map((s) => s.trim()).filter(Boolean);
 
 // ----------------------------------------------------------------------------- Bonita
 let sesion = null; // { cookie, token }

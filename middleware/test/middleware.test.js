@@ -104,7 +104,7 @@ test('BLINDAJE: ticket de otro pipeline (Comercio) se ignora, no instancia', asy
 
 test('deal.propertyChange con los 4 campos -> busca el ticket y completa "entregado"', async () => {
   dealProps = {
-    concepto_viabilidad: 'Aprobado (Viable)', estimacion_costos: '1200',
+    concepto_viabilidad: 'Aprobado (Viable)', valoracion_operaciones: 'https://sheet',
     url_ppta_preventa: 'https://ppta', link_repo_preventa: 'https://repo',
   };
   const r = await mw.onArtifactsLoaded({ subscriptionType: 'deal.propertyChange', objectId: 'D-1' });
@@ -116,7 +116,7 @@ test('deal.propertyChange con los 4 campos -> busca el ticket y completa "entreg
 });
 
 test('deal.propertyChange sin los 4 campos -> queda pendiente, no completa', async () => {
-  dealProps = { concepto_viabilidad: '', estimacion_costos: '', url_ppta_preventa: '', link_repo_preventa: '' };
+  dealProps = { concepto_viabilidad: '', valoracion_operaciones: '', url_ppta_preventa: '', link_repo_preventa: '' };
   const ejecAntes = n.execution;
   const r = await mw.onArtifactsLoaded({ subscriptionType: 'deal.propertyChange', objectId: 'D-1' });
   assert.equal(r.pendiente, true);
@@ -148,7 +148,7 @@ test('avance a «Diseño» es de una sola vez (no vuelve a mover el mismo ticket
 test('detector propio: con las 4 fuentes llenas en el Negocio, entrega sin webhook', async () => {
   ticketProps = { hs_pipeline: '0' };        // Preventa, para instanciar
   await mw.onTicketCreated({ objectId: 'T-POLL' }); // caso en espera (no entregado)
-  dealProps = { concepto_viabilidad: 'Aprobado (Viable)', estimacion_costos: '9', url_ppta_preventa: 'u', link_repo_preventa: 'r' };
+  dealProps = { concepto_viabilidad: 'Aprobado (Viable)', valoracion_operaciones: '9', url_ppta_preventa: 'u', link_repo_preventa: 'r' };
   const antes = n.execution;
   await mw.revisarArtefactos();              // sin webhook: el middleware lo detecta solo
   assert.equal(n.execution, antes + 1);      // completo la espera -> entregado
