@@ -157,6 +157,15 @@ export async function getDeal(dealId) {
   return hs(`/crm/v3/objects/deals/${dealId}?properties=${props}`);
 }
 
+// Negocio (Deal) asociado a un ticket (cada ticket cuelga de un solo Negocio). Devuelve el dealId o null.
+export async function dealDeTicket(ticketId) {
+  const r = await hs(`/crm/v4/objects/tickets/${ticketId}/associations/deals?limit=1`);
+  const res = r?.results || [];
+  if (!res.length) return null;
+  const d = res[0];
+  return String(d.toObjectId ?? d.id ?? d.to?.id ?? '') || null;
+}
+
 // Tickets asociados a un Negocio (Deal), via asociaciones v4. Un Negocio puede tener N tickets
 // (cardinalidad 1 Negocio -> N Tickets); devuelve TODOS los ticketIds para que el llamador
 // elija el ticket activo de Preventa (el que este instanciado y en el pipeline de Preventa).

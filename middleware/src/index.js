@@ -4,7 +4,7 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { instanciarCaso, completarEspera, getTicket, getDeal, ticketsDeNegocio, artefactosCompletos, casosActivos, ticketsDelPipeline, moverStageTicket, stageDeTicket } from './clients.js';
+import { instanciarCaso, completarEspera, getTicket, getDeal, ticketsDeNegocio, dealDeTicket, artefactosCompletos, casosActivos, ticketsDelPipeline, moverStageTicket, stageDeTicket } from './clients.js';
 
 const PORT = Number(process.env.PORT || 3000);
 const APP_SECRET = process.env.HUBSPOT_APP_SECRET || '';
@@ -19,6 +19,9 @@ const MIN_VALIDACION = Number(process.env.MINUTOS_EN_VALIDACION ?? 5);
 const STAGE_VALIDACION = String(process.env.HUBSPOT_STAGE_VALIDACION || '2');
 const STAGE_DISENO = String(process.env.HUBSPOT_STAGE_DISENO || '3');
 const DISENO_CHECK_MS = Number(process.env.DISENO_CHECK_MS || 30000);
+// Detector propio de artefactos: el webhook deal.propertyChange es el mecanismo primario (instantaneo);
+// esto es la red de seguridad (y lo que hace que funcione sin webhook, p. ej. en pruebas locales).
+const ARTEFACTOS_CHECK_MS = Number(process.env.ARTEFACTOS_CHECK_MS || 60000);
 
 // ----- store (fichero JSON atomico): ticketId -> { caseId, validacionDesde, disenoHecho } -----
 // Formato antiguo (ticketId -> caseId numerico) se sigue leyendo por compatibilidad.
@@ -30,6 +33,26 @@ function guardar(map) {
 function casoDe(ticketId) { const v = leerStore()[String(ticketId)]; return (v && typeof v === 'object') ? v.caseId : (v ?? null); }
 function recordar(ticketId, caseId) { const m = leerStore(); m[String(ticketId)] = { caseId, validacionDesde: Date.now(), disenoHecho: false }; guardar(m); }
 function marcarDiseno(ticketId) { const m = leerStore(); const v = m[String(ticketId)]; if (v && typeof v === 'object') { v.disenoHecho = true; guardar(m); } }
+function marcarEntregado(ticketId) { const m = leerStore(); const v = m[String(ticketId)]; if (v && typeof v === 'object') { v.entregado = true; guardar(m); } }
+
+// Detector propio: por cada caso en espera (no entregado), mira el Negocio asociado al ticket y, si las
+// 4 fuentes estan llenas, completa el caso -> «Entregado a ventas». Corre periodicamente y al arrancar.
+// El middleware "sabe" cuando estan las fuentes sin depender de que llegue el webhook.
+async function revisarArtefactos() {
+  const m = leerStore();
+  for (const [ticketId, v] of Object.entries(m)) {
+    if (!v || typeof v !== 'object' || v.entregado) continue;
+    try {
+      const dealId = await dealDeTicket(ticketId);
+      if (!dealId) continue;
+      const deal = await getDeal(dealId);
+      if (!artefactosCompletos(deal)) continue;
+      await completarEspera(v.caseId, 'entregado');
+      marcarEntregado(ticketId);
+      log('auto-artefactos: ticket', ticketId, 'deal', dealId, 'caso', v.caseId, '-> «Entregado a ventas»');
+    } catch (e) { log('revisarArtefactos', ticketId, 'fallo:', e.message); }
+  }
+}
 
 // Avance automatico a «Diseño»: corre periodicamente y al arrancar (durable: el reloj vive en el store).
 async function avanzarADiseno() {
@@ -116,6 +139,7 @@ async function onArtifactsLoaded(payload) {
     const cerrado = String(ticket?.properties?.hs_pipeline_stage) === String(process.env.STAGE_CLOSED || '4');
     if (!cerrado) { log('ticket', objectId, 'cambio no relevante (no cerrado); ignorado'); return { ignorado: true }; }
     await completarEspera(caseId, 'cerrado');
+    marcarEntregado(objectId); // terminal: el detector no vuelve a procesarlo
     log('ticket', objectId, 'caso', caseId, '-> espera completada: cerrado');
     return { resultado: 'cerrado', ticketId: objectId, caseId };
   }
@@ -137,6 +161,7 @@ async function onArtifactsLoaded(payload) {
   }
   if (!elegido) throw new Error(`deal ${objectId}: ningun ticket asociado de Preventa con caso activo (asociados: ${asociados.join(', ') || 'ninguno'})`);
   await completarEspera(elegido.caseId, 'entregado');
+  marcarEntregado(elegido.ticketId); // terminal: el detector no vuelve a procesarlo
   log('deal', objectId, '-> ticket', elegido.ticketId, 'caso', elegido.caseId, '-> espera completada: entregado');
   return { resultado: 'entregado', dealId: objectId, ticketId: elegido.ticketId, caseId: elegido.caseId };
 }
@@ -174,6 +199,8 @@ if (process.env.NODE_ENV !== 'test') {
   setInterval(reconciliar, RECONCILE_MS);
   avanzarADiseno();
   setInterval(avanzarADiseno, DISENO_CHECK_MS);
+  revisarArtefactos();
+  setInterval(revisarArtefactos, ARTEFACTOS_CHECK_MS);
 }
 
-export { server, onTicketCreated, onArtifactsLoaded, reconciliar, avanzarADiseno };
+export { server, onTicketCreated, onArtifactsLoaded, reconciliar, avanzarADiseno, revisarArtefactos };

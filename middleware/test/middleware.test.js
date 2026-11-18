@@ -42,6 +42,7 @@ before(async () => {
   hubspot = http.createServer((req, res) => {
     const u = req.url;
     res.writeHead(200, { 'Content-Type': 'application/json' });
+    if (u.includes('/associations/deals')) return res.end(JSON.stringify({ results: [{ toObjectId: 'D-1' }] }));
     if (u.includes('/associations/tickets')) return res.end(JSON.stringify({ results: [{ toObjectId: 'T-1' }] }));
     if (u.includes('/objects/deals/')) return res.end(JSON.stringify({ id: 'D-1', properties: dealProps }));
     if (u.includes('/objects/tickets/')) {
@@ -142,6 +143,17 @@ test('avance a «Diseño» es de una sola vez (no vuelve a mover el mismo ticket
   const antes = n.movioTicket;
   await mw.avanzarADiseno();
   assert.equal(n.movioTicket, antes); // ya marcado disenoHecho -> no mueve otra vez
+});
+
+test('detector propio: con las 4 fuentes llenas en el Negocio, entrega sin webhook', async () => {
+  ticketProps = { hs_pipeline: '0' };        // Preventa, para instanciar
+  await mw.onTicketCreated({ objectId: 'T-POLL' }); // caso en espera (no entregado)
+  dealProps = { concepto_viabilidad: 'Aprobado (Viable)', estimacion_costos: '9', url_ppta_preventa: 'u', link_repo_preventa: 'r' };
+  const antes = n.execution;
+  await mw.revisarArtefactos();              // sin webhook: el middleware lo detecta solo
+  assert.equal(n.execution, antes + 1);      // completo la espera -> entregado
+  const map = JSON.parse(fs.readFileSync(store, 'utf8'));
+  assert.equal(map['T-POLL'].entregado, true);
 });
 
 test('firma invalida -> 401 por el servidor HTTP', async () => {
