@@ -4,7 +4,7 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { instanciarCaso, completarEspera, getTicket, getDeal, ticketsDeNegocio, artefactosCompletos, casosActivos, ticketsDelPipeline } from './clients.js';
+import { instanciarCaso, completarEspera, getTicket, getDeal, ticketsDeNegocio, artefactosCompletos, casosActivos, ticketsDelPipeline, moverStageTicket, stageDeTicket } from './clients.js';
 
 const PORT = Number(process.env.PORT || 3000);
 const APP_SECRET = process.env.HUBSPOT_APP_SECRET || '';
@@ -13,15 +13,43 @@ const APP_SECRET = process.env.HUBSPOT_APP_SECRET || '';
 const PREVENTA_PIPELINE = String(process.env.HUBSPOT_PIPELINE || '0');
 const STORE = process.env.STORE_PATH || path.join(process.cwd(), 'data', 'store.json');
 const RECONCILE_MS = Number(process.env.RECONCILE_MS || 24 * 60 * 60 * 1000);
+// Avance automatico "En validacion" -> "Diseno": tras N minutos en «En validación», el ticket pasa
+// solo a «Asignado/En diseño» (ahi la consultora trabaja dias y carga las 4 fuentes). Configurable.
+const MIN_VALIDACION = Number(process.env.MINUTOS_EN_VALIDACION ?? 5);
+const STAGE_VALIDACION = String(process.env.HUBSPOT_STAGE_VALIDACION || '2');
+const STAGE_DISENO = String(process.env.HUBSPOT_STAGE_DISENO || '3');
+const DISENO_CHECK_MS = Number(process.env.DISENO_CHECK_MS || 30000);
 
-// ----- store de idempotencia: ticketId -> caseId (fichero JSON, escritura atomica) -----
+// ----- store (fichero JSON atomico): ticketId -> { caseId, validacionDesde, disenoHecho } -----
+// Formato antiguo (ticketId -> caseId numerico) se sigue leyendo por compatibilidad.
 function leerStore() { try { return JSON.parse(fs.readFileSync(STORE, 'utf8')); } catch { return {}; } }
 function guardar(map) {
   fs.mkdirSync(path.dirname(STORE), { recursive: true });
   const tmp = STORE + '.tmp'; fs.writeFileSync(tmp, JSON.stringify(map, null, 2)); fs.renameSync(tmp, STORE);
 }
-function casoDe(ticketId) { return leerStore()[String(ticketId)] || null; }
-function recordar(ticketId, caseId) { const m = leerStore(); m[String(ticketId)] = caseId; guardar(m); }
+function casoDe(ticketId) { const v = leerStore()[String(ticketId)]; return (v && typeof v === 'object') ? v.caseId : (v ?? null); }
+function recordar(ticketId, caseId) { const m = leerStore(); m[String(ticketId)] = { caseId, validacionDesde: Date.now(), disenoHecho: false }; guardar(m); }
+function marcarDiseno(ticketId) { const m = leerStore(); const v = m[String(ticketId)]; if (v && typeof v === 'object') { v.disenoHecho = true; guardar(m); } }
+
+// Avance automatico a «Diseño»: corre periodicamente y al arrancar (durable: el reloj vive en el store).
+async function avanzarADiseno() {
+  if (!(MIN_VALIDACION >= 0)) return;
+  const m = leerStore(); const ahora = Date.now(); const dueMs = MIN_VALIDACION * 60 * 1000;
+  for (const [ticketId, v] of Object.entries(m)) {
+    if (!v || typeof v !== 'object' || v.disenoHecho || !v.validacionDesde) continue;
+    if (ahora - v.validacionDesde < dueMs) continue;
+    try {
+      const stage = await stageDeTicket(ticketId);
+      if (String(stage) === STAGE_VALIDACION) {
+        await moverStageTicket(ticketId, STAGE_DISENO);
+        log('ticket', ticketId, `-> «Diseño» (stage ${STAGE_DISENO}) tras ${MIN_VALIDACION} min en «En validación»`);
+      } else {
+        log('ticket', ticketId, `ya no está en «En validación» (stage ${stage}); no se mueve a «Diseño»`);
+      }
+      marcarDiseno(ticketId); // marcar hecho: el avance es de una sola vez por ticket
+    } catch (e) { log('avanzarADiseno', ticketId, 'fallo:', e.message); }
+  }
+}
 
 // ----- validacion de firma de HubSpot (X-HubSpot-Signature-v3) -----
 function firmaValida(req, rawBody) {
@@ -141,9 +169,11 @@ const server = http.createServer(async (req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  server.listen(PORT, () => log(`preventa-middleware escuchando en :${PORT}`));
+  server.listen(PORT, () => log(`preventa-middleware escuchando en :${PORT} (En validación -> Diseño a los ${MIN_VALIDACION} min)`));
   reconciliar();
   setInterval(reconciliar, RECONCILE_MS);
+  avanzarADiseno();
+  setInterval(avanzarADiseno, DISENO_CHECK_MS);
 }
 
-export { server, onTicketCreated, onArtifactsLoaded, reconciliar };
+export { server, onTicketCreated, onArtifactsLoaded, reconciliar, avanzarADiseno };

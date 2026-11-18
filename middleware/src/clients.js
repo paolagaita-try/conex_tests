@@ -74,6 +74,19 @@ async function getProcessId() {
   return processIdCache;
 }
 
+// Mueve el ticket a un stage (solo hs_pipeline_stage; no toca el propietario). Usado por el
+// avance automatico "En validacion" -> "Diseno" a los N minutos. Devuelve el stage resultante.
+export async function moverStageTicket(ticketId, stageId) {
+  const r = await hs(`/crm/v3/objects/tickets/${ticketId}`, { method: 'PATCH', body: { properties: { hs_pipeline_stage: String(stageId) } } });
+  return r?.properties?.hs_pipeline_stage ?? null;
+}
+
+// Lee solo el stage actual del ticket (para no mover si ya cambio de etapa).
+export async function stageDeTicket(ticketId) {
+  const r = await hs(`/crm/v3/objects/tickets/${ticketId}?properties=hs_pipeline_stage`);
+  return r?.properties?.hs_pipeline_stage ?? null;
+}
+
 // Instancia el caso con el contrato de instanciacion { ticketId }. Devuelve el caseId.
 export async function instanciarCaso(ticketId) {
   const pid = await getProcessId();

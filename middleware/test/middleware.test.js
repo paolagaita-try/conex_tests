@@ -13,7 +13,7 @@ const listen = (s) => new Promise((r) => s.listen(0, '127.0.0.1', () => r()));
 const port = (s) => s.address().port;
 
 // contadores para verificar que no se duplican llamadas
-const n = { instanciacion: 0, login: 0, assign: 0, execution: 0 };
+const n = { instanciacion: 0, login: 0, assign: 0, execution: 0, movioTicket: 0 };
 let dealProps = {};                     // propiedades del Negocio (Deal) en el HubSpot falso
 let ticketProps = { hs_pipeline: '0' }; // propiedades del ticket (Preventa por defecto)
 
@@ -44,7 +44,10 @@ before(async () => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     if (u.includes('/associations/tickets')) return res.end(JSON.stringify({ results: [{ toObjectId: 'T-1' }] }));
     if (u.includes('/objects/deals/')) return res.end(JSON.stringify({ id: 'D-1', properties: dealProps }));
-    if (u.includes('/objects/tickets/')) return res.end(JSON.stringify({ id: 'T-1', properties: ticketProps }));
+    if (u.includes('/objects/tickets/')) {
+      if (req.method === 'PATCH') n.movioTicket++;
+      return res.end(JSON.stringify({ id: 'T-1', properties: ticketProps }));
+    }
     return res.end(JSON.stringify({}));
   });
   await listen(hubspot);
@@ -60,6 +63,7 @@ before(async () => {
   process.env.STORE_PATH = store;
   process.env.STAGE_CLOSED = '4';
   process.env.HUBSPOT_APP_SECRET = 'secreto-de-prueba';
+  process.env.MINUTOS_EN_VALIDACION = '0'; // avance a Diseno inmediato en los tests
 
   mw = await import('../src/index.js');
 });
@@ -74,7 +78,7 @@ test('instancia el caso al recibir ticket-created y guarda el mapeo', async () =
   assert.equal(r.caseId, 500);
   assert.equal(n.instanciacion, 1);
   const map = JSON.parse(fs.readFileSync(store, 'utf8'));
-  assert.equal(map['T-1'], 500);
+  assert.equal(map['T-1'].caseId, 500); // store ahora guarda { caseId, validacionDesde, disenoHecho }
 });
 
 test('idempotencia: segundo ticket-created del mismo ticket no vuelve a instanciar', async () => {
@@ -125,6 +129,19 @@ test('ticket.propertyChange a stage cerrado -> completa "cerrado"', async () => 
   assert.equal(r.resultado, 'cerrado');
   assert.equal(r.caseId, 500);
   assert.equal(n.execution, ejecAntes + 1);
+});
+
+test('avance automatico: tras los minutos, el ticket en «En validación» pasa a «Diseño»', async () => {
+  ticketProps = { hs_pipeline: '0', hs_pipeline_stage: '2' }; // En validacion
+  const antes = n.movioTicket;
+  await mw.avanzarADiseno();
+  assert.equal(n.movioTicket, antes + 1); // hizo el PATCH del ticket a «Diseño» (3)
+});
+
+test('avance a «Diseño» es de una sola vez (no vuelve a mover el mismo ticket)', async () => {
+  const antes = n.movioTicket;
+  await mw.avanzarADiseno();
+  assert.equal(n.movioTicket, antes); // ya marcado disenoHecho -> no mueve otra vez
 });
 
 test('firma invalida -> 401 por el servidor HTTP', async () => {
