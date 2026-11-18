@@ -52,8 +52,8 @@ impl Bonita {
         }
         let tok = tok.ok_or_else(|| "Bonita login: falta X-Bonita-API-Token".to_string())?;
         *self.token.lock().await = Some(tok);
-        // userId de la sesión (lo exige GET como no-admin)
-        if let Ok(s) = self.api(reqwest::Method::GET, "/system/session/unusedId", None).await {
+        // userId de la sesión. Se usa `enviar` (hoja), NO `api`, para no recursar login->api->login.
+        if let Ok(Some(s)) = self.enviar(reqwest::Method::GET, "/system/session/unusedId", None).await {
             let uid = s.get("user_id").and_then(|v| v.as_str()).map(|s| s.to_string());
             *self.user_id.lock().await = uid;
         }
