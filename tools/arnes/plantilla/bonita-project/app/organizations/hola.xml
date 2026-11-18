@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<organization:Organization xmlns:organization="http://documentation.bonitasoft.com/organization-xml-schema/1.1">
+  <users>
+    <user userName="walter.bates">
+      <firstName>Walter.bates</firstName>
+      <lastName>Empleado</lastName>
+      <jobTitle>Empleado</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
+    <user userName="empleado1">
+      <firstName>Empleado1</firstName>
+      <lastName>Empleado</lastName>
+      <jobTitle>Empleado</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
+    <user userName="empleado2">
+      <firstName>Empleado2</firstName>
+      <lastName>Empleado</lastName>
+      <jobTitle>Empleado</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
+  </users>
+  <roles>
+    <role name="empleado">
+      <displayName>Empleado</displayName>
+    </role>
+    <role name="superAdministradorParametros">
+      <displayName>SuperAdministradorParametros</displayName>
+    </role>
+    <role name="administrador">
+      <displayName>Administrador</displayName>
+    </role>
+  </roles>
+  <groups>
+    <group name="trycore">
+      <displayName>Trycore</displayName>
+    </group>
+  </groups>
+  <memberships>
+    <membership>
+      <userName>walter.bates</userName>
+      <roleName>empleado</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+    <membership>
+      <userName>empleado1</userName>
+      <roleName>empleado</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+    <membership>
+      <userName>empleado2</userName>
+      <roleName>empleado</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+    <membership>
+      <userName>walter.bates</userName>
+      <roleName>superAdministradorParametros</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+    <membership>
+      <userName>empleado1</userName>
+      <roleName>superAdministradorParametros</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+    <membership>
+      <userName>empleado2</userName>
+      <roleName>superAdministradorParametros</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+    <membership>
+      <userName>walter.bates</userName>
+      <roleName>administrador</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+  </memberships>
+</organization:Organization>

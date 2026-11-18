@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./doc-page.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Karla:wght@400;500;600;700&display=swap">
+<style>body{margin:0}doc-page:not(:defined){visibility:hidden}</style>
+</helmet>
+<doc-page margin="0.75in">
+
+<div slot="header" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24pt;padding-bottom:11pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif">
+<img src="./assets/logo-trycore.png" alt="Trycore" style="height:16pt">
+<span style="font-size:8pt;font-weight:600;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Flujo de solución · Integración de sistemas</span>
+</div>
+<div slot="footer" style="padding-top:14pt">
+<img src="./assets/pie-sedes-docs.png" alt="Sedes Trycore: Bogotá, Colombia · Santo Domingo, República Dominicana · San José, Costa Rica" style="display:block;width:100%">
+</div>
+
+<p style="font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#00A19A;margin:16pt 0 0">Flujo de solución · Diseño de construcción</p>
+<h1 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:22pt;line-height:1.2;letter-spacing:-0.01em;color:#1D2751;margin:12pt 0 0;max-width:26em">Cómo se construye la integración</h1>
+<p style="font-family:'Karla',sans-serif;font-size:11pt;line-height:1.4;color:#6B7280;margin:8pt 0 0;max-width:44em">Secuencia técnica end-to-end, mapa de estados y rutas de retorno.</p>
+<div style="width:64pt;height:2pt;background:#00A19A;margin:20pt 0 0"></div>
+
+<p style="margin:16pt 0 0"><a href="Main.dc.html" style="font-family:'Poppins',sans-serif;font-size:9pt;font-weight:600;color:#007F7A;text-decoration:none">&#8592; Volver a la propuesta</a></p>
+
+<div style="background:#F4F6F9;border-radius:4px;padding:12pt 16pt;margin:18pt 0 0;break-inside:avoid">
+<p style="font-family:'Karla',sans-serif;font-size:9.5pt;line-height:1.5;color:#6B7280;margin:0">Diseño técnico preliminar. Se afinará con el flujo de diseño de soluciones de preventa (entrega prevista: día siguiente).</p>
+</div>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:30pt 0 0">1 &#183; Secuencia end-to-end</h2>
+
+<div style="display:flex;gap:12pt;margin:16pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#1D2751;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">1</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#5C82F2;border-radius:3px;padding:2pt 6pt">HubSpot</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Se crea un ticket. Una suscripción de webhook de app notifica al middleware con el ID del ticket.</p>
+</div>
+</div>
+
+<div style="display:flex;gap:12pt;margin:12pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#1D2751;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">2</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#00A19A;border-radius:3px;padding:2pt 6pt">Middleware</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Valida la firma del webhook, abre sesión en Bonita y crea el caso con <span style="font-family:monospace;font-size:9.5pt;color:#1D2751">POST /bonita/API/bpm/process/{processId}/instantiation</span>, enviando los datos del ticket. Usa el <strong style="font-weight:600;color:#1D2751">ticketId como clave de idempotencia</strong> para no duplicar casos si el webhook reintenta.</p>
+</div>
+</div>
+
+<div style="display:flex;gap:12pt;margin:12pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#1D2751;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">3</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#1D2751;border-radius:3px;padding:2pt 6pt">Bonita</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Un service task de round robin lee e incrementa un contador persistente (BDM) y asigna el responsable del caso, sin intervención humana.</p>
+</div>
+</div>
+
+<div style="display:flex;gap:12pt;margin:12pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#1D2751;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">4</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#1D2751;border-radius:3px;padding:2pt 6pt">Bonita</span>
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#5C82F2;border-radius:3px;padding:2pt 6pt;margin-left:4pt">HubSpot</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Un conector REST ejecuta <span style="font-family:monospace;font-size:9.5pt;color:#1D2751">PATCH /crm/v3/objects/tickets/{id}</span> y fija el estado «en validación» y el responsable (<span style="font-family:monospace;font-size:9.5pt;color:#1D2751">hubspot_owner_id</span>).</p>
+</div>
+</div>
+
+<div style="display:flex;gap:12pt;margin:12pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#1D2751;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">5</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#1D2751;border-radius:3px;padding:2pt 6pt">Bonita</span>
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#5C82F2;border-radius:3px;padding:2pt 6pt;margin-left:4pt">HubSpot</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">El caso recorre el flujo BPMN (en diseño &#8594; en espera de información del lead &#8594; entregado a ventas &#8594; caso cerrado). En cada transición, un conector REST actualiza <span style="font-family:monospace;font-size:9.5pt;color:#1D2751">hs_pipeline_stage</span> en HubSpot.</p>
+</div>
+</div>
+
+<div style="display:flex;gap:12pt;margin:12pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#B45309;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">6</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#1D2751;border-radius:3px;padding:2pt 6pt">Bonita</span>
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#5C82F2;border-radius:3px;padding:2pt 6pt;margin-left:4pt">HubSpot</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Rutas de retorno: desde «entregado a ventas» el caso puede volver a «en diseño» por cambios del cliente o falta de cita. El conector refleja el retorno y registra el motivo.</p>
+</div>
+</div>
+
+<div style="display:flex;gap:12pt;margin:12pt 0 0;break-inside:avoid">
+<div style="flex:0 0 auto;width:20pt;height:20pt;border-radius:50%;background:#1D2751;color:#ffffff;font-family:'Poppins',sans-serif;font-weight:600;font-size:9pt;text-align:center;line-height:20pt">7</div>
+<div style="flex:1">
+<span style="display:inline-block;font-family:'Poppins',sans-serif;font-size:7.5pt;font-weight:700;letter-spacing:1pt;text-transform:uppercase;color:#ffffff;background:#00A19A;border-radius:3px;padding:2pt 6pt">Middleware</span>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Un job de reconciliación diaria compara casos de Bonita contra tickets de HubSpot para detectar huérfanos o estados desincronizados.</p>
+</div>
+</div>
+
+<h2 style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14pt;line-height:1.2;color:#1D2751;margin:34pt 0 0">2 &#183; Mapa de estados Bonita &#8596; HubSpot</h2>
+<table style="width:100%;border-collapse:collapse;margin:10pt 0 0;font-family:'Karla',sans-serif;font-size:9.5pt;color:#333333">
+<thead>
+<tr>
+<th style="text-align:left;padding:0 10pt 7pt 0;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Estado del caso (Bonita)</th>
+<th style="text-align:left;padding:0 10pt 7pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Stage en HubSpot</th>
+<th style="text-align:left;padding:0 0 7pt 10pt;border-bottom:0.75pt solid #D8DCE5;font-family:'Poppins',sans-serif;font-size:8pt;font-weight:700;letter-spacing:1.2pt;text-transform:uppercase;color:#6B7280">Disparo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Caso creado y asignado</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">En validación</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Creación + round robin</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">En diseño</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">En diseño</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Transición BPMN</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">En espera de información del lead</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">En espera de información del lead</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Transición BPMN</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Entregado a ventas</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Entregado a ventas</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Transición BPMN</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Caso cerrado</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Caso cerrado</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Transición BPMN</td>
+</tr>
+<tr>
+<td style="padding:8pt 10pt 8pt 0;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Retorno a «en diseño»</td>
+<td style="padding:8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">En diseño</td>
+<td style="padding:8pt 0 8pt 10pt;border-bottom:0.75pt solid #D8DCE5;vertical-align:top">Ruta de retorno + motivo</td>
+</tr>
+</tbody>
+</table>
+
+<div style="background:#F4F6F9;border-radius:4px;padding:14pt 16pt;margin:22pt 0 0;break-inside:avoid">
+<p style="font-family:'Poppins',sans-serif;font-weight:600;font-size:10.5pt;color:#1D2751;margin:0">Rutas de retorno</p>
+<p style="font-family:'Karla',sans-serif;font-size:10.5pt;line-height:1.55;color:#333333;margin:6pt 0 0">Desde «entregado a ventas» el caso vuelve a «en diseño» por (1) solicitud de cambios del cliente o (2) falta de asignación de cita. Cada retorno registra el motivo en HubSpot. Al escribir solo Bonita en HubSpot (y no al revés), el riesgo de bucle es bajo.</p>
+</div>
+
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":864,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

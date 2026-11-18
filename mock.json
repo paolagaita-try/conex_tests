@@ -1,0 +1,28 @@
+{
+  "GET /hubspot/crm/v3/objects/tickets/T-001": {
+    "status": 200,
+    "json": { "id": "T-001", "properties": { "subject": "Preventa cliente ACME" } }
+  },
+  "GET /hubspot/crm/v3/objects/tickets/T-002": {
+    "status": 200,
+    "json": { "id": "T-002", "properties": { "subject": "Preventa cliente GLOBEX" } }
+  },
+  "POST /hubspot/crm/v3/objects/tickets/search": {
+    "status": 200,
+    "json": {
+      "total": 2,
+      "results": [
+        { "id": "T-900", "properties": { "hubspot_owner_id": "89450377" } },
+        { "id": "T-901", "properties": { "hubspot_owner_id": "89450377" } }
+      ]
+    }
+  },
+  "PATCH /hubspot/crm/v3/objects/tickets/T-001": {
+    "status": 200,
+    "json": { "id": "T-001", "properties": { "hs_pipeline_stage": "2" } }
+  },
+  "PATCH /hubspot/crm/v3/objects/tickets/T-002": {
+    "status": 200,
+    "json": { "id": "T-002", "properties": { "hs_pipeline_stage": "2" } }
+  }
+}

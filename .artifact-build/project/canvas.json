@@ -1,0 +1,14 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-10T00:00:00Z" },
+  "title": "Propuesta Técnica — Integración HubSpot ↔ Bonita",
+  "launch": { "view": "focused", "file": "Main.dc.html" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 864, "h": 1180, "expand": "fill", "title": "Propuesta HubSpot ↔ Bonita" },
+    "FlujoSolucion.dc.html": { "x": 984, "y": 0, "w": 864, "h": 1180, "expand": "fill", "title": "Flujo de solución" }
+  },
+  "order": ["Main.dc.html", "FlujoSolucion.dc.html"],
+  "notes": {},
+  "designSystems": []
+}

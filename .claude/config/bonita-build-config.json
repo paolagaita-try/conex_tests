@@ -1,0 +1,14 @@
+{
+  "_origen": "trycore-spec-build-harness@062c6fd config/build-config.template.json",
+  "context": {
+    "warning_pct": 35,
+    "critical_pct": 25,
+    "auto_checkpoint": false,
+    "stale_seconds": 60
+  },
+  "runtime": {
+    "url": "https://desarrollo.trycore.co:8444/api/orchestrator",
+    "stale_seconds": 900,
+    "context_refresh_s": 45
+  }
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<organization:Organization xmlns:organization="http://documentation.bonitasoft.com/organization-xml-schema/1.1">
+  <users>
+    <user userName="ofelia.bot">
+      <firstName>Ofelia.bot</firstName>
+      <lastName>Integracion</lastName>
+      <jobTitle>Integracion</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
+    <user userName="walter.bates">
+      <firstName>Walter.bates</firstName>
+      <lastName>Administrador</lastName>
+      <jobTitle>Administrador</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
+  </users>
+  <roles>
+    <role name="integracion">
+      <displayName>Integracion</displayName>
+    </role>
+    <role name="administrador">
+      <displayName>Administrador</displayName>
+    </role>
+  </roles>
+  <groups>
+    <group name="trycore">
+      <displayName>Trycore</displayName>
+    </group>
+    <group name="integracion" parentPath="/trycore">
+      <displayName>Integracion</displayName>
+    </group>
+  </groups>
+  <memberships>
+    <membership>
+      <userName>ofelia.bot</userName>
+      <roleName>integracion</roleName>
+      <groupName>integracion</groupName>
+      <groupParentPath>/trycore</groupParentPath>
+    </membership>
+    <membership>
+      <userName>walter.bates</userName>
+      <roleName>administrador</roleName>
+      <groupName>trycore</groupName>
+    </membership>
+  </memberships>
+</organization:Organization>

@@ -1,0 +1,38 @@
+{
+  "bonita_version": "2026.2",
+  "actualizacion": "u0",
+  "runtime": "11.1.0",
+  "subscription": {"actualizacion": "u3", "runtime": "11.1.3"},
+  "maven_parent": {"groupId": "org.bonitasoft", "artifactId": "bonita-project", "version": "11.1.0"},
+  "docker": {
+    "bonita": "bonita:2026.2-u0",
+    "postgres": "bonitasoft/bonita-postgres:16.4",
+    "arquitecturas": ["amd64"],
+    "platform": "linux/amd64"
+  },
+  "conectores": {
+    "rest": {
+      "groupId": "org.bonitasoft.connectors",
+      "artifactId": "bonita-connector-rest",
+      "version": "1.5.1",
+      "definiciones": {
+        "rest-get": {"definitionId": "rest-get", "definitionVersion": "1.4.1", "implementationId": "rest-get-impl", "implementationVersion": "1.5.1"}
+      }
+    },
+    "email": "org.bonitasoft.connectors:bonita-connector-email:1.5.0"
+  },
+  "verificado": {
+    "bonita_version": "Docker Hub library/bonita: tags 2026.2 y 2026.2-u0 (2026-11-01)",
+    "actualizacion": "Docker Hub: la ultima actualizacion publica de 2026.2 es u0; 2026.2-u3 no existe (docker manifest inspect: no such manifest)",
+    "runtime": "Maven Central: org.bonitasoft.runtime:bonita-runtime-bom ultima version 11.1.0; tag Docker 11.1.0 = 2026.2-u0",
+    "subscription": "Bundle de /Applications/BonitaStudioSubscription-2026.2-u3.app: bonita-project 11.1.3 con bonita.runtime.version 11.1.3; el BOM 11.1.3 no esta en Maven Central (solo Subscription)",
+    "maven_parent": "mvn -q dependency:get -Dartifact=org.bonitasoft:bonita-project:11.1.0:pom -> exit 0 (11.1.3 falla: bonita-runtime-bom 11.1.3 ausente en Central)",
+    "docker": "docker manifest inspect bonita:2026.2-u0 -> solo linux/amd64; Docker Hub bonitasoft/bonita-postgres 16.4 solo amd64 (la doc 2026.2 muestra 15.4 de ejemplo; 16.4 la uso el proyecto analizado)",
+    "conectores.rest": "mvn dependency:get -Dartifact=org.bonitasoft.connectors:bonita-connector-rest:1.5.1 -> exit 0; maven-metadata de Central: latest = release = 1.5.1 (2026-06-24); ids y versiones leidos de rest-get.def (id rest-get, version 1.4.1) y rest-get.impl (rest-get-impl 1.5.1, definitionVersion 1.4.1) del jar (2026-11-01); bytecode Java 11, compilado contra bonita-runtime-bom 7.14.0; la doc 2026.2 (process/rest-connector.adoc) documenta funciones de la 1.5.0+; build -Pbundle 2026.2 verde con connector/rest-get-impl-1.5.1.impl en el .bar y caso real en el bundle Community 2026.2-u0 contra el mock (pv y BDM con el valor del JSON) (Task 11)"
+  },
+  "no_verificado": ["conectores.email"],
+  "notas": {
+    "conectores": "Ultima release en Maven Central (2026-11-01); no vienen en el runtime ni en el bundle del Studio: son dependencias Maven del proyecto (plantilla/bonita-project/app/pom.xml). rest verificado en Task 11; email sin comprobar. Las versiones de definicion y de implementacion NO coinciden (rest-get def 1.4.1, impl 1.5.1).",
+    "apple_silicon": "Las imagenes son solo amd64: en Mac con Apple Silicon corren emuladas con platform linux/amd64."
+  }
+}

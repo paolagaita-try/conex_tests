@@ -1,0 +1,33 @@
+{
+  "context": {
+    "warning_pct": 35,
+    "critical_pct": 25,
+    "auto_checkpoint": false,
+    "stale_seconds": 60
+  },
+  "runtime": {
+    "mode": "legacy",
+    "stale_seconds": 900,
+    "context_refresh_s": 45
+  },
+  "boundaries": [
+    {
+      "id": "hubspot-crm-api",
+      "name": "HubSpot CRM API",
+      "source": "HANDOFF-SCAFFOLD.md",
+      "paths": [
+        "bonita-project/extensions/**",
+        "bonita-project/app/diagrams/*.proc"
+      ],
+      "credential_env": "HUBSPOT_PRIVATE_APP_TOKEN",
+      "message_kinds": [
+        "patch-ticket",
+        "get-pipelines",
+        "get-owners",
+        "webhook-ticket-creation"
+      ],
+      "na": null,
+      "verified": []
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+target/
+.flattened-pom.xml
+dependency-reduced-pom.xml
+evidencia/
+h2_database/
+.DS_Store
+# Lo genera el build (bonita-project-maven-plugin copy-provided-pages)
+bonita-project/app/web_widgets/
+bonita-project/app/web_page/.metadata/
+runtime/my-application/*.zip
+runtime/my-application/*.bconf
+# Formularios (frontend/): dependencias, builds, informes y entorno local
+frontend/node_modules/
+frontend/dist/
+frontend/dist-zips/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/.vite/
+frontend/*.tsbuildinfo
+frontend/.env
+frontend/.env.local

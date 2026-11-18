@@ -1,0 +1,46 @@
+# Runtime QA: bonita:2026.2-u0 + PostgreSQL (las imágenes salen de versiones/<versión>.json al crear el proyecto).
+# Las imágenes solo publican linux/amd64: en Apple Silicon corren emuladas.
+# El zip sale de bonita-project/app/target/*.zip: copiarlo (y su .bconf) a runtime/my-application/ antes de levantar.
+name: bonita-qa
+
+services:
+  db:
+    image: bonitasoft/bonita-postgres:16.4
+    platform: linux/amd64
+    environment:
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  bonita:
+    # Contexto propio (./bonita) y uno adicional con los permisos REST del proyecto, que viven fuera de runtime/.
+    build:
+      context: ./bonita
+      additional_contexts:
+        permisos: ../bonita-project/app/permisos
+    image: bonita-qa/bonita:2026.2-u0
+    platform: linux/amd64
+    ports:
+      - "8095:8080"
+    environment:
+      DB_VENDOR: postgres
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: bonita
+      DB_USER: bonita
+      DB_PASS: bpm
+      BIZ_DB_NAME: business_data
+      BIZ_DB_USER: business_data
+      BIZ_DB_PASS: bpm
+      BONITA_RUNTIME_ADMIN_USERNAME: install
+      BONITA_RUNTIME_ADMIN_PASSWORD: install
+      BONITA_RUNTIME_AUTHORIZATION_DYNAMICCHECK_ENABLED: "false"
+      JAVA_OPTS: "-Xms512m -Xmx2g"
+    volumes:
+      - ./my-application:/srv/my-application:ro
+    depends_on:
+      db:
+        condition: service_healthy

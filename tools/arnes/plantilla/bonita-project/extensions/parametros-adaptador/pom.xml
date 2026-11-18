@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>{{GRUPO}}</groupId>
+    <artifactId>{{NOMBRE}}-extensions</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <artifactId>{{NOMBRE}}-parametros-adaptador</artifactId>
+  <name>Adaptador del proceso al módulo de parámetros</name>
+  <description>Lo único de parámetros que es del proyecto: el adaptador que usa el .proc para leer y fijar por caso los parámetros de impacto alto, el proveedor de «expedientes por opción» y los fallbacks de la semilla. Jar de PROCESO, no de API.</description>
+  <!-- Jar de proceso: viaja en el classpath del .bar junto a parametros-core (dependencia de app/pom.xml). No
+       nombra ninguna clase del BDM de forma estática: crea las filas con el cargador de la entidad que recibe.
+       Las semillas del proyecto (bonita-project/parametros/semillas) se empaquetan como recurso para leer de
+       ellas el fallback declarado de una definición ausente del módulo: una sola declaración, la de la semilla. -->
+  <properties>
+    <byte-buddy.version>1.14.5</byte-buddy.version>
+    <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
+    <spock-core.version>2.3-groovy-3.0</spock-core.version>
+    <logback-classic.version>1.2.13</logback-classic.version>
+    <h2.version>1.4.200</h2.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>{{NOMBRE}}-parametros-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>${spock-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>${byte-buddy.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-classic.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main/groovy</sourceDirectory>
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/../../parametros/semillas</directory>
+        <targetPath>semillas</targetPath>
+        <includes>
+          <include>*.json</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Todo lo que compila bajo src/test: los sufijos por defecto no casan con *Spec. -->
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

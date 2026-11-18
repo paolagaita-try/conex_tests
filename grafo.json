@@ -1,0 +1,50 @@
+{
+  "epics": [
+    {
+      "code": "U0",
+      "title": "Plantilla configurada",
+      "layer": "FOUNDATIONAL",
+      "files_scope": [
+        ".claude/**",
+        ".gitattributes",
+        ".gitignore",
+        ".trycore-bonita.json",
+        "CLAUDE.md",
+        "bonita-project/**",
+        "build/**",
+        "hola/**",
+        "runtime/**",
+        "tools/*.sh",
+        "tools/arnes/**"
+      ],
+      "depends_on": [],
+      "openspec_change": "u0-plantilla-configurada",
+      "stories": [],
+      "docs_ref": "HANDOFF-SCAFFOLD.md"
+    },
+    {
+      "code": "U1",
+      "title": "Datos, organización y procesos",
+      "layer": "FOUNDATIONAL",
+      "files_scope": [
+        "bonita-project/app/diagrams/*.proc",
+        "bonita-project/app/environements/*.xml",
+        "bonita-project/app/organizations/*.xml",
+        "bonita-project/app/process_configurations/*.conf",
+        "bonita-project/app/profiles/*.xml",
+        "bonita-project/bdm/bom.xml",
+        "bonita-project/extensions/preventa-conectores/**",
+        "bonita-project/parametros/**",
+        "build/**",
+        "journey/*.postman_collection.json",
+        "mock.json"
+      ],
+      "depends_on": [
+        "U0"
+      ],
+      "openspec_change": "u1-datos-organizacion-y-procesos",
+      "stories": [],
+      "docs_ref": "docs/07-bonita/bdm.md, docs/07-bonita/bpmn.md, docs/07-bonita/contratos.md"
+    }
+  ]
+}

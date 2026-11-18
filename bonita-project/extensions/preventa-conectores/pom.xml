@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>co.trycore.hubspot</groupId>
+    <artifactId>hubspot-bonita-extensions</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <artifactId>hubspot-bonita-preventa-conectores</artifactId>
+  <name>Conectores propios de preventa hacia HubSpot</name>
+  <description>Tres conectores REST nativos del proyecto hacia la API de HubSpot: hubspot-ticket-leer (lee el ticket), hubspot-consultores-menor-carga (balance de carga: elige el owner con menos tickets en los stages de trabajo, con desempate circular) y hubspot-ticket-actualizar (fija owner y stage). El token de la Private App se lee de la variable de entorno HUBSPOT_PRIVATE_APP_TOKEN, nunca de una entrada. En Local apuntan al mock (mock.json).</description>
+  <properties>
+    <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
+    <spock-core.version>2.3-groovy-3.0</spock-core.version>
+    <byte-buddy.version>1.14.5</byte-buddy.version>
+    <logback-classic.version>1.2.13</logback-classic.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.bonitasoft.engine</groupId>
+      <artifactId>bonita-common</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>${spock-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>${byte-buddy.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-classic.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main/groovy</sourceDirectory>
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/resources-filtered</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

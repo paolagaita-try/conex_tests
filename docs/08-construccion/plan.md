@@ -1,0 +1,8 @@
+# Plan de unidades — hubspot-bonita
+
+Alcance (reunión de socialización, `docs/07-bonita/insumo-preventa/reunion-socializacion.md`): Bonita automatiza **solo el carril Orquestador** del pool `GestionPreventa` — consultar el ticket, verificar la carga de consultores, asignar por **balance de carga** (menos tickets en «En validación» + «Asignado/En diseño»; alternancia solo como desempate), actualizar el ticket (propietario + «En validación»), esperar la carga de artefactos (tarea humana que completa el middleware por API) y pasar a «Entregado a ventas». Sin formularios, sin actor filter, sin Agente IA como servicio, sin receive task. Todo lo demás es manual en HubSpot.
+
+| Unidad | Tipo | Título | Depende de | Ficheros | Entrada | Tareas | Estado |
+|---|---|---|---|---|---|---|---|
+| `U0` | cimiento | Plantilla configurada | — | `.trycore-bonita.json`, `.gitignore`, `.gitattributes`, `bonita-project/**`, `runtime/**`, `hola/**`, `tools/*.sh`, `tools/arnes/**`, `.claude/**`, `CLAUDE.md`, `build/**` | `HANDOFF-SCAFFOLD.md` | — | construida y verde; pendiente de cierre en el hub |
+| `U1` | cimiento | Datos, organización y procesos | `U0` | `bonita-project/bdm/bom.xml`, `bonita-project/app/organizations/*.xml`, `bonita-project/app/profiles/*.xml`, `bonita-project/app/environements/*.xml`, `bonita-project/app/diagrams/*.proc`, `bonita-project/app/process_configurations/*.conf`, `bonita-project/extensions/preventa-conectores/**`, `bonita-project/parametros/**`, `journey/*.postman_collection.json`, `build/**`, `mock.json` | `docs/07-bonita/bdm.md`, `docs/07-bonita/bpmn.md`, `docs/07-bonita/contratos.md` | — | bloqueada por la auditoría de capas (capas 0-2 en `pendiente`) |

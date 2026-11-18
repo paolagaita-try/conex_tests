@@ -1,0 +1,70 @@
+{
+  "_comment": "ÚNICA FUENTE DE IDENTIDAD de los formularios. El campo `id` es el mismo string en cuatro lugares: la carpeta src/forms/<id>/, el nombre del recurso desplegado (`custompage`), la actividad humana del .proc (`userTask`) y su contrato (`contrato`). Un recurso desplegado con el nombre de otro LO SOBRESCRIBE en el runtime. Este archivo es fuente de IDENTIDAD, nunca de EXPECTATIVA: el conjunto esperado sale de las tareas humanas del BPMN y de sus contratos, y solo se cruzan los formularios con `tipo: negocio`. REGLA DE PLATAFORMA: tras `custompage_` solo caracteres ALFANUMÉRICOS; un guion bajo o un guion lanza InvalidPageTokenException, aborta la instalación de la aplicación completa y el runtime NO ARRANCA. De ahí el camelCase.",
+  "version": 2,
+  "formularios": [
+    {
+      "id": "_semilla",
+      "tipo": "tecnico",
+      "custompage": "custompage_formInternoSemilla",
+      "displayName": "Semilla técnica de formularios",
+      "descripcion": "Página semilla de la capa de formularios: verifica el circuito build -> empaquetado -> despliegue -> sesión -> contrato -> ejecución sin construir ninguna pantalla de negocio. Desechable.",
+      "familia": "interno",
+      "userTask": null,
+      "contrato": null,
+      "permisos": [
+        "POST|bpm/userTask",
+        "GET|bpm/userTask",
+        "GET|bpm/humanTask",
+        "GET|bpm/case",
+        "GET|bpm/process",
+        "GET|system/session"
+      ]
+    },
+    {
+      "id": "_muestra",
+      "tipo": "tecnico",
+      "custompage": "custompage_formClienteMuestra",
+      "displayName": "Muestra del sistema de diseño",
+      "descripcion": "Referencia visual viva de la galería de componentes: un formulario de ejemplo que ejercita todos los tipos de campo de un contrato, más acciones y avisos. Desechable: no sustituye ninguna pantalla de negocio.",
+      "familia": "cliente",
+      "userTask": null,
+      "contrato": null,
+      "permisos": [
+        "GET|bpm/case",
+        "GET|bpm/process"
+      ]
+    },
+    {
+      "id": "parametros",
+      "tipo": "administracion",
+      "custompage": "custompage_formInternoParametros",
+      "displayName": "Parámetros de negocio",
+      "descripcion": "Administración de los parámetros y catálogos de negocio del módulo de parámetros: inicio por ámbito, listas, parámetros de impacto alto con doble control, aprobaciones, permisos, importación CSV y traza. Una sola página con navegación propia; consume solo la API de parámetros, nunca el BDM. Va en la aplicación `parametros` y viaja en el artefacto (no es técnica).",
+      "familia": "interno",
+      "userTask": null,
+      "contrato": null,
+      "permisos": [
+        "GET|system/session",
+        "GET|identity/user",
+        "GET|identity/membership",
+        "GET|identity/role",
+        "GET|identity/group",
+        "GET|extension/parametros/administracion/valores",
+        "GET|extension/parametros/definiciones",
+        "GET|extension/parametros/procesos",
+        "GET|extension/parametros/propuestas",
+        "GET|extension/parametros/editores",
+        "GET|extension/parametros/usos",
+        "GET|extension/parametros/traza",
+        "GET|extension/parametros/traza/verificacion",
+        "GET|extension/parametros/avisos",
+        "GET|extension/parametros/delegaciones",
+        "GET|extension/parametros/organizacion",
+        "POST|extension/parametros/cambios",
+        "POST|extension/parametros/propuestas/decision",
+        "POST|extension/parametros/importaciones",
+        "POST|extension/parametros/delegaciones"
+      ]
+    }
+  ]
+}

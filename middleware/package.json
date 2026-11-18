@@ -1,0 +1,12 @@
+{
+  "name": "preventa-middleware",
+  "version": "0.1.0",
+  "description": "Middleware HubSpot <-> Bonita (preventa): instancia casos en Bonita al crearse un ticket, completa la tarea de espera cuando se cargan los 4 artefactos, y reconcilia diariamente. Sin dependencias externas: solo modulos nativos de Node 18+ (http, fetch, crypto, fs).",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test"
+  }
+}

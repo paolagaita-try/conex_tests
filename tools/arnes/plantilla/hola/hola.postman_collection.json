@@ -1,0 +1,892 @@
+{
+  "info": {
+    "name": "hola — journey de la prueba 1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0a. login admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/loginservice",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "loginservice"
+          ],
+          "query": []
+        },
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "{{adminUsuario}}"
+            },
+            {
+              "key": "password",
+              "value": "{{adminClave}}"
+            },
+            {
+              "key": "redirect",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"login 204\", () => pm.response.to.have.status(204));",
+              "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0b. id de walter.bates",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/identity/user?f=userName={{usuario}}&p=0&c=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "identity",
+            "user"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "userName={{usuario}}"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"el archive no se instaló: falta el usuario de su organización\", () => pm.expect(pm.response.json().length).to.eql(1));",
+              "pm.collectionVariables.set(\"userId\", pm.response.json()[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0c. id del perfil User",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/portal/profile?f=name=User&p=0&c=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "portal",
+            "profile"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "name=User"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"perfil User existe\", () => pm.expect(pm.response.json().length).to.eql(1));",
+              "pm.collectionVariables.set(\"profileId\", pm.response.json()[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0d. walter.bates ya está en el perfil User (lo mapea tools/perfiles.py tras el despliegue)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/portal/profileMember?f=profile_id={{profileId}}&f=member_type=user&p=0&c=1000",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "portal",
+            "profileMember"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "profile_id={{profileId}}"
+            },
+            {
+              "key": "f",
+              "value": "member_type=user"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "1000"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const ids = pm.response.json().map((m) => String(m.user_id));",
+              "pm.test(\"perfil User de walter.bates (paso tools/arnes.sh perfiles)\", () => pm.expect(ids).to.include(String(pm.variables.get(\"userId\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0e. logout admin",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/logoutservice?redirect=false",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "logoutservice"
+          ],
+          "query": [
+            {
+              "key": "redirect",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. login walter.bates",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/loginservice",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "loginservice"
+          ],
+          "query": []
+        },
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "{{usuario}}"
+            },
+            {
+              "key": "password",
+              "value": "{{clave}}"
+            },
+            {
+              "key": "redirect",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"login 204\", () => pm.response.to.have.status(204));",
+              "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. proceso Hola instalado y habilitado",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/process?f=name=Hola&f=version={{versionProceso}}&p=0&c=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "process"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "name=Hola"
+            },
+            {
+              "key": "f",
+              "value": "version={{versionProceso}}"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const p = pm.response.json();",
+              "pm.test(\"el archive no se instaló: no hay proceso Hola\", () => pm.expect(p.length).to.eql(1));",
+              "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(pm.variables.get(\"versionProceso\") || \"1.0\"));",
+              "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
+              "pm.collectionVariables.set(\"processId\", p[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2b. form mapping de la tarea: URL a su página en la app hola",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/form/mapping?f=processDefinitionId={{processId}}&f=type=TASK&p=0&c=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "form",
+            "mapping"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "processDefinitionId={{processId}}"
+            },
+            {
+              "key": "f",
+              "value": "type=TASK"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"200\", () => pm.response.to.have.status(200));",
+              "const m = pm.response.json();",
+              "pm.test(\"un form mapping de tarea, el de Revisión\", () => { pm.expect(m.length).to.eql(1); pm.expect(m[0].task).to.eql(pm.variables.get(\"nombreTarea\") || \"Revisión\"); });",
+              "pm.test(\"por URL\", () => pm.expect(m[0].target).to.eql(\"URL\"));",
+              "pm.test(\"a la página del formulario Svelte\", () => pm.expect(m[0].url).to.eql(\"/bonita/portal/resource/app/hola/frmHolaRevisar/content/\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. instanciar con contrato",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/process/{{processId}}/instantiation",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "process",
+            "{{processId}}",
+            "instantiation"
+          ],
+          "query": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"mensaje\": \"hola\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"200\", () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set(\"caseId\", pm.response.json().caseId);",
+              "pm.collectionVariables.set(\"intentos\", 0);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. tarea humana Revisión",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/humanTask?f=caseId={{caseId}}&p=0&c=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "humanTask"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "caseId={{caseId}}"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const t = pm.response.json();",
+              "const n = Number(pm.collectionVariables.get(\"intentos\")) + 1;",
+              "pm.collectionVariables.set(\"intentos\", n);",
+              "if (t.length === 0 && n < 30) { setTimeout(() => {}, 2000); postman.setNextRequest(\"4. tarea humana Revisión\"); return; }",
+              "pm.test(\"hay una tarea\", () => pm.expect(t.length).to.eql(1));",
+              "pm.test(\"se llama como en el spec\", () => pm.expect(t[0].displayName || t[0].name).to.eql(pm.variables.get(\"nombreTarea\") || \"Revisión\"));",
+              "pm.collectionVariables.set(\"taskId\", t[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4b. param_saludos del módulo de parámetros para la tarea",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/extension/parametros/valores?definicion=saludos&tarea={{taskId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "extension",
+            "parametros",
+            "valores"
+          ],
+          "query": [
+            {
+              "key": "definicion",
+              "value": "saludos"
+            },
+            {
+              "key": "tarea",
+              "value": "{{taskId}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"200 (la semilla se aplicó en la primera invocación)\", () => pm.response.to.have.status(200));",
+              "const v = pm.response.json();",
+              "pm.test(\"la lista saludos\", () => { pm.expect(v.definicion).to.eql(\"saludos\"); pm.expect(v.clase).to.eql(\"LISTA\"); });",
+              "pm.test(\"las opciones de la semilla, en su orden\", () => pm.expect(v.opciones.map((o) => o.etiqueta)).to.eql([\"Hola\", \"Buenos días\", \"Bienvenida\"]));",
+              "pm.test(\"códigos del módulo\", () => pm.expect(v.opciones.map((o) => o.codigo)).to.eql([\"hola\", \"buenos_dias\", \"bienvenida\"]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4c. saludo inicial por la extensión de consultas",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/extension/consultas/caso?caseId={{caseId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "extension",
+            "consultas",
+            "caso"
+          ],
+          "query": [
+            {
+              "key": "caseId",
+              "value": "{{caseId}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"200 (familia interna: el actor Empleado está en el bloque de consultas)\", () => pm.response.to.have.status(200));",
+              "pm.test(\"el saludo de la instanciación\", () => pm.expect(pm.response.json().mensaje).to.eql(\"hola\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4d. página del formulario en la aplicación hola",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/portal/resource/app/hola/frmHolaRevisar/content/?id={{taskId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "portal",
+            "resource",
+            "app",
+            "hola",
+            "frmHolaRevisar",
+            "content",
+            ""
+          ],
+          "query": [
+            {
+              "key": "id",
+              "value": "{{taskId}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"200: walter.bates abre la página\", () => pm.response.to.have.status(200));",
+              "pm.test(\"es la pantalla Svelte\", () => pm.expect(pm.response.text()).to.include('<div id=\"app\"></div>'));",
+              "pm.test(\"con el tema de la aplicación\", () => pm.expect(pm.response.text()).to.include('../theme/theme.css'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5a. asignar a walter.bates",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "humanTask",
+            "{{taskId}}"
+          ],
+          "query": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"assigned_id\": \"{{userId}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5b. ejecutar con contrato",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "userTask",
+            "{{taskId}}",
+            "execution"
+          ],
+          "query": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"mensaje\": \"{{mensajeTarea}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"204\", () => pm.response.to.have.status(204));",
+              "pm.collectionVariables.set(\"intentos\", 0);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. caso archivado",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/archivedCase?f=sourceObjectId={{caseId}}&p=0&c=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "archivedCase"
+          ],
+          "query": [
+            {
+              "key": "f",
+              "value": "sourceObjectId={{caseId}}"
+            },
+            {
+              "key": "p",
+              "value": "0"
+            },
+            {
+              "key": "c",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const a = pm.response.json();",
+              "const n = Number(pm.collectionVariables.get(\"intentos\")) + 1;",
+              "pm.collectionVariables.set(\"intentos\", n);",
+              "if (a.length === 0 && n < 30) { setTimeout(() => {}, 2000); postman.setNextRequest(\"6. caso archivado\"); return; }",
+              "pm.test(\"caso terminado\", () => pm.expect(a.length).to.eql(1));",
+              "pm.collectionVariables.set(\"archivedCaseId\", a[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7a. contexto del caso archivado",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bpm/archivedCase/{{archivedCaseId}}/context",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bpm",
+            "archivedCase",
+            "{{archivedCaseId}}",
+            "context"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const ctx = pm.response.json();",
+              "pm.test(\"el caso tiene su referencia saludo_ref\", () => pm.expect(ctx.saludo_ref && ctx.saludo_ref.storageId).to.be.ok);",
+              "pm.collectionVariables.set(\"saludoId\", ctx.saludo_ref.storageId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7b. Saludo de ESTE caso en el BDM",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Bonita-API-Token",
+            "value": "{{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/API/bdm/businessData/com.trycore.hola.model.Saludo/{{saludoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "API",
+            "bdm",
+            "businessData",
+            "com.trycore.hola.model.Saludo",
+            "{{saludoId}}"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"el BDM guarda el mensaje de la tarea de este caso\", () => pm.expect(pm.response.json().mensaje).to.eql(pm.variables.get(\"mensajeEsperado\")));"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8095/bonita"
+    },
+    {
+      "key": "usuario",
+      "value": "walter.bates"
+    },
+    {
+      "key": "clave",
+      "value": "bpm"
+    },
+    {
+      "key": "adminUsuario",
+      "value": "install"
+    },
+    {
+      "key": "adminClave",
+      "value": "install"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "versionProceso",
+      "value": "1.0"
+    },
+    {
+      "key": "nombreTarea",
+      "value": "Revisión"
+    },
+    {
+      "key": "mensajeTarea",
+      "value": "hola desde la tarea"
+    },
+    {
+      "key": "mensajeEsperado",
+      "value": "hola desde la tarea"
+    }
+  ]
+}
