@@ -107,7 +107,9 @@ async fn entorno(ticket_props: Value, deal_props: Value) -> Entorno {
 }
 
 fn uuid() -> String {
-    format!("{}-{}", std::process::id(), preventa_middleware::now_ms())
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static SEQ: AtomicU64 = AtomicU64::new(0);
+    format!("{}-{}", std::process::id(), SEQ.fetch_add(1, Ordering::SeqCst))
 }
 
 fn deal_lleno() -> Value {
