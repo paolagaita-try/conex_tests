@@ -38,6 +38,7 @@ Las 4 propiedades **ya existen** en el objeto Negocio (grupo `dealinformation`);
 
 ## Seguridad
 
+- **Blindaje de pipeline (Preventa vs. otros):** el middleware **solo** actúa sobre tickets del pipeline de Preventa (`HUBSPOT_PIPELINE`, por defecto `0`). En `ticket-created` lee el ticket y, si no es de Preventa (p. ej. «Comercio»), lo **ignora** sin crear caso ni mover nada. En el tramo de artefactos, entre los **N** tickets que puede tener un Negocio, elige el ticket activo de Preventa (instanciado por nosotros y en ese pipeline). El Negocio nunca se escribe.
 - Todo secreto por variable de entorno (`.env` en `.gitignore`).
 - Firma de webhook validada con `HUBSPOT_APP_SECRET`.
 - Pruebas de escritura solo contra tickets de prueba desechables; nunca tickets de producción reales sin autorización.

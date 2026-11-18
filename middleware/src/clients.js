@@ -130,9 +130,10 @@ async function hs(path, { method = 'GET', body } = {}) {
   return t ? JSON.parse(t) : null;
 }
 
-// Lee un ticket (stage/subject). Para decidir el cierre sin entrega (resultado "cerrado").
+// Lee un ticket (pipeline/stage/subject). El pipeline sirve para blindar que solo se actue
+// sobre tickets de Preventa (nunca de otro pipeline como "Comercio").
 export async function getTicket(ticketId) {
-  const props = ['hs_pipeline_stage', 'subject'].join(',');
+  const props = ['hs_pipeline', 'hs_pipeline_stage', 'subject'].join(',');
   return hs(`/crm/v3/objects/tickets/${ticketId}?properties=${props}`);
 }
 
@@ -143,13 +144,12 @@ export async function getDeal(dealId) {
   return hs(`/crm/v3/objects/deals/${dealId}?properties=${props}`);
 }
 
-// Ticket asociado a un Negocio (Deal), via asociaciones v4. Devuelve el primer ticketId o null.
-export async function ticketDeNegocio(dealId) {
-  const r = await hs(`/crm/v4/objects/deals/${dealId}/associations/tickets?limit=1`);
-  const res = r?.results || [];
-  if (!res.length) return null;
-  const t = res[0];
-  return String(t.toObjectId ?? t.id ?? t.to?.id ?? '');
+// Tickets asociados a un Negocio (Deal), via asociaciones v4. Un Negocio puede tener N tickets
+// (cardinalidad 1 Negocio -> N Tickets); devuelve TODOS los ticketIds para que el llamador
+// elija el ticket activo de Preventa (el que este instanciado y en el pipeline de Preventa).
+export async function ticketsDeNegocio(dealId) {
+  const r = await hs(`/crm/v4/objects/deals/${dealId}/associations/tickets?limit=100`);
+  return (r?.results || []).map((t) => String(t.toObjectId ?? t.id ?? t.to?.id ?? '')).filter(Boolean);
 }
 
 // true si los 4 campos de artefactos tienen valor no vacio.

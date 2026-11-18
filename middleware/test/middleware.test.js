@@ -14,8 +14,8 @@ const port = (s) => s.address().port;
 
 // contadores para verificar que no se duplican llamadas
 const n = { instanciacion: 0, login: 0, assign: 0, execution: 0 };
-let dealProps = {};   // propiedades que devuelve el HubSpot falso para el Negocio (Deal)
-let ticketProps = {}; // propiedades del ticket (para el caso "cerrado")
+let dealProps = {};                     // propiedades del Negocio (Deal) en el HubSpot falso
+let ticketProps = { hs_pipeline: '0' }; // propiedades del ticket (Preventa por defecto)
 
 let bonita, hubspot, store, mw;
 
@@ -85,6 +85,18 @@ test('idempotencia: segundo ticket-created del mismo ticket no vuelve a instanci
   assert.equal(n.instanciacion, antes); // no incremento
 });
 
+test('BLINDAJE: ticket de otro pipeline (Comercio) se ignora, no instancia', async () => {
+  ticketProps = { hs_pipeline: '5' }; // pipeline distinto a Preventa (0)
+  const antes = n.instanciacion;
+  const r = await mw.onTicketCreated({ objectId: 'T-COMERCIO' });
+  assert.equal(r.ignorado, true);
+  assert.equal(r.motivo, 'pipeline no Preventa');
+  assert.equal(n.instanciacion, antes); // NO instancio
+  const map = JSON.parse(fs.readFileSync(store, 'utf8'));
+  assert.equal(map['T-COMERCIO'], undefined); // no se guardo
+  ticketProps = { hs_pipeline: '0' }; // restaurar Preventa para los demas tests
+});
+
 test('deal.propertyChange con los 4 campos -> busca el ticket y completa "entregado"', async () => {
   dealProps = {
     concepto_viabilidad: 'Aprobado (Viable)', estimacion_costos: '1200',
@@ -107,7 +119,7 @@ test('deal.propertyChange sin los 4 campos -> queda pendiente, no completa', asy
 });
 
 test('ticket.propertyChange a stage cerrado -> completa "cerrado"', async () => {
-  ticketProps = { hs_pipeline_stage: '4' }; // STAGE_CLOSED
+  ticketProps = { hs_pipeline: '0', hs_pipeline_stage: '4' }; // Preventa, STAGE_CLOSED
   const ejecAntes = n.execution;
   const r = await mw.onArtifactsLoaded({ subscriptionType: 'ticket.propertyChange', objectId: 'T-1' });
   assert.equal(r.resultado, 'cerrado');

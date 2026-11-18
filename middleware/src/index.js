@@ -4,10 +4,13 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { instanciarCaso, completarEspera, getTicket, getDeal, ticketDeNegocio, artefactosCompletos, casosActivos, ticketsDelPipeline } from './clients.js';
+import { instanciarCaso, completarEspera, getTicket, getDeal, ticketsDeNegocio, artefactosCompletos, casosActivos, ticketsDelPipeline } from './clients.js';
 
 const PORT = Number(process.env.PORT || 3000);
 const APP_SECRET = process.env.HUBSPOT_APP_SECRET || '';
+// Pipeline de Preventa (Fase 0: "Mesa de preventa" = "0"). BLINDAJE: el middleware solo actua
+// sobre tickets de ESTE pipeline; nunca toca tickets de otro pipeline (p. ej. "Comercio").
+const PREVENTA_PIPELINE = String(process.env.HUBSPOT_PIPELINE || '0');
 const STORE = process.env.STORE_PATH || path.join(process.cwd(), 'data', 'store.json');
 const RECONCILE_MS = Number(process.env.RECONCILE_MS || 24 * 60 * 60 * 1000);
 
@@ -54,6 +57,14 @@ async function onTicketCreated(payload) {
   if (!ticketId) throw new Error('ticket-created: sin ticketId en el payload');
   const existente = casoDe(ticketId);
   if (existente) { log('ticket', ticketId, 'ya tiene caso', existente, '(idempotente)'); return { caseId: existente, idempotente: true }; }
+  // BLINDAJE pipeline: solo se instancia para tickets de Preventa; un ticket de otro pipeline
+  // (p. ej. "Comercio") se ignora sin crear caso ni tocar nada.
+  const ticket = await getTicket(ticketId);
+  const pipeline = String(ticket?.properties?.hs_pipeline ?? '');
+  if (pipeline !== PREVENTA_PIPELINE) {
+    log('ticket', ticketId, `pipeline ${pipeline} != Preventa (${PREVENTA_PIPELINE}); ignorado`);
+    return { ignorado: true, motivo: 'pipeline no Preventa', pipeline };
+  }
   const caseId = await instanciarCaso(ticketId);
   recordar(ticketId, caseId);
   log('ticket', ticketId, '-> caso Bonita', caseId);
@@ -70,11 +81,12 @@ async function onArtifactsLoaded(payload) {
   if (!objectId) throw new Error('artifacts-loaded: sin objectId en el payload');
 
   if (esTicket) {
+    // Solo actuamos sobre tickets que nosotros instanciamos (en el store) -> implicitamente de Preventa.
+    const caseId = casoDe(objectId);
+    if (!caseId) { log('ticket', objectId, 'sin caso nuestro; ignorado'); return { ignorado: true }; }
     const ticket = await getTicket(objectId);
     const cerrado = String(ticket?.properties?.hs_pipeline_stage) === String(process.env.STAGE_CLOSED || '4');
     if (!cerrado) { log('ticket', objectId, 'cambio no relevante (no cerrado); ignorado'); return { ignorado: true }; }
-    const caseId = casoDe(objectId);
-    if (!caseId) throw new Error(`ticket ${objectId} cerrado sin caso asociado`);
     await completarEspera(caseId, 'cerrado');
     log('ticket', objectId, 'caso', caseId, '-> espera completada: cerrado');
     return { resultado: 'cerrado', ticketId: objectId, caseId };
@@ -83,13 +95,22 @@ async function onArtifactsLoaded(payload) {
   // deal.propertyChange: los 4 campos de artefactos viven en el Negocio
   const deal = await getDeal(objectId);
   if (!artefactosCompletos(deal)) { log('deal', objectId, 'aun sin los 4 artefactos; no se completa'); return { pendiente: true }; }
-  const ticketId = await ticketDeNegocio(objectId);
-  if (!ticketId) throw new Error(`deal ${objectId} sin ticket asociado`);
-  const caseId = casoDe(ticketId);
-  if (!caseId) throw new Error(`ticket ${ticketId} (del deal ${objectId}) sin caso (no instanciado)`);
-  await completarEspera(caseId, 'entregado');
-  log('deal', objectId, '-> ticket', ticketId, 'caso', caseId, '-> espera completada: entregado');
-  return { resultado: 'entregado', dealId: objectId, ticketId, caseId };
+  // Cardinalidad 1 Negocio -> N Tickets: elegir el ticket ACTIVO de Preventa, es decir, el que
+  // nosotros instanciamos (esta en el store) Y esta en el pipeline de Preventa.
+  const asociados = await ticketsDeNegocio(objectId);
+  let elegido = null;
+  for (const tid of asociados) {
+    const caseId = casoDe(tid);
+    if (!caseId) continue; // no instanciado por nosotros -> no es el ticket activo de Preventa
+    const tk = await getTicket(tid);
+    if (String(tk?.properties?.hs_pipeline ?? '') !== PREVENTA_PIPELINE) continue; // no es de Preventa
+    elegido = { ticketId: tid, caseId };
+    break;
+  }
+  if (!elegido) throw new Error(`deal ${objectId}: ningun ticket asociado de Preventa con caso activo (asociados: ${asociados.join(', ') || 'ninguno'})`);
+  await completarEspera(elegido.caseId, 'entregado');
+  log('deal', objectId, '-> ticket', elegido.ticketId, 'caso', elegido.caseId, '-> espera completada: entregado');
+  return { resultado: 'entregado', dealId: objectId, ticketId: elegido.ticketId, caseId: elegido.caseId };
 }
 
 // ----- reconciliacion diaria -----
