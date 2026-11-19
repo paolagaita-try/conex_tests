@@ -8,11 +8,26 @@ import org.bonitasoft.engine.connector.ConnectorValidationException
 
 /**
  * conn_hubspotCarga — toda la decisión de a quién asignar vive aquí (regla de 4 puntos, bpmn.md).
- * Candidatos: los owners de ownerIds, en ese orden. Carga de cada uno: cuántos tickets del pipeline están en alguno
- * de los stages de trabajo con ese propietario. Gana el de menor carga; si empatan, alterna de forma circular
- * respecto de ultimoOwnerId (el owner del caso asignado más recientemente). Salida: ownerElegido.
+ * Candidatos: los owners de ownerIds, en ese orden. Carga de cada uno: la SUMA DEL PESO POR PRIORIDAD de sus tickets
+ * del pipeline que estén en alguno de los stages de trabajo (no el conteo simple). Así el reparto mide capacidad
+ * (más tickets = más suma) y prioridad (un ticket alto pesa más que uno bajo) a la vez. Gana el de menor carga; si
+ * empatan, alterna de forma circular respecto de ultimoOwnerId (el owner asignado más recientemente). Salida: ownerElegido.
  */
 class HubspotConsultoresMenorCarga extends AbstractConnector {
+
+    /** Peso de cada prioridad de HubSpot (hs_ticket_priority). Sin prioridad / desconocida → MEDIUM. */
+    static final Map<String, Integer> PESO_PRIORIDAD = [
+        'URGENT': 4,
+        'HIGH'  : 3,
+        'MEDIUM': 2,
+        'LOW'   : 1
+    ]
+    static final int PESO_POR_DEFECTO = 2
+
+    static int pesoDe(Object prioridad) {
+        String p = (prioridad == null) ? '' : prioridad.toString().trim().toUpperCase()
+        return PESO_PRIORIDAD.containsKey(p) ? PESO_PRIORIDAD[p] : PESO_POR_DEFECTO
+    }
 
     @Override
     void validateInputParameters() throws ConnectorValidationException {
@@ -46,7 +61,7 @@ class HubspotConsultoresMenorCarga extends AbstractConnector {
                     [propertyName: 'hs_pipeline', operator: 'EQ', value: pipelineId],
                     [propertyName: 'hs_pipeline_stage', operator: 'IN', values: stages]
                 ]]],
-                properties: ['hubspot_owner_id'],
+                properties: ['hubspot_owner_id', 'hs_ticket_priority'],
                 limit: 100
             ])
             def respuesta = Http.post(urlBase + rutaTickets + '/search', cuerpo)
@@ -54,7 +69,7 @@ class HubspotConsultoresMenorCarga extends AbstractConnector {
             (json?.results ?: []).each { t ->
                 def owner = t?.properties?.hubspot_owner_id
                 if (owner != null && carga.containsKey(owner.toString())) {
-                    carga[owner.toString()] = carga[owner.toString()] + 1
+                    carga[owner.toString()] = carga[owner.toString()] + pesoDe(t?.properties?.hs_ticket_priority)
                 }
             }
         } catch (Exception e) {
