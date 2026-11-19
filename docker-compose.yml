@@ -1,0 +1,16 @@
+# Despliegue local/servidor del MIDDLEWARE (Rust). Bonita y PostgreSQL son externos:
+# BONITA_URL (en middleware/.env) apunta a la Bonita de ese entorno; el token de HubSpot va por env.
+# En producción, el middleware vive detrás de un reverse proxy TLS (nginx/caddy) que expone :443.
+services:
+  middleware:
+    build: ./middleware
+    image: preventa-middleware:local
+    env_file: ./middleware/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - middleware-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  middleware-data:

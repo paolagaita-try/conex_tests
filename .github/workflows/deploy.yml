@@ -1,0 +1,25 @@
+name: Deploy (plantilla)
+
+# Plantilla de despliegue — INERTE hasta que haya servidor y credenciales.
+# Solo se dispara a mano. Completar los pasos comentados con el host destino.
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: |
+          echo "Plantilla de despliegue del middleware (imagen en GHCR)."
+          echo "Rellenar con el host destino y sus credenciales (secrets)."
+      # Ejemplo (SSH a un servidor con Docker):
+      # - uses: appleboy/ssh-action@v1
+      #   with:
+      #     host: ${{ secrets.DEPLOY_HOST }}
+      #     username: ${{ secrets.DEPLOY_USER }}
+      #     key: ${{ secrets.DEPLOY_SSH_KEY }}
+      #     script: |
+      #       docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_TOKEN }}
+      #       docker pull ghcr.io/${{ github.repository }}/preventa-middleware:latest
+      #       docker compose -f /opt/preventa/docker-compose.yml up -d
