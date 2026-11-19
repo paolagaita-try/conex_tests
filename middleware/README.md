@@ -5,7 +5,7 @@ Puente entre HubSpot y Bonita para la integración de preventa. Servicio **Rust*
 ## Qué hace
 
 1. **Entrada** — `POST /webhooks/ticket-created`: webhook de app `ticket.creation` → instancia el caso en Bonita (`POST /API/bpm/process/{id}/instantiation`). **Idempotente** por `ticketId` (store en `data/store.json`). **Blindaje de pipeline:** solo actúa sobre el pipeline de Preventa (`HUBSPOT_PIPELINE`); ignora otros (p. ej. «Comercio»).
-2. **Avance a diseño (automático)** — tras ~5 min (`MINUTOS_EN_VALIDACION`) en «En validación», pasa el ticket a «Asignado/En diseño» (durable, una sola vez).
+2. **Avance a diseño (manual)** — el paso «En validación» → «Asignado/En diseño» lo hace **la consultora** en el tablero de HubSpot. El middleware **no** lo automatiza (antes había un temporizador; se eliminó porque ensuciaba los tiempos por etapa y saturaba el trabajo en curso).
 3. **Espera** — `POST /webhooks/artifacts-loaded`: las **4 fuentes** viven en el **Negocio (Deal)**. Con `deal.propertyChange`, si las 4 (`concepto_viabilidad`, `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa`) tienen valor, busca el ticket asociado (cardinalidad 1 Negocio→N tickets, elige el activo de Preventa) y completa la espera → «Entregado a ventas». `ticket.propertyChange` a stage cerrado → `cerrado`. **Detector propio** cada `ARTEFACTOS_CHECK_MS` como red de seguridad (entrega sin depender del webhook).
 4. **Reconciliación** — barrido periódico (log). `GET /health` → `{ok:true}`.
 
