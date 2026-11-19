@@ -1,4 +1,4 @@
-# Gestión de Preventa — Integración HubSpot ↔ Bonita
+# Integración HubSpot ↔ Bonita
 
 Automatiza el **carril del Orquestador** del proceso de preventa: cuando se crea un ticket en HubSpot, se instancia un caso en Bonita que asigna una consultora por **balance de carga**, mueve el ticket por sus estados y, cuando la consultora carga los artefactos en el Negocio, lo pasa a **«Entregado a ventas»**. El resto del proceso es manual en HubSpot.
 
