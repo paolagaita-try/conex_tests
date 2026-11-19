@@ -151,11 +151,19 @@ impl Bonita {
         }
         let task = task.ok_or_else(|| format!("No hay tarea «{}» para el caso {case_id}", self.tarea_espera))?;
         let task_id = task.get("id").and_then(|v| v.as_str()).ok_or_else(|| "tarea sin id".to_string())?.to_string();
-        let assigned = task.get("assigned_id").and_then(|v| v.as_str()).filter(|s| *s != "0").map(|s| s.to_string());
-        let asignar = assigned.or(uid);
-        if let Some(u) = asignar {
-            let _ = self.api(reqwest::Method::PUT, &format!("/bpm/humanTask/{task_id}"), Some(json!({ "assigned_id": u }))).await;
+        // Bonita exige la tarea ASIGNADA antes de ejecutarla. Se asigna a ofelia (usuario técnico):
+        // se resuelve el user_id (reintentando si login no lo dejó) y se asigna propagando el error.
+        let mut u = uid;
+        if u.is_none() {
+            if let Ok(Some(s)) = self.enviar(reqwest::Method::GET, "/system/session/unusedId", None).await {
+                u = s.get("user_id").and_then(|v| v.as_str()).map(|x| x.to_string());
+                if u.is_some() {
+                    *self.user_id.lock().await = u.clone();
+                }
+            }
         }
+        let u = u.ok_or_else(|| "no se pudo resolver el user_id para asignar la tarea".to_string())?;
+        self.api(reqwest::Method::PUT, &format!("/bpm/humanTask/{task_id}"), Some(json!({ "assigned_id": u }))).await?;
         self.api(reqwest::Method::POST, &format!("/bpm/userTask/{task_id}/execution"), Some(json!({ "resultado": resultado }))).await?;
         Ok(())
     }
