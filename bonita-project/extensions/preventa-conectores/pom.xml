@@ -9,7 +9,7 @@
   </parent>
   <artifactId>hubspot-bonita-preventa-conectores</artifactId>
   <name>Conectores propios de preventa hacia HubSpot</name>
-  <description>Tres conectores REST nativos del proyecto hacia la API de HubSpot: hubspot-ticket-leer (lee el ticket), hubspot-consultores-menor-carga (balance de carga: elige el owner con menos tickets en los stages de trabajo, con desempate circular) y hubspot-ticket-actualizar (fija owner y stage). El token de la Private App se lee de la variable de entorno HUBSPOT_PRIVATE_APP_TOKEN, nunca de una entrada. En Local apuntan al mock (mock.json).</description>
+  <description>Tres conectores REST nativos del proyecto hacia la API de HubSpot: hubspot-ticket-leer (lee el ticket), hubspot-consultores-menor-carga (balance de carga ponderada por prioridad: elige el owner con menor suma de pesos —URGENT=4, HIGH=3, MEDIUM=2, LOW=1— de sus tickets en los stages de trabajo, con desempate circular) y hubspot-ticket-actualizar (fija owner y stage). El token de la Private App se lee de la variable de entorno HUBSPOT_PRIVATE_APP_TOKEN, nunca de una entrada. En Local apuntan al mock (mock.json).</description>
   <properties>
     <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
     <spock-core.version>2.3-groovy-3.0</spock-core.version>
