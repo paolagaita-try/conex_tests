@@ -61,7 +61,7 @@ flowchart LR
 | ID | Nombre | Tipo Bonita | Lane / actor | Fuente en §12 | Contrato (capa 2) | Conector / comunicación | Operaciones previstas | Notas |
 |---|---|---|---|---|---|---|---|---|
 | `3_consultarTicket` | Consultar el ticket de preventa en HubSpot | service | Orquestador | insumo `A03` | — | `conn_hubspotLeer` (síncrono) | según plantilla | Comprueba que el ticket existe y lee su asunto |
-| `4_verificarDisponibilidad` | Verificar la carga de los consultores | service | Orquestador | insumo `A04`; reunión 04:49 | — | `conn_hubspotCarga` (síncrono) | según plantilla | Cuenta en HubSpot los tickets de cada consultor de `param_consultores` en los stages «En validación» y «Asignado/En diseño» y devuelve el elegido (regla completa bajo la tabla de conectores) |
+| `4_verificarDisponibilidad` | Verificar la carga de los consultores | service | Orquestador | insumo `A04`; reunión 04:49 | — | `conn_hubspotCarga` (síncrono) | según plantilla | Suma en HubSpot la carga **ponderada por prioridad** de cada consultor de `param_consultores` en los stages «En validación» y «Asignado/En diseño» y devuelve el de menor carga (regla y pesos completos bajo la tabla de conectores) |
 | `5_asignarConsultor` | Asignar consultor preventa | script | Orquestador | insumo `A05`; reunión 03:45 | — | — | según plantilla | Guarda en el caso al consultor que eligió `4_verificarDisponibilidad` |
 | `6_actualizarTicket` | Actualizar estado y propietario del ticket en HubSpot | service | Orquestador | insumo `A06`; reunión 11:01 | — | `conn_hubspotActualizar` (síncrono) | según plantilla | Fija el propietario y pasa el ticket a «En validación» |
 | `18_esperarArtefactos` | Esperar la carga de artefactos en el negocio | human | Orquestador | insumo `A18`; reunión 28:22 | `ctr_18_esperarArtefactos` | — | según plantilla | Tarea añadida por el diseño (en el insumo `A18` la hace la consultora en HubSpot, no el orquestador). No la abre una persona: la completa el middleware por la API cuando HubSpot avisa. Es la espera del caso. Sin temporizador a propósito (nota bajo Eventos) |
@@ -119,7 +119,17 @@ Los tres conectores son **propios** del proyecto (`bonita-project/extensions/pre
 **Regla de `conn_hubspotCarga`** (toda la decisión de a quién asignar vive en este conector, para que se pruebe en un solo sitio):
 
 1. Candidatos: los owners de `ownerIds`, en ese orden. Si la lista está vacía, el conector falla con el mensaje «no hay consultores en el reparto» y la tarea queda en fallo. `param_consultores` se lee quitando espacios; un par sin «:», con owner vacío o con un owner repetido hace fallar la tarea con el mensaje «param_consultores mal formado».
-2. Carga de cada candidato: cantidad de tickets del pipeline `pipelineId` («Mesa de preventa») cuyo propietario es ese owner y cuyo stage es uno de `stages` (búsqueda de tickets de HubSpot; verificada en vivo el 2026-11-12).
+2. Carga de cada candidato: **suma ponderada por prioridad** de los tickets del pipeline `pipelineId` («Mesa de preventa») cuyo propietario es ese owner y cuyo stage es uno de `stages` (búsqueda de tickets de HubSpot). No es el conteo simple: así la carga mide **capacidad** (más tickets suman más) **y prioridad** (un ticket de mayor prioridad pesa más) a la vez. El peso se lee de `hs_ticket_priority`:
+
+   | `hs_ticket_priority` | Peso |
+   |---|---|
+   | `URGENT` | 4 |
+   | `HIGH` | 3 |
+   | `MEDIUM` | 2 |
+   | `LOW` | 1 |
+   | vacío / desconocido | 2 (como `MEDIUM`) |
+
+   Cuando todos los tickets tienen la misma prioridad, la suma equivale al conteo (reparte por capacidad). Verificado: conteo en vivo el 2026-11-12; ponderación en vivo el 2026-11-19 (Linda HIGH+URGENT = 7 vs Viviana HIGH+LOW+LOW = 5 → el nuevo ticket va a Viviana, aunque tenga más tickets, porque su carga ponderada es menor; contar habría elegido a Linda).
 3. Si un solo candidato tiene la carga mínima, ese es `ownerElegido`.
 4. Si varios empatan en la mínima: si `ultimoOwnerId` está vacío o no es un candidato, gana el primero de los empatados en el orden de `ownerIds`; si no, gana el primer empatado que aparece después de `ultimoOwnerId` recorriendo `ownerIds` de forma circular.
 
@@ -138,7 +148,7 @@ Los tres conectores son **propios** del proyecto (`bonita-project/extensions/pre
 | Entregado a ventas | `1425810258` | **Bonita**, `40_entregarAVentas` | automático al cargarse los artefactos en el negocio (`param_stageEntregado`) |
 | Closed | `4` | el comercial | manual (reunión 39:22) |
 
-Bonita escribe el ticket dos veces por caso. Los stages 2 y 3 son además la medida de carga de `4_verificarDisponibilidad`.
+Bonita escribe el ticket dos veces por caso. Los stages 2 y 3 son además la medida de carga de `4_verificarDisponibilidad` (ponderada por prioridad; «En espera información del lead» no cuenta, está bloqueado por el lead).
 
 ## Process variables (insumo de construcción)
 
