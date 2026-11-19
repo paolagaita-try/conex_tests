@@ -85,34 +85,9 @@ pub async fn on_artifacts_loaded(st: &Shared, payload: &Value) -> AppResult<Valu
     Err(format!("deal {object_id}: ningún ticket de Preventa con caso activo (asociados: {})", asociados.join(", ")))
 }
 
-/// Avance automático «En validación» -> «Diseño» tras MINUTOS_EN_VALIDACION (una vez, durable).
-pub async fn avanzar_a_diseno(st: &Shared) {
-    if st.cfg.min_validacion < 0.0 {
-        return;
-    }
-    let due_ms = (st.cfg.min_validacion * 60_000.0) as i64;
-    let ahora = now_ms();
-    for (ticket, e) in st.store.snapshot().await {
-        if e.diseno_hecho || e.entregado || e.validacion_desde == 0 {
-            continue;
-        }
-        if ahora - e.validacion_desde < due_ms {
-            continue;
-        }
-        match st.hubspot.stage_de_ticket(&ticket).await {
-            Ok(Some(stage)) if stage == st.cfg.stage_validacion => {
-                if let Err(err) = st.hubspot.mover_stage_ticket(&ticket, &st.cfg.stage_diseno).await {
-                    info!(%ticket, %err, "avanzar_a_diseno: fallo PATCH");
-                    continue;
-                }
-                info!(%ticket, "-> «Diseño»");
-            }
-            Ok(_) => info!(%ticket, "ya no está en «En validación»; no se mueve"),
-            Err(err) => { info!(%ticket, %err, "avanzar_a_diseno: fallo"); continue; }
-        }
-        st.store.marcar_diseno(&ticket).await;
-    }
-}
+// El paso «En validación» -> «Asignado/En diseño» es MANUAL (lo hace la consultora en el tablero).
+// Antes había aquí un avance automático por temporizador; se eliminó a pedido de Preventa: el reloj
+// no debe empujar el ticket a diseño (ensuciaba los tiempos por etapa y saturaba el trabajo en curso).
 
 /// Detector propio: entrega cuando las 4 fuentes del Negocio están llenas (red de seguridad).
 pub async fn revisar_artefactos(st: &Shared) {

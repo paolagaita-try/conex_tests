@@ -31,7 +31,6 @@ async fn main() {
 
     let cfg = Config::from_env();
     let port = cfg.port;
-    let min_val = cfg.min_validacion;
     let state: Shared = Arc::new(AppState {
         store: Store::new(cfg.store_path.clone()),
         bonita: Bonita::new(
@@ -46,9 +45,8 @@ async fn main() {
         cfg,
     });
 
-    // jobs periódicos (reconciliación, avance a diseño, detector de artefactos)
+    // jobs periódicos (reconciliación y detector de artefactos). El avance a diseño es manual: no hay job.
     spawn_cada(state.clone(), state.cfg.reconcile_ms, |s| async move { handlers::reconciliar(&s).await });
-    spawn_cada(state.clone(), state.cfg.diseno_check_ms, |s| async move { handlers::avanzar_a_diseno(&s).await });
     spawn_cada(state.clone(), state.cfg.artefactos_check_ms, |s| async move { handlers::revisar_artefactos(&s).await });
 
     let app = Router::new()
@@ -58,7 +56,7 @@ async fn main() {
         .with_state(state);
 
     let addr = format!("0.0.0.0:{port}");
-    info!("preventa-middleware escuchando en :{port} (En validación -> Diseño a los {min_val} min)");
+    info!("preventa-middleware escuchando en :{port} (validación -> diseño es MANUAL; detector de artefactos activo)");
     let listener = tokio::net::TcpListener::bind(&addr).await.expect("bind");
     axum::serve(listener, app).await.expect("serve");
 }
