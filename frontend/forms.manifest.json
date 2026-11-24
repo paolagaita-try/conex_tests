@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "formularios": [
+    {
+      "id": "frm10ValidarSolicitud",
+      "tipo": "negocio",
+      "custompage": "custompage_frm10ValidarSolicitud",
+      "displayName": "Validar la solicitud",
+      "descripcion": "Pantalla de la tarea 10_validarSolicitud (contrato ctr_10_validarSolicitud): formulario frm_10_validarSolicitud de la matriz de formularios.",
+      "familia": "interno",
+      "userTask": "10_validarSolicitud",
+      "contrato": "ctr_10_validarSolicitud",
+      "permisos": [
+        "GET|bpm/userTask",
+        "POST|bpm/userTask",
+        "GET|bpm/humanTask",
+        "GET|bpm/case",
+        "GET|system/session",
+        "GET|extension/consultas"
+      ]
+    },
+    {
+      "id": "frm20DisenarPropuesta",
+      "tipo": "negocio",
+      "custompage": "custompage_frm20DisenarPropuesta",
+      "displayName": "Diseñar la propuesta",
+      "descripcion": "Pantalla de la tarea 20_disenarPropuesta (contrato ctr_20_disenarPropuesta): formulario frm_20_disenarPropuesta de la matriz de formularios.",
+      "familia": "interno",
+      "userTask": "20_disenarPropuesta",
+      "contrato": "ctr_20_disenarPropuesta",
+      "permisos": [
+        "GET|bpm/userTask",
+        "POST|bpm/userTask",
+        "GET|bpm/humanTask",
+        "GET|bpm/case",
+        "GET|system/session",
+        "GET|extension/consultas"
+      ]
+    },
+    {
+      "id": "frmOverview",
+      "tipo": "negocio",
+      "custompage": "custompage_frmOverview",
+      "displayName": "Vista del caso",
+      "descripcion": "Pantalla de resumen del caso: formulario frm_overview de la matriz de formularios.",
+      "familia": "interno",
+      "userTask": null,
+      "contrato": null,
+      "permisos": [
+        "GET|bpm/case",
+        "GET|bpm/process",
+        "GET|system/session",
+        "GET|extension/consultas"
+      ]
+    }
+  ]
+}

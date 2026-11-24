@@ -1,0 +1,845 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Estilos de la aplicación de parámetros. Una copia curada de
+   docs/05-prototipo/parametros/_fuente/componentes.css: solo lo que NO traen ya los componentes
+   del cimiento (Boton, Aviso, EstadoVacio, Campo, Entrada, AreaTexto, Pestanas…), y SOLO con los
+   tokens de `src/lib/estilos/tokens.css`. Todo bajo `.pa`: la galería viva pinta estas mismas
+   vistas dentro de su página sin que sus reglas se escapen a las demás pantallas.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.pa {
+  max-inline-size: var(--ancho-contenido);
+  margin: 0 auto;
+  padding: var(--esp-5) var(--esp-5) var(--esp-7);
+  font-family: var(--fuente-base);
+  color: var(--color-texto);
+}
+.pa .saludo h1 {
+  margin: 0;
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-medio);
+  line-height: var(--linea-apretada);
+}
+.pa .titular {
+  margin: var(--esp-1) 0 var(--esp-5);
+  font-size: var(--texto-lg);
+  color: var(--color-texto-suave);
+}
+
+/* Segmentos en píldora (filtros y pasos cortos) */
+.pa .segmentos {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-block-end: var(--esp-4);
+}
+.pa .segmentos button {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--objetivo-min);
+  padding: 0 var(--esp-4);
+  font: inherit;
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-medio);
+  color: var(--color-texto-suave);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-completo);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.pa .segmentos button[aria-pressed='true'] {
+  color: var(--color-texto);
+  border-color: var(--color-texto);
+}
+
+/* Grupos y filas */
+.pa .grupo {
+  margin: var(--esp-4) 0 var(--esp-2);
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-medio);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+.pa .filas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pa .fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  inline-size: 100%;
+  min-height: 56px;
+  padding: var(--esp-3) var(--esp-5);
+  font: inherit;
+  text-align: start;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-xl);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.pa .fila:hover {
+  background: var(--color-superficie);
+}
+.pa .fila.seleccionada {
+  border-color: var(--color-primario);
+  background: var(--color-superficie);
+}
+.pa .fila .texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-inline-size: 0;
+}
+.pa .fila .titulo {
+  font-size: var(--texto-md);
+  font-weight: var(--peso-medio);
+  line-height: var(--linea-apretada);
+}
+.pa .fila .meta {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+.pa .fila .lado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-3);
+  flex: none;
+}
+.pa .fila .chevron {
+  font-size: var(--texto-xl);
+  line-height: 1;
+  color: var(--color-texto-suave);
+}
+.pa .fila.solo-lectura .chevron {
+  font-size: var(--texto-sm);
+}
+
+/* Panel */
+.pa .panel {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.pa .panel > .cabecera-panel {
+  margin-block-end: var(--esp-4);
+}
+.pa .linea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-3);
+}
+.pa .panel h2 {
+  margin: 0;
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-medio);
+  line-height: var(--linea-apretada);
+  color: var(--color-texto);
+}
+.pa .subtitulo {
+  margin: var(--esp-1) 0 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+.pa .volver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--objetivo-min);
+  padding: 0 var(--esp-2);
+  font: inherit;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  background: none;
+  border: 0;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+.pa .cuerpo-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  min-inline-size: 0;
+}
+
+/* Acción de texto (editar, desactivar en una fila de tabla) */
+.pa .enlace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--objetivo-min);
+  min-height: var(--objetivo-min);
+  padding: 0 var(--esp-2);
+  font: inherit;
+  font-size: var(--texto-sm);
+  font-weight: var(--peso-medio);
+  color: var(--color-primario-fuerte);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+.pa .enlace.grave {
+  color: var(--color-error);
+}
+
+/* Barras y composiciones */
+.pa .acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  align-items: center;
+}
+.pa .barra {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 1;
+  margin-block-start: var(--esp-4);
+  padding-block: var(--esp-3);
+  background: var(--color-fondo);
+  border-block-start: 1px solid var(--color-borde);
+}
+.pa .confirmacion {
+  margin-block-start: var(--esp-4);
+  padding: var(--esp-4);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radio-lg);
+  background: var(--color-fondo);
+}
+.pa .confirmacion.decision {
+  border-color: var(--color-primario);
+}
+.pa .confirmacion h3 {
+  margin: 0 0 var(--esp-2);
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-fuerte);
+}
+.pa .confirmacion p {
+  margin: 0 0 var(--esp-3);
+  font-size: var(--texto-md);
+  line-height: var(--linea-normal);
+}
+.pa .contexto {
+  display: grid;
+  gap: var(--esp-4);
+  padding: var(--esp-4);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie);
+  align-self: start;
+}
+.pa .contexto h3 {
+  margin: 0 0 var(--esp-2);
+  font-size: var(--texto-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave);
+}
+.pa .contexto dl {
+  margin: 0;
+  display: grid;
+  gap: var(--esp-1);
+}
+.pa .contexto .par {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-2);
+}
+.pa .contexto dt {
+  color: var(--color-texto-suave);
+}
+.pa .contexto dd {
+  margin: 0;
+  text-align: right;
+}
+.pa .dos-columnas {
+  display: grid;
+  gap: var(--esp-5);
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+.pa .lista-detalle {
+  display: grid;
+  gap: var(--esp-6);
+}
+@media (min-width: 60rem) {
+  .pa .dos-columnas {
+    grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  }
+  .pa .lista-detalle {
+    grid-template-columns: minmax(17rem, 21rem) minmax(0, 1fr);
+  }
+  .pa .lista-detalle > .panel {
+    border-inline-start: 1px solid var(--color-borde);
+    padding-inline-start: var(--esp-5);
+  }
+}
+.pa .barra-busqueda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  align-items: center;
+  margin-block-end: var(--esp-2);
+}
+.pa .barra-busqueda .buscar {
+  flex: 1 1 18rem;
+  position: relative;
+}
+.pa .barra-busqueda .buscar svg {
+  position: absolute;
+  inset-inline-start: var(--esp-3);
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  color: var(--color-texto-suave);
+  pointer-events: none;
+}
+.pa .barra-busqueda .segmentos {
+  margin: 0;
+}
+.pa .cabecera-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--esp-3);
+}
+.pa .cabecera-seccion h3 {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-medio);
+}
+.pa .cabecera-seccion .segmentos,
+.pa .linea .segmentos {
+  margin: 0;
+}
+
+/* Chips de estado */
+.pa .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  padding: 0 var(--esp-2);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  line-height: 1.5rem;
+  white-space: nowrap;
+  border-radius: var(--radio-completo);
+}
+.pa .chip.neutro {
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  line-height: calc(1.5rem - 2px);
+}
+.pa .chip.marca {
+  color: var(--color-primario-fuerte);
+  background: var(--color-primario-suave);
+}
+.pa .chip.exito {
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+}
+.pa .chip.atencion {
+  color: var(--color-aviso);
+  background: var(--color-aviso-suave);
+}
+.pa .chip.error {
+  color: var(--color-error);
+  background: var(--color-error-suave);
+}
+.pa .codigo {
+  font-family: var(--fuente-mono);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-suave);
+}
+
+/* Migas de ámbito */
+.pa .migas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+}
+.pa .migas li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  color: var(--color-texto-suave);
+}
+.pa .migas li + li::before {
+  content: '›';
+  color: var(--color-texto-suave);
+}
+.pa .migas button {
+  font: inherit;
+  color: var(--color-primario-fuerte);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.pa .migas [aria-current] {
+  color: var(--color-texto);
+  font-weight: var(--peso-fuerte);
+}
+.pa .ambito {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+}
+.pa .ambito .rotulo {
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-suave);
+  margin-inline-end: var(--esp-2);
+}
+
+/* Tabla de valores */
+.pa .tabla-marco {
+  position: relative;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  overflow-x: auto;
+  background: var(--color-fondo);
+}
+.pa .tabla {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-md);
+}
+.pa .tabla th {
+  padding: var(--esp-3) var(--esp-4);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  text-align: start;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border-block-end: 1px solid var(--color-borde);
+}
+.pa .tabla td {
+  padding: var(--esp-2) var(--esp-4);
+  border-block-end: 1px solid var(--color-borde);
+  vertical-align: middle;
+}
+.pa .tabla tr:last-child td {
+  border-block-end: 0;
+}
+.pa .tabla tr.inactiva td {
+  color: var(--color-texto-suave);
+}
+.pa .tabla tr.editando td {
+  background: var(--color-primario-suave);
+}
+.pa .tabla .num {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.pa .tabla .acciones-fila {
+  text-align: end;
+  white-space: nowrap;
+}
+.pa .orden {
+  display: inline-flex;
+  gap: var(--esp-1);
+}
+.pa .orden button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--objetivo-min);
+  block-size: var(--objetivo-min);
+  font: inherit;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+.pa .orden button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Cadena de herencia */
+.pa .herencia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pa .herencia li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-inline-size: 11rem;
+  padding: var(--esp-3) var(--esp-4);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  background: var(--color-fondo);
+}
+.pa .herencia li.flecha {
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  justify-content: center;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+}
+.pa .herencia li.aplica {
+  border-color: var(--color-primario);
+  background: var(--color-primario-suave);
+}
+.pa .herencia li.hereda {
+  border-style: dashed;
+}
+.pa .herencia .donde {
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-suave);
+}
+.pa .herencia .cuanto {
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-medio);
+  font-variant-numeric: tabular-nums;
+}
+.pa .herencia .nota {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+.pa .valor-grande {
+  margin: 0;
+  font-size: var(--texto-2xl);
+  font-weight: var(--peso-medio);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--linea-apretada);
+}
+
+/* Antes → después */
+.pa .diff {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  font-variant-numeric: tabular-nums;
+}
+.pa .diff .antes {
+  padding: 0 var(--esp-2);
+  color: var(--color-error);
+  background: var(--color-error-suave);
+  border-radius: var(--radio-sm);
+  text-decoration: line-through;
+}
+.pa .diff .despues {
+  padding: 0 var(--esp-2);
+  color: var(--color-exito);
+  background: var(--color-exito-suave);
+  border-radius: var(--radio-sm);
+  font-weight: var(--peso-fuerte);
+}
+
+/* Línea de tiempo */
+.pa .eventos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.pa .eventos li {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: var(--esp-4);
+  padding: var(--esp-4) 0;
+  border-block-end: 1px solid var(--color-borde);
+}
+.pa .eventos li:last-child {
+  border-block-end: 0;
+}
+.pa .eventos time {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+.pa .eventos .que {
+  margin: 0;
+  font-size: var(--texto-md);
+  line-height: var(--linea-normal);
+}
+.pa .eventos .porque {
+  margin: var(--esp-1) 0 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+.pa .eventos .porque strong {
+  color: var(--color-texto);
+  font-weight: var(--peso-medio);
+}
+
+/* Fichas y vista previa */
+.pa .fichas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--esp-4);
+}
+.pa .ficha {
+  padding: var(--esp-4);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  background: var(--color-fondo);
+  display: grid;
+  gap: var(--esp-2);
+  align-content: start;
+}
+.pa .ficha h4 {
+  margin: 0;
+  font-size: var(--texto-md);
+  font-weight: var(--peso-medio);
+}
+.pa .ficha p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  line-height: var(--linea-normal);
+}
+.pa .ficha > .chip {
+  justify-self: start;
+}
+.pa .vista-previa {
+  padding: var(--esp-4) var(--esp-5);
+  border: 1px dashed var(--color-borde-control);
+  border-radius: var(--radio-lg);
+  background: var(--color-superficie);
+}
+.pa .vista-previa > .rotulo {
+  margin: 0 0 var(--esp-3);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-suave);
+}
+
+/* Campos de la aplicación que el cimiento no trae */
+.pa .campo-libre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  margin-block-end: var(--esp-4);
+}
+.pa .campo-libre > label,
+.pa .campo-libre > .etiqueta,
+.pa .linea > .etiqueta {
+  font-weight: 600;
+  font-size: var(--texto-sm);
+  color: var(--color-texto);
+}
+.pa .ayuda {
+  margin: 0;
+  font-size: var(--texto-xs);
+  color: var(--color-texto-suave);
+}
+.pa .error-campo {
+  margin: 0;
+  font-size: var(--texto-xs);
+  color: var(--color-error);
+  font-weight: 500;
+}
+.pa .espacio-arriba {
+  margin-block-start: var(--esp-4);
+}
+.pa .rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--esp-4);
+}
+.pa .completo {
+  grid-column: 1 / -1;
+}
+.pa .solo-lectores {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.pa .contador {
+  min-inline-size: 1.5rem;
+  padding: 0 var(--esp-2);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  line-height: 1.5rem;
+  text-align: center;
+  color: var(--color-texto-inverso);
+  background: var(--color-primario);
+  border-radius: var(--radio-completo);
+  box-sizing: border-box;
+}
+
+@media (max-width: 60rem) {
+  .pa .fila {
+    padding: var(--esp-3) var(--esp-4);
+  }
+  .pa .eventos li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-1);
+  }
+  .pa .tabla .ocultable {
+    display: none;
+  }
+}
+
+/* Grupo de campos con leyenda (el de «Nuevo valor», «A quién», «Sobre qué»): la ficha del cimiento */
+.pa fieldset {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  padding: var(--esp-5);
+  margin: 0 0 var(--esp-5);
+  background: var(--color-fondo);
+  min-inline-size: 0;
+}
+.pa legend {
+  padding-inline: var(--esp-2);
+  font-size: var(--texto-xs);
+  font-weight: var(--peso-fuerte);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-suave);
+}
+
+/* Controles de filtro y de fichero: la misma caja que los campos del cimiento (44 px, foco visible). */
+.pa .control,
+.pa input[type='file'] {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--objetivo-min);
+  padding: var(--esp-2) var(--esp-3);
+  font: inherit;
+  font-size: var(--texto-md);
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-md);
+}
+.pa .control:focus-visible,
+.pa input[type='file']:focus-visible {
+  outline: var(--ancho-foco) solid var(--color-foco);
+  outline-offset: 1px;
+}
+
+/* Miga «Global»: objetivo táctil de 44 px sin cambiar cómo se lee. */
+.pa .migas button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--objetivo-min);
+  min-inline-size: var(--objetivo-min);
+}
+
+/* Las pestañas de sección caben en 390 px: pasan a otra fila en vez de desbordar el documento. */
+.pa div.pestanas[role='tablist'] {
+  flex-wrap: wrap;
+  max-inline-size: 100%;
+}
+.pa [role='tablist'] button {
+  max-inline-size: 100%;
+}
+@media (max-width: 30rem) {
+  .pa div.pestanas[role='tablist'] {
+    gap: 0;
+  }
+  .pa [role='tablist'] button {
+    padding-inline: var(--esp-2);
+  }
+}
+
+/* Flechas dibujadas (no letras): del tamaño del texto y del color del contexto. */
+.pa .flecha-icono {
+  inline-size: 1em;
+  block-size: 1em;
+  vertical-align: -0.125em;
+  flex: none;
+}
+
+/* Campo de búsqueda en el servidor (persona, grupo, rol) */
+.pa .buscador-servidor {
+  position: relative;
+}
+.pa .buscador-servidor .resultados {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 3;
+  margin: var(--esp-1) 0 0;
+  padding: var(--esp-1);
+  max-block-size: 16rem;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde-control);
+  border-radius: var(--radio-md);
+}
+.pa .buscador-servidor .resultados li {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--objetivo-min);
+  padding: 0 var(--esp-3);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+.pa .buscador-servidor .resultados li.activa,
+.pa .buscador-servidor .resultados li:hover {
+  background: var(--color-superficie);
+}
+.pa .buscador-servidor .resultados li[aria-selected='true'] {
+  font-weight: var(--peso-fuerte);
+}
+
+/* A escala, una fila con varias etiquetas no desborda el documento a 390 px: las etiquetas pasan a otra línea. */
+.pa .fila .lado {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.pa .fila {
+  min-inline-size: 0;
+}
+/* A 390 px la barra de acciones deja de ser fija: pegada al borde tapa lo que hay debajo (y axe no puede decidir su contraste). */
+@media (max-width: 30rem) {
+  .pa .barra {
+    position: static;
+  }
+}

@@ -1,0 +1,253 @@
+/**
+ * Sistema de identidad visual de los formularios — tokens `[PARAM]`.
+ *
+ * Cada proyecto reparametriza su marca cambiando ESTOS valores, y la vía prevista para
+ * hacerlo sin recompilar es el tema de la Living Application: la custom page enlaza
+ * `../theme/theme.css` y sus variables sobreescriben los valores por defecto de aquí
+ * (la doc de la plataforma expone el tema de la aplicación a la página). La marca que
+ * sirve el módulo de parámetros (`$lib/parametros/marca`) se aplica encima.
+ *
+ * El default es de MARCA NEUTRA: minimalismo, mucho aire, ninguna entidad real.
+ *
+ * La escala completa está aquí a propósito: si un token falta, la pantalla lo inventa y
+ * la identidad se dispersa (es lo que hace que N formularios parezcan N productos).
+ */
+
+/**
+ * Base tipográfica — corrige un reset de la plataforma (medido el 2026-09-09).
+ *
+ * El tema de Bonita (Bootstrap 3) declara `html { font-size: 10px }` **fijo** y, como el
+ * puente al tema se enlaza después de nuestros estilos, gana por orden. Dos consecuencias,
+ * las dos malas:
+ *
+ *  1. Todo token en `rem` valía el 62,5% de lo escrito: un titular de `2rem` se dibujaba a
+ *     20px en vez de 32px, y un ancho de `80rem` a 800px en vez de 1280px.
+ *  2. Un tamaño **fijo en píxeles** en la raíz ignora la preferencia de tamaño de letra del
+ *     navegador. Quien necesita la letra más grande no obtiene nada: es un incumplimiento
+ *     de WCAG 1.4.4 (Resize text), y sin UI Designer la accesibilidad es nuestra.
+ *
+ * `100%` devuelve la raíz a la preferencia del usuario (16px por defecto, más si la ha
+ * subido). Es el único `!important` del sistema y está acotado a esta única declaración:
+ * no puede ganarse por orden porque el tema se carga después a propósito —es lo que
+ * permite que un proyecto reparametrice su marca sin recompilar—, y el iframe de la
+ * página solo contiene nuestra pantalla, así que no afecta al resto del portal.
+ */
+html {
+  font-size: 100% !important;
+}
+
+:root {
+  /* ── Marca [PARAM] ─────────────────────────────────────────────────────── */
+  --marca-nombre: 'Empresa Demo';
+  /* Sustituible por el logotipo del proyecto. Se declara como token para que el
+     formulario nunca incruste una imagen de marca en su propio código. El tema puede
+     darle una `url(...)` externa, un `data:` embebido, o servir el fichero desde su
+     propio paquete (`resources/images/…`), que es lo que hace el arquetipo oficial. */
+  --marca-logo: none;
+  --marca-logo-alto: 2rem;
+  --marca-logo-ancho: 8rem;
+  /* Tipografía de marca: el titular y el nombre pueden llevar la fuente corporativa
+     mientras el cuerpo conserva la del sistema (más legible en texto largo). Si el tema
+     no la define, cae a `--fuente-base` y nada se rompe. */
+  --fuente-marca: var(--fuente-base);
+
+  /* ── Color ─────────────────────────────────────────────────────────────── */
+  --color-primario: #6b21a8;
+  --color-primario-fuerte: #581c87;
+  --color-primario-suave: #f3e8ff;
+  --color-acento: #a855f7;
+
+  --color-fondo: #ffffff;
+  --color-superficie: #faf9fc;
+  /* Separador DECORATIVO: una ficha, una fila, una tira. WCAG no le exige contraste
+     (1.4.11 excluye lo puramente decorativo), así que puede ser tan tenue como el diseño
+     quiera. NO sirve para el borde de un control: ver `--color-borde-control`. */
+  --color-borde: #e4e1e8;
+  /* Límite de un CONTROL (campo, lista, área de texto, zona de carga, botón secundario).
+     WCAG 2.1 §1.4.11 exige 3:1 contra el fondo adyacente: el borde es lo que dice dónde
+     se escribe, y un borde que no se percibe es un campo que no se ve. Un solo token no
+     podía cumplir los dos contratos (un borde tenue dejaba controles a 1.27:1), así que son
+     dos. Este valor da 4.5:1 sobre blanco: margen para que un tema oscurezca el fondo sin
+     caer por debajo de 3:1. */
+  --color-borde-control: #79747e;
+
+  --color-texto: #1c1b1f;
+  --color-texto-suave: #5f5b66;
+  --color-texto-inverso: #ffffff;
+
+  /* Estados. El error y el foco son de accesibilidad, no decorativos. */
+  --color-error: #b3261e;
+  --color-error-suave: #fdeceb;
+  --color-exito: #1b6b3a;
+  --color-exito-suave: #e7f4ec;
+  --color-aviso: #8a5a00;
+  --color-aviso-suave: #fdf3e2;
+  --color-foco: #6b21a8;
+
+  /* ── Tipografía ───────────────────────────────────────────────────────── */
+  /* [PARAM] El proyecto puede imponer su fuente corporativa desde el tema: basta redefinir
+     `--fuente-base` (y declarar la `@font-face` en el propio tema, que se sirve como
+     recurso de la aplicación: sin depender de internet en runtime, la fuente viaja en el
+     paquete del tema, nunca desde un CDN). La pila por defecto es la del sistema: sin
+     descargas, sin salto de layout y con soporte completo de acentos del español. */
+  --fuente-base:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --fuente-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+  --texto-xs: 0.75rem;
+  --texto-sm: 0.875rem;
+  --texto-md: 1rem;
+  --texto-lg: 1.125rem;
+  --texto-xl: 1.5rem;
+  --texto-2xl: 2rem;
+
+  --peso-normal: 400;
+  --peso-medio: 500;
+  --peso-fuerte: 600;
+  --linea-apretada: 1.25;
+  --linea-normal: 1.5;
+
+  /* ── Espaciado ────────────────────────────────────────────────────────── */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+
+  /* ── Disposición ──────────────────────────────────────────────────────────
+     DIRECTRIZ: la aplicación es **responsive con foco principal en escritorio**, no
+     mobile-first. Es coherente con quién usa un proceso: la mayoría de las pantallas son
+     bandejas internas que se trabajan en un puesto de escritorio, con varias piezas de
+     información a la vista a la vez. El canal de cliente comparte el mismo sistema.
+
+     Consecuencia práctica: una pantalla NO se compone como una columna estrecha
+     centrada —eso deja media pantalla vacía en un monitor— sino en rejilla, y colapsa a
+     una columna cuando el ancho no da. Estos tokens son la vara común para que las
+     pantallas no inventen cada una su ancho.
+
+     `--ancho-lectura` se reserva para bloques de texto corrido, donde una línea larga sí
+     se lee peor. No es el ancho de la pantalla. */
+  --ancho-contenido: 80rem;
+  --ancho-lectura: 34rem;
+  /* Bajo este ancho, las rejillas de dos columnas se apilan. */
+  --corte-columnas: 60rem;
+
+  /* ── Formas y sombras ─────────────────────────────────────────────────── */
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 16px;
+  /* Ficha de bandeja: el radio grande es lo que
+     separa una lista de trabajo de una tabla. Entra con la bandeja única; lo usan las dos. */
+  --radio-xl: 24px;
+  --radio-completo: 999px;
+
+  --sombra-sm: 0 1px 2px rgb(28 27 31 / 8%);
+  --sombra-md: 0 2px 8px rgb(28 27 31 / 10%);
+  --sombra-lg: 0 8px 24px rgb(28 27 31 / 12%);
+
+  /* ── Interacción ──────────────────────────────────────────────────────── */
+  --ancho-foco: 2px;
+  --transicion: 150ms ease;
+  /* Altura mínima de un objetivo táctil: es un requisito de accesibilidad, no estética. */
+  --objetivo-min: 44px;
+  /* Alto de la fila de cabecera de la app (marca | momentos | persona): una sola fila compacta. */
+  --alto-cabecera: 3.25rem;
+}
+
+/* Respeta la preferencia del sistema de reducir el movimiento (accesibilidad). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transicion: 0ms;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   La pantalla DENTRO de una bandeja (`enMarco.ts` marca el documento).
+
+   Medido: embebida, la pantalla repetía la cabecera que la bandeja
+   ya pinta —sobretítulo, título grande y «Quién la usa»— y el primer campo
+   quedaba a ~300 px del borde del marco; además el marco se leía como «una
+   ventana dentro de la ventana» por su borde redondeado y su barra de scroll
+   gruesa. Suelta, la pantalla no cambia: esto solo aplica embebida.
+   ───────────────────────────────────────────────────────────────────────────── */
+/* El selector NO cuelga del padre. Si colgara (`main > header.cabecera`), lo que la regla
+   protege dependería de la GEOMETRÍA del marcado: una pantalla que envuelve en
+   `<div class="marco">` en vez de `<main>` seguiría pintando su cabecera embebida.
+   `header.cabecera` es la cabecera de pantalla y hay exactamente una por pantalla: contado, no
+   supuesto. */
+[data-en-marco] header.cabecera {
+  display: none;
+}
+
+/* La marca («Empresa Demo») también: la bandeja que contiene el marco ya la pinta arriba. */
+[data-en-marco] header.marca {
+  display: none;
+}
+
+[data-en-marco] :is(main, .marco) {
+  padding-block-start: var(--esp-2, 0.5rem);
+}
+
+/* El scroll se integra en vez de imponerse: fino, pero VISIBLE. El pulgar es un
+   control —a menudo la única pista de que el formulario sigue más abajo—, así
+   que usa el token de límite de control (≥3:1, WCAG 1.4.11): 4,55:1 sobre el fondo
+   y 4,34:1 sobre la superficie. Con `--color-borde` (decorativo) daba ≈1,3:1. */
+[data-en-marco] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-borde-control, #79747e) transparent;
+}
+
+[data-en-marco] ::-webkit-scrollbar {
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+[data-en-marco] ::-webkit-scrollbar-thumb {
+  background: var(--color-borde-control, #79747e);
+  border-radius: 999px;
+}
+
+[data-en-marco] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LA ACCIÓN SIGUE A LA VISTA AL FINAL DEL SCROLL.
+
+   Las pantallas de ejecución son dos columnas: el formulario y el contexto del
+   caso. La barra de acciones es `sticky` al pie de SU columna, así que en
+   cuanto el contexto es más largo que el formulario, al desplazar hasta el final
+   la barra se va por arriba del viewport — medido en el portal real. «Siempre a la vista» dejaba de ser cierto justo donde
+   la persona termina de leer.
+
+   El arreglo es de layout y va aquí, no repetido en cada pantalla: la fila se estira y la columna del formulario es flexible. Lo que sostiene
+   la acción hasta el final NO es empujarla con `margin-block-start: auto` —se probó,
+   y a cambio dejaba hueco muerto en el formulario corto—: es que la barra viva FUERA
+   de la rejilla, como pie del área. Lo vigila `areaDeTrabajo.test.ts`.
+
+   El selector cubre las DOS formas de la rejilla —`<main><div class="cuerpo">` y
+   `<main class="cuerpo">`— porque colgar de una sola es el error que se evita unas
+   líneas más arriba con `header.cabecera`: lo que la regla
+   protege no puede depender de la geometría del marcado.
+   ───────────────────────────────────────────────────────────────────────────── */
+main > .cuerpo,
+main.cuerpo {
+  align-items: stretch;
+}
+
+main > .cuerpo > div:first-child,
+main > .cuerpo > form,
+main.cuerpo > div:first-child,
+main.cuerpo > form {
+  display: flex;
+  flex-direction: column;
+}
+
+main > .cuerpo form,
+main.cuerpo form {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}

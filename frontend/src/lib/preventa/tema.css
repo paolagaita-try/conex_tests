@@ -1,0 +1,226 @@
+/* Tema corporativo Trycore: azul marino #000C4C (principal) y turquesa #00CCC0 (acento). Contraste AA:
+   el turquesa nunca es color de texto sobre blanco; para texto se usa #006B65 (≥ 5.5:1). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --tc-marino: #000c4c;
+  --tc-marino-2: #0b1a6b;
+  --tc-turquesa: #00ccc0;
+  --tc-turquesa-texto: #006b65;
+  --tc-turquesa-suave: #e3faf8;
+  --tc-fondo: #f4f6fb;
+  --tc-tarjeta: #ffffff;
+  --tc-borde: #e2e6f0;
+  --tc-texto: #141a33;
+  --tc-texto-suave: #4a5272;
+  --tc-sombra: 0 1px 2px rgb(0 12 76 / 0.06), 0 8px 24px rgb(0 12 76 / 0.07);
+  --tc-radio: 14px;
+
+  --color-primario: var(--tc-marino);
+  --color-primario-fuerte: #00062e;
+  --color-primario-suave: #e8ebf7;
+  --color-acento: var(--tc-turquesa);
+  --color-fondo: var(--tc-fondo);
+  --color-superficie: var(--tc-tarjeta);
+  --color-borde: var(--tc-borde);
+  --color-texto: var(--tc-texto);
+  --color-texto-suave: var(--tc-texto-suave);
+  --color-foco: var(--tc-marino);
+  --fuente-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-marca: var(--fuente-base);
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--tc-fondo);
+  color: var(--tc-texto);
+  font-family: var(--fuente-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tc-pagina {
+  max-inline-size: 72rem;
+  margin-inline: auto;
+  padding: 1.5rem clamp(1rem, 3vw, 2rem) 3rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.tc-rejilla {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 64rem) {
+  .tc-rejilla {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: start;
+  }
+}
+
+.tc-tarjeta {
+  background: var(--tc-tarjeta);
+  border: 1px solid var(--tc-borde);
+  border-radius: var(--tc-radio);
+  box-shadow: var(--tc-sombra);
+  padding: 1.25rem 1.5rem;
+}
+.tc-tarjeta > h2,
+.tc-titulo {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--tc-marino);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.tc-titulo::before,
+.tc-tarjeta > h2::before {
+  content: '';
+  inline-size: 4px;
+  block-size: 1.1em;
+  border-radius: 2px;
+  background: var(--tc-turquesa);
+}
+
+.tc-campo {
+  display: grid;
+  gap: 0.35rem;
+  margin-block-end: 1.1rem;
+}
+.tc-campo > label,
+.tc-leyenda {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--tc-texto);
+}
+.tc-requerido {
+  color: #b3261e;
+  margin-inline-start: 0.15rem;
+}
+.tc-ayuda {
+  font-size: 0.82rem;
+  color: var(--tc-texto-suave);
+  margin: 0;
+}
+.tc-error {
+  font-size: 0.85rem;
+  color: #b3261e;
+  margin: 0;
+  font-weight: 500;
+}
+.tc-control {
+  font: inherit;
+  color: inherit;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #8a91ad;
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+textarea.tc-control {
+  min-block-size: 6.5rem;
+  resize: vertical;
+}
+.tc-control:hover {
+  border-color: var(--tc-marino-2);
+}
+.tc-control[aria-invalid='true'] {
+  border-color: #b3261e;
+  background: #fffafa;
+}
+:where(.tc-pagina) :focus-visible {
+  outline: 3px solid var(--tc-marino);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px rgb(0 204 192 / 0.45);
+}
+
+.tc-boton {
+  font: inherit;
+  font-weight: 600;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
+  cursor: pointer;
+  background: var(--tc-marino);
+  color: #fff;
+  box-shadow: 0 6px 16px rgb(0 12 76 / 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.1s, background 0.15s;
+}
+.tc-boton:hover:not(:disabled) {
+  background: var(--tc-marino-2);
+  transform: translateY(-1px);
+}
+.tc-boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.tc-giro {
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 2px solid rgb(255 255 255 / 0.4);
+  border-top-color: var(--tc-turquesa);
+  border-radius: 50%;
+  animation: tc-giro 0.8s linear infinite;
+}
+@keyframes tc-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-giro {
+    animation: none;
+  }
+}
+
+.tc-aviso {
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid;
+  margin: 0;
+}
+.tc-aviso strong {
+  display: block;
+}
+.tc-aviso--exito {
+  background: #e6f7f0;
+  border-color: #7fd3b4;
+  color: #0e5132;
+}
+.tc-aviso--error {
+  background: #fdeceb;
+  border-color: #f0a8a3;
+  color: #8c1d16;
+}
+.tc-aviso--info {
+  background: var(--tc-turquesa-suave);
+  border-color: #7fe3dc;
+  color: #003d3a;
+}
+
+.tc-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-block-start: 1px solid var(--tc-borde);
+  padding-block-start: 1rem;
+  margin-block-start: 0.5rem;
+}
+
+.tc-sr {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
