@@ -43,27 +43,46 @@ Hub desconectado: trabajo en modo local, sin claims de `slice-ops.sh`. Sin escri
 - `mvn -B clean install -Pbundle` (desde `bonita-project/`) → BUILD SUCCESS; conectores 54 tests, filtros 7 tests;
   `app/target/processes/GestionPreventa--1.1.bar` (ya sin la 1.0).
 
-## Journey (no ejecutado: tres intentos fallidos al arrancar el runtime)
+## Journey (2026-11-24, tercera tanda: verde, contra el mock local)
 
-- Intentos con un bundle nuevo extraído por `run-journey.sh` (en el scratchpad y en `C:/bjA\Temp`): «FALLA: la REST
-  API no respondió en 300 s». Causa encontrada: en Git Bash, `cmd.exe /c "start-bonita.bat …"` pierde el `/c` por la
-  conversión de rutas de MSYS (`/c` → `C:/`) y cmd abre un prompt sin arrancar Bonita (`stdout.log` solo muestra el
-  prompt). Con `MSYS_NO_PATHCONV=1` el `/c` funciona, pero entonces el mock no arranca (ruta `/c/...` del script) y
-  la corrida siguiente (mock arrancado aparte) la detuvo Claude Code por **falta de memoria del equipo**; no se
-  reintentó.
-- Queda sin probar en ejecución: los caminos `entregada` (con adjunto y «viviana no ve la tarea»), `bloqueada` y
-  `noViable`.
-- El mock (`mock_http.py`) **no registra peticiones**: aunque el journey corra, solo prueba que el PATCH del ticket
-  responde y que el caso llega a `fin_noViable`; no puede comprobar que el cuerpo lleva `hs_pipeline_stage` = `4`.
-- `mock.json`: se añadieron las rutas de `T-003` (copia de las de `T-001`) para el camino `bloqueada`.
+Corrido con las copias parcheadas del arnés (P-1 arranque en Windows, P-2 mock con `--registro`), bundle nuevo
+construido por el runner (`mvn clean install -Pbundle` BUILD SUCCESS, 7 min) y token ficticio. RAM libre antes de
+arrancar: 3,9 GB. Nada contra HubSpot real.
+
+- **Antes de la corrida verde** se corrigieron dos cosas:
+  1. `frontend/forms.manifest.json`: restauradas las entradas técnicas (`parametros`, `_semilla`, `_muestra`); sin
+     ellas la aplicación `parametros` no se instalaba. El bundle trae ya `custompage_formInternoParametros`,
+     `custompage_frm10ValidarSolicitud`, `custompage_frm20DisenarPropuesta` y `custompage_frmOverview`.
+  2. `docs/08-construccion/expresiones.md`: el `cuerpo` de `conn_hubspotNota` (10 y 20) usaba
+     `.replace("\n","<br>")`; el generador convierte el `<br>` de la celda en un salto de línea real dentro del
+     string Groovy y la tarea «Validar la solicitud» quedaba `failed` («Unexpected character: '"'»). Ahora:
+     `.replace(String.valueOf((char) 10), "<" + "br>")`.
+- **Resultado Newman**: salida 0 (`JOURNEY_EXIT=0`), sin assertions fallidas.
+- **Reparto**: la consultora elegida por round robin fue `linda.lozano` (owner `89450376`) en los tres casos; el
+  journey comprueba que «Validar la solicitud» **no** es tarea pendiente de `viviana.velasquez` y sí de `linda.lozano`.
+
+Registro del mock (`método ruta cuerpo`, recortado):
+
+| Camino | Líneas clave del registro | Resultado |
+|---|---|---|
+| `entregada` (viable + diseño **con** adjunto) | `PATCH tickets/T-001 {"hs_pipeline_stage": "2", "hubspot_owner_id": "89450376"}` · `POST notes` «Validación de preventa (Bonita): Viable … Concepto de viabilidad: Viable con DocFly» · `PATCH tickets/T-001 {"hs_pipeline_stage": "3"}` · `PATCH deals/D-001 {"concepto_viabilidad": …, "valoracion_operaciones": "40 h de fábrica", "url_ppta_preventa": …, "link_repo_preventa": …}` · `POST notes` «Propuesta de preventa (Bonita)» · `POST files/v3/files` (multipart `propuesta.pdf`) · `POST notes {"hs_note_body": "Adjuntos de preventa: 1 archivo(s).", "hs_attachment_ids": "F-001"}` · `PATCH tickets/T-001 {"hs_pipeline_stage": "1425810258"}` | pasó |
+| `bloqueada` (bloqueado → En espera → vuelve → viable → diseño **sin** adjuntos) | `PATCH tickets/T-003 {"hs_pipeline_stage": "2", …}` · `POST notes` «Bloqueado (falta información del lead) … Falta el volumen de documentos.» · `PATCH tickets/T-003 {"hs_pipeline_stage": "1425810257"}` · `POST notes` «Viable … El lead completó la información.» · `PATCH tickets/T-003 {"hs_pipeline_stage": "3"}` · `PATCH deals/D-001 {… "valoracion_operaciones": "20 h" …}` · `POST notes` «Propuesta de preventa» · **sin** `POST files` · `PATCH tickets/T-003 {"hs_pipeline_stage": "1425810258"}` | pasó |
+| `noViable` | `PATCH tickets/T-002 {"hs_pipeline_stage": "2", …}` · `POST notes {"hs_note_body": "<p><strong>Cerrado por viabilidad:</strong> Fuera del alcance de los productos</p>…"}` · `PATCH tickets/T-002 {"hs_pipeline_stage": "4"}` · `PATCH deals/D-002 {"concepto_viabilidad": "Fuera del alcance de los productos"}` | pasó |
+
+- Limpieza: Bonita y el mock detenidos (puertos 8096 y 8099 libres, sin procesos `java`).
 
 ## Pendiente o no verificado
 
-1. **Journey de punta a punta** (ver arriba): corregir el arranque del bundle en Windows en `run-journey.sh` (arnés)
-   o correrlo con memoria disponible; para ver el stage `4` hace falta un mock que registre las peticiones.
-2. Restos fuera del repo: `C:/bjA\Temp\hubspot-bonita-bundle.xgc8` (bundle extraído del intento detenido; sin
-   procesos vivos). Borrarlo a mano.
-3. Orden contrato → operaciones → conectores de salida y acceso a inputs en esos conectores: `[no verificado]` (sin MCP
+1. **`tools/arnes.sh verificar` = 1 solo por `check_generados`**: el manifiesto lleva el permiso
+   `GET|extension/preventa` que el generador no escribe (opción B, `scripts/parche-manifest-preventa.py`). Se resuelve
+   con P-3. Los demás custodios en verde.
+2. **Versión del pool**: el `.proc` cambió (expresión del cuerpo de la nota) y el pool sigue en 1.1; en un runtime que
+   ya tenga la 1.1 desplegada hay que subir la versión (regla 6), lo que exige tocar `docs/07-bonita/`.
+3. Formularios en el navegador (precarga por `extension/preventa` con sesión real): no recorridos en esta corrida;
+   el journey va por REST API.
+4. Resto fuera del repo: `C:/Users/Administrador/AppData/Local/Temp/hubspot-bonita-bundle.Ldm3` (bundle de una
+   corrida con `--mantener`, Bonita ya detenido). Borrarlo a mano.
+5. Orden contrato → operaciones → conectores de salida y acceso a inputs en esos conectores: `[no verificado]` (sin MCP
    `bonita-doc-index` en la sesión).
-4. Reintentar una tarea en fallo puede duplicar notas/adjuntos en HubSpot.
-5. Tipo real de `concepto_viabilidad` y `valoracion_operaciones` en HubSpot (se guardan como `TEXT`).
+6. Reintentar una tarea en fallo puede duplicar notas/adjuntos en HubSpot.
+7. Tipo real de `concepto_viabilidad` y `valoracion_operaciones` en HubSpot (se guardan como `TEXT`).
