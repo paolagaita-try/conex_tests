@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applications xmlns="http://documentation.bonitasoft.com/application-xml-schema/1.1">
+  <application token="hubspotBonita" version="1.0" profile="User" homePage="frm10ValidarSolicitud" state="ACTIVATED" layout="custompage_layoutBonita" theme="custompage_themeBonita">
+    <displayName>hubspot-bonita</displayName>
+    <description>Aplicación hubspot-bonita: contiene las pantallas de sus formularios.</description>
+    <applicationPages>
+      <applicationPage customPage="custompage_frm10ValidarSolicitud" token="frm10ValidarSolicitud" />
+      <applicationPage customPage="custompage_frm20DisenarPropuesta" token="frm20DisenarPropuesta" />
+      <applicationPage customPage="custompage_frmOverview" token="frmOverview" />
+    </applicationPages>
+    <applicationMenus />
+  </application>
+</applications>

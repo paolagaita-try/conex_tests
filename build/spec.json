@@ -42,6 +42,126 @@
             "obligatorio": false,
             "relacion": null,
             "tipo": "STRING"
+          },
+          {
+            "longitud": 50,
+            "multiple": false,
+            "nombre": "dealId",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": 20,
+            "multiple": false,
+            "nombre": "resultadoValidacion",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "conceptoViabilidad",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "TEXT"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "notaValidacion",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "TEXT"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "supuestos",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "TEXT"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "valoracionOperaciones",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "TEXT"
+          },
+          {
+            "longitud": 1000,
+            "multiple": false,
+            "nombre": "urlPptaPreventa",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": 1000,
+            "multiple": false,
+            "nombre": "linkRepoPreventa",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "STRING"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "notaPropuesta",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "TEXT"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "cantidadAdjuntos",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "INTEGER"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "fechaRecepcion",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "OFFSETDATETIME"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "fechaAsignacion",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "OFFSETDATETIME"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "fechaValidacion",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "OFFSETDATETIME"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "fechaPropuesta",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "OFFSETDATETIME"
+          },
+          {
+            "longitud": null,
+            "multiple": false,
+            "nombre": "fechaEntrega",
+            "obligatorio": false,
+            "relacion": null,
+            "tipo": "OFFSETDATETIME"
           }
         ],
         "consultas": [
@@ -74,9 +194,12 @@
     {
       "esperado": {
         "preventa.asunto": "Preventa cliente ACME",
+        "preventa.cantidadAdjuntos": 1,
         "preventa.consultor": "Linda",
         "preventa.consultorOwnerId": "89450376",
-        "preventa.estado": "entregadaAVentas"
+        "preventa.estado": "entregadaAVentas",
+        "preventa.resultadoValidacion": "viable",
+        "preventa.urlPptaPreventa": "https://example.com/ppta"
       },
       "fin": "fin_entregada",
       "id": "entregada",
@@ -91,25 +214,111 @@
         },
         {
           "evento": null,
+          "objetivo": "10_validarSolicitud",
+          "payload": null,
+          "tarea": "(no ve)",
+          "usuario": "viviana.velasquez"
+        },
+        {
+          "evento": null,
           "payload": {
-            "resultado": "entregado"
+            "conceptoViabilidad": "Viable con DocFly",
+            "notaValidacion": "Requerimiento claro; se valida.",
+            "resultado": "viable",
+            "supuestos": "Cliente entrega muestras"
           },
-          "tarea": "18_esperarArtefactos",
-          "usuario": "ofelia.bot"
+          "tarea": "10_validarSolicitud",
+          "usuario": "linda.lozano"
+        },
+        {
+          "evento": null,
+          "payload": {
+            "adjuntos": [
+              {
+                "$archivo": "propuesta.pdf"
+              }
+            ],
+            "linkRepoPreventa": "https://example.com/repo",
+            "notaPropuesta": "Propuesta lista",
+            "urlPptaPreventa": "https://example.com/ppta",
+            "valoracionOperaciones": "40 h de fábrica"
+          },
+          "tarea": "20_disenarPropuesta",
+          "usuario": "linda.lozano"
         }
       ],
       "salidas": [
-        "gwXor_1→40_entregarAVentas"
+        "gwXor_1→11_pasarADiseno",
+        "gwXor_2→21_subirAdjuntos"
+      ]
+    },
+    {
+      "esperado": {
+        "preventa.estado": "entregadaAVentas",
+        "preventa.notaValidacion": "El lead completó la información.",
+        "preventa.resultadoValidacion": "viable"
+      },
+      "fin": "fin_entregada",
+      "id": "bloqueada",
+      "pasos": [
+        {
+          "evento": null,
+          "payload": {
+            "ticketId": "T-003"
+          },
+          "tarea": "(instanciacion)",
+          "usuario": "ofelia.bot"
+        },
+        {
+          "evento": null,
+          "payload": {
+            "conceptoViabilidad": "",
+            "notaValidacion": "Falta el volumen de documentos.",
+            "resultado": "bloqueado",
+            "supuestos": ""
+          },
+          "tarea": "10_validarSolicitud",
+          "usuario": "linda.lozano"
+        },
+        {
+          "evento": null,
+          "payload": {
+            "conceptoViabilidad": "Viable",
+            "notaValidacion": "El lead completó la información.",
+            "resultado": "viable",
+            "supuestos": ""
+          },
+          "tarea": "10_validarSolicitud",
+          "usuario": "linda.lozano"
+        },
+        {
+          "evento": null,
+          "payload": {
+            "adjuntos": [],
+            "linkRepoPreventa": "https://example.com/repo2",
+            "notaPropuesta": "",
+            "urlPptaPreventa": "https://example.com/ppta2",
+            "valoracionOperaciones": "20 h"
+          },
+          "tarea": "20_disenarPropuesta",
+          "usuario": "linda.lozano"
+        }
+      ],
+      "salidas": [
+        "gwXor_1→12_pasarAEnEspera",
+        "gwXor_1→11_pasarADiseno",
+        "gwXor_2→40_entregarAVentas"
       ]
     },
     {
       "esperado": {
         "preventa.consultor": "Linda",
         "preventa.consultorOwnerId": "89450376",
-        "preventa.estado": "cerrada"
+        "preventa.estado": "noViable",
+        "preventa.resultadoValidacion": "no_viable"
       },
-      "fin": "fin_cerrada",
-      "id": "cerrada",
+      "fin": "fin_noViable",
+      "id": "noViable",
       "pasos": [
         {
           "evento": null,
@@ -122,19 +331,83 @@
         {
           "evento": null,
           "payload": {
-            "resultado": "cerrado"
+            "conceptoViabilidad": "Fuera del alcance de los productos",
+            "notaValidacion": "No aplica a DocFly ni Oriuno.",
+            "resultado": "no_viable",
+            "supuestos": ""
           },
-          "tarea": "18_esperarArtefactos",
-          "usuario": "ofelia.bot"
+          "tarea": "10_validarSolicitud",
+          "usuario": "linda.lozano"
         }
       ],
       "salidas": [
-        "gwXor_1→fin_cerrada"
+        "gwXor_1→13_registrarNoViable"
       ]
     }
   ],
   "extensiones": {
     "definiciones": {
+      "hubspot-archivo-subir": {
+        "entradas": [
+          {
+            "nombre": "urlBase",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaArchivos",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaObjetos",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "documentos",
+            "obligatoria": true,
+            "tipo": "java.util.List"
+          },
+          {
+            "nombre": "dealId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "carpeta",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "cuerpoNota",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "hubspot-archivo-subir-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [
+          {
+            "nombre": "fileIds",
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "noteId",
+            "tipo": "java.lang.String"
+          }
+        ],
+        "tipo": "conector",
+        "version": "1.0.0"
+      },
       "hubspot-consultores-menor-carga": {
         "entradas": [
           {
@@ -176,6 +449,90 @@
         "salidas": [
           {
             "nombre": "ownerElegido",
+            "tipo": "java.lang.String"
+          }
+        ],
+        "tipo": "conector",
+        "version": "1.0.0"
+      },
+      "hubspot-negocio-actualizar": {
+        "entradas": [
+          {
+            "nombre": "urlBase",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaObjetos",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "dealId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "propiedadesJson",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "hubspot-negocio-actualizar-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [
+          {
+            "nombre": "ok",
+            "tipo": "java.lang.Boolean"
+          }
+        ],
+        "tipo": "conector",
+        "version": "1.0.0"
+      },
+      "hubspot-nota-crear": {
+        "entradas": [
+          {
+            "nombre": "urlBase",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaObjetos",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "cuerpo",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "dealId",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "adjuntos",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "hubspot-nota-crear-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [
+          {
+            "nombre": "noteId",
             "tipo": "java.lang.String"
           }
         ],
@@ -235,6 +592,11 @@
             "nombre": "ticketId",
             "obligatoria": true,
             "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaAsociaciones",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
           }
         ],
         "implementacion": {
@@ -246,11 +608,44 @@
           {
             "nombre": "asunto",
             "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "dealId",
+            "tipo": "java.lang.String"
           }
         ],
         "tipo": "conector",
         "version": "1.0.0"
+      },
+      "usuario-por-nombre": {
+        "entradas": [
+          {
+            "nombre": "usuario",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "usuario-por-nombre-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-filtros",
+        "salidas": [],
+        "tipo": "filtro",
+        "version": "1.0.0"
       }
+    }
+  },
+  "filtros": {
+    "filtroConsultoraDelCaso": {
+      "definicion": "usuario-por-nombre",
+      "entradas": {
+        "usuario": "def usuario = \"\"; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\"); if (kv.length >= 3 && kv[0] == ownerElegido) usuario = kv[2] }; if (!usuario) throw new RuntimeException(\"param_consultores no da usuario de Bonita al owner \" + ownerElegido); return usuario"
+      },
+      "tareas_doc": [
+        "10_validarSolicitud",
+        "20_disenarPropuesta"
+      ]
     }
   },
   "formularios": {
@@ -258,7 +653,9 @@
       {
         "familia_actores": null,
         "nombre": "hubspot-bonita",
-        "perfiles": [],
+        "perfiles": [
+          "User"
+        ],
         "token": "hubspotBonita"
       }
     ],
@@ -277,35 +674,341 @@
         "titulo": null
       },
       {
-        "acciones": "",
-        "actor": null,
-        "campos": [],
-        "contrato": "ctr_18_esperarArtefactos",
+        "acciones": "Enviar (fija resultado, conceptoViabilidad, notaValidacion, supuestos).",
+        "actor": "Consultora (la asignada)",
+        "campos": [
+          {
+            "campo": "Ticket",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.ticketId`, `ctx.ticket.subject`, `ctx.ticket.content`, `ctx.ticket.hs_ticket_priority`, `ctx.ticket.hs_pipeline_stage",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Todas las propiedades del ticket",
+            "catalogo": null,
+            "control": "Lista clave-valor (solo lectura, plegable)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.ticket.*",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Negocio",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "`ctx.deal.dealname`, `ctx.deal.amount`, `ctx.deal.dealstage`, `ctx.deal.*` (MEDDPICC y demás)",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Empresa",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.company.name`, `ctx.company.domain`, `ctx.company.*",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Contactos",
+            "catalogo": null,
+            "control": "Tabla (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.contacts[].firstname`, `lastname`, `email`, `phone`, `jobtitle",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Comercial / owner",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.owner",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Consultora asignada",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.consultor`, `Preventa.fechaAsignacion",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Validación anterior",
+            "catalogo": null,
+            "control": "Text (solo lectura, solo si hubo bloqueo)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.resultadoValidacion`, `Preventa.notaValidacion`, `Preventa.fechaValidacion",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Resultado",
+            "catalogo": null,
+            "control": "Radio buttons (viable / bloqueado / no viable)",
+            "depende": null,
+            "escribe": "resultado",
+            "lee": null,
+            "obligatorio": true,
+            "validacion": "espeja resultado_valido",
+            "visibilidad": null
+          },
+          {
+            "campo": "Concepto de viabilidad",
+            "catalogo": null,
+            "control": "Text area",
+            "depende": "Resultado",
+            "escribe": "conceptoViabilidad",
+            "lee": "`Preventa.conceptoViabilidad` (valor inicial)",
+            "obligatorio": false,
+            "validacion": "espeja conceptoViabilidad_si_concluye",
+            "visibilidad": null
+          },
+          {
+            "campo": "Nota de validación",
+            "catalogo": null,
+            "control": "Text area (texto largo)",
+            "depende": null,
+            "escribe": "notaValidacion",
+            "lee": null,
+            "obligatorio": true,
+            "validacion": "espeja notaValidacion_presente",
+            "visibilidad": null
+          },
+          {
+            "campo": "Supuestos",
+            "catalogo": null,
+            "control": "Text area",
+            "depende": null,
+            "escribe": "supuestos",
+            "lee": "`Preventa.supuestos` (valor inicial)",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          }
+        ],
+        "contrato": "ctr_10_validarSolicitud",
         "familia_actores": null,
-        "familia_formularios": null,
-        "id": "frm_18_esperarArtefactos",
-        "mapping": "No form",
-        "tarea": "18_esperarArtefactos",
+        "familia_formularios": "FAM-consultoras",
+        "id": "frm_10_validarSolicitud",
+        "mapping": "Svelte",
+        "tarea": "10_validarSolicitud",
         "tipo": "Task form",
-        "titulo": null
+        "titulo": "Validar la solicitud"
       },
       {
-        "acciones": "",
-        "actor": null,
-        "campos": [],
+        "acciones": "Enviar (fija valoracionOperaciones, urlPptaPreventa, linkRepoPreventa, notaPropuesta, adjuntos).",
+        "actor": "Consultora (la asignada)",
+        "campos": [
+          {
+            "campo": "Ticket",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.ticketId`, `ctx.ticket.*",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Negocio",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.deal.*",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Empresa",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.company.*",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Contactos",
+            "catalogo": null,
+            "control": "Tabla (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.contacts[]",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Validación",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.resultadoValidacion`, `Preventa.conceptoViabilidad`, `Preventa.notaValidacion`, `Preventa.supuestos`, `Preventa.fechaValidacion",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Valoración de operaciones",
+            "catalogo": null,
+            "control": "Text area",
+            "depende": null,
+            "escribe": "valoracionOperaciones",
+            "lee": "`ctx.deal.valoracion_operaciones` (valor inicial)",
+            "obligatorio": true,
+            "validacion": "espeja valoracionOperaciones_presente",
+            "visibilidad": null
+          },
+          {
+            "campo": "URL propuesta (presentación)",
+            "catalogo": null,
+            "control": "Text (URL)",
+            "depende": null,
+            "escribe": "urlPptaPreventa",
+            "lee": "`ctx.deal.url_ppta_preventa` (valor inicial)",
+            "obligatorio": true,
+            "validacion": "espeja urlPptaPreventa_valida",
+            "visibilidad": null
+          },
+          {
+            "campo": "Link repositorio preventa",
+            "catalogo": null,
+            "control": "Text (URL)",
+            "depende": null,
+            "escribe": "linkRepoPreventa",
+            "lee": "`ctx.deal.link_repo_preventa` (valor inicial)",
+            "obligatorio": true,
+            "validacion": "espeja linkRepoPreventa_valido",
+            "visibilidad": null
+          },
+          {
+            "campo": "Nota de propuesta",
+            "catalogo": null,
+            "control": "Text area",
+            "depende": null,
+            "escribe": "notaPropuesta",
+            "lee": null,
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Adjuntos",
+            "catalogo": null,
+            "control": "File upload (múltiple)",
+            "depende": null,
+            "escribe": "adjuntos",
+            "lee": null,
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          }
+        ],
+        "contrato": "ctr_20_disenarPropuesta",
+        "familia_actores": null,
+        "familia_formularios": "FAM-consultoras",
+        "id": "frm_20_disenarPropuesta",
+        "mapping": "Svelte",
+        "tarea": "20_disenarPropuesta",
+        "tipo": "Task form",
+        "titulo": "Diseñar la propuesta"
+      },
+      {
+        "acciones": "ninguna.",
+        "actor": "Consultora",
+        "campos": [
+          {
+            "campo": "Estado y etapas",
+            "catalogo": null,
+            "control": "Línea de tiempo (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.estado`, `Preventa.fechaRecepcion`, `fechaAsignacion`, `fechaValidacion`, `fechaPropuesta`, `fechaEntrega",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Validación",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.resultadoValidacion`, `conceptoViabilidad`, `notaValidacion`, `supuestos",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "Artefactos",
+            "catalogo": null,
+            "control": "Enlaces (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "Preventa.valoracionOperaciones`, `urlPptaPreventa`, `linkRepoPreventa`, `notaPropuesta",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          },
+          {
+            "campo": "CRM",
+            "catalogo": null,
+            "control": "Text (solo lectura)",
+            "depende": null,
+            "escribe": null,
+            "lee": "ctx.ticket.*`, `ctx.deal.*`, `ctx.company.*`, `ctx.contacts[]",
+            "obligatorio": false,
+            "validacion": null,
+            "visibilidad": null
+          }
+        ],
         "contrato": null,
         "familia_actores": null,
-        "familia_formularios": null,
+        "familia_formularios": "FAM-consultoras",
         "id": "frm_overview",
-        "mapping": "No form",
+        "mapping": "Svelte",
         "tarea": "(pool)",
         "tipo": "Case overview",
-        "titulo": null
+        "titulo": "Vista del caso"
       }
     ]
   },
   "organizacion": {
     "actores": {
+      "Consultora": {
+        "grupo": "trycore/preventa",
+        "rol": "consultora"
+      },
       "Orquestador": {
         "grupo": "trycore/integracion",
         "rol": "integracion"
@@ -314,18 +1017,37 @@
     "contrasena": "bpm",
     "grupos": [
       "trycore",
-      "trycore/integracion"
+      "trycore/integracion",
+      "trycore/preventa"
     ],
     "membresias": [],
-    "perfiles": [],
+    "perfiles": [
+      {
+        "nombre": "User",
+        "roles": [
+          "consultora"
+        ]
+      }
+    ],
     "roles": [
-      "integracion"
+      "integracion",
+      "consultora"
     ],
     "usuarios": [
       {
         "grupo": "trycore/integracion",
         "nombre": "ofelia.bot",
         "rol": "integracion"
+      },
+      {
+        "grupo": "trycore/preventa",
+        "nombre": "linda.lozano",
+        "rol": "consultora"
+      },
+      {
+        "grupo": "trycore/preventa",
+        "nombre": "viviana.velasquez",
+        "rol": "consultora"
       }
     ]
   },
@@ -354,6 +1076,10 @@
             {
               "destino": "preventa.asunto",
               "salida": "asunto"
+            },
+            {
+              "destino": "preventa.dealId",
+              "salida": "dealId"
             }
           ],
           "tarea": "3_consultarTicket",
@@ -400,6 +1126,150 @@
           "tipo": "propio"
         },
         {
+          "definicion": "hubspot-nota-crear",
+          "entradas": {
+            "cuerpo": "def esc = { String x -> (x ?: \"\").replace(\"&\",\"&amp;\").replace(\"<\",\"&lt;\").replace(\">\",\"&gt;\").replace(\"\\n\",\"\n\") }; def r = [viable: \"Viable\", bloqueado: \"Bloqueado (falta información del lead)\", no_viable: \"No viable\"][preventa.resultadoValidacion] ?: preventa.resultadoValidacion; def partes = []; if (preventa.resultadoValidacion == \"no_viable\") partes << \"<p><strong>Cerrado por viabilidad:</strong> \" + esc(preventa.conceptoViabilidad) + \"</p>\"; partes << \"<p><strong>Validación de preventa (Bonita):</strong> \" + esc(r) + \"</p>\"; if (preventa.conceptoViabilidad?.trim()) partes << \"<p><strong>Concepto de viabilidad:</strong> \" + esc(preventa.conceptoViabilidad) + \"</p>\"; partes << \"<p>\" + esc(preventa.notaValidacion) + \"</p>\"; if (preventa.supuestos?.trim()) partes << \"<p><strong>Supuestos:</strong> \" + esc(preventa.supuestos) + \"</p>\"; return partes.join(\"\")",
+            "dealId": "return preventa.dealId ?: \"\"",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotNota",
+          "ignorar_errores": false,
+          "momento": "salida",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "10_validarSolicitud",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-ticket-actualizar",
+          "entradas": {
+            "ownerId": "return \"\"",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "stageId": "return param_stageEnDiseno",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotActualizar",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "11_pasarADiseno",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-negocio-actualizar",
+          "entradas": {
+            "dealId": "return preventa.dealId ?: \"\"",
+            "propiedadesJson": "def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotNegocio",
+          "ignorar_errores": false,
+          "momento": "salida",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "11_pasarADiseno",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-ticket-actualizar",
+          "entradas": {
+            "ownerId": "return \"\"",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "stageId": "return param_stageEnEspera",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotActualizar",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "12_pasarAEnEspera",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-negocio-actualizar",
+          "entradas": {
+            "dealId": "return preventa.dealId ?: \"\"",
+            "propiedadesJson": "def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotNegocio",
+          "ignorar_errores": false,
+          "momento": "salida",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "13_registrarNoViable",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-ticket-actualizar",
+          "entradas": {
+            "ownerId": "return \"\"",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "stageId": "return param_stageCerrado",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotActualizar",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "13_registrarNoViable",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-negocio-actualizar",
+          "entradas": {
+            "dealId": "return preventa.dealId ?: \"\"",
+            "propiedadesJson": "def m = [concepto_viabilidad: preventa.conceptoViabilidad, valoracion_operaciones: preventa.valoracionOperaciones, url_ppta_preventa: preventa.urlPptaPreventa, link_repo_preventa: preventa.linkRepoPreventa].findAll { k, v -> v?.trim() }; return groovy.json.JsonOutput.toJson(m)",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotNegocio",
+          "ignorar_errores": false,
+          "momento": "salida",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "20_disenarPropuesta",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-nota-crear",
+          "entradas": {
+            "cuerpo": "def esc = { String x -> (x ?: \"\").replace(\"&\",\"&amp;\").replace(\"<\",\"&lt;\").replace(\">\",\"&gt;\").replace(\"\\n\",\"\n\") }; def partes = [\"<p><strong>Propuesta de preventa (Bonita)</strong></p>\", \"<p><strong>Valoración de operaciones:</strong> \" + esc(preventa.valoracionOperaciones) + \"</p>\", \"<p><strong>Propuesta:</strong> \" + esc(preventa.urlPptaPreventa) + \"</p>\", \"<p><strong>Repositorio:</strong> \" + esc(preventa.linkRepoPreventa) + \"</p>\"]; if (preventa.notaPropuesta?.trim()) partes << \"<p>\" + esc(preventa.notaPropuesta) + \"</p>\"; return partes.join(\"\")",
+            "dealId": "return preventa.dealId ?: \"\"",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotNota",
+          "ignorar_errores": false,
+          "momento": "salida",
+          "orden": 2,
+          "salidas": [],
+          "tarea": "20_disenarPropuesta",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "hubspot-archivo-subir",
+          "entradas": {
+            "dealId": "return preventa.dealId ?: \"\"",
+            "documentos": "return apiAccessor.processAPI.getDocumentList(processInstanceId, \"adjuntosPropuesta\", 0, 100)",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase"
+          },
+          "id": "conn_hubspotArchivos",
+          "ignorar_errores": false,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "21_subirAdjuntos",
+          "tipo": "propio"
+        },
+        {
           "definicion": "hubspot-ticket-actualizar",
           "entradas": {
             "ownerId": "return \"\"",
@@ -436,7 +1306,7 @@
             }
           ]
         },
-        "18_esperarArtefactos": {
+        "10_validarSolicitud": {
           "inputs": [
             {
               "hijos": [],
@@ -444,23 +1314,126 @@
               "nombre": "resultado",
               "obligatorio": true,
               "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "conceptoViabilidad",
+              "obligatorio": false,
+              "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "notaValidacion",
+              "obligatorio": true,
+              "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "supuestos",
+              "obligatorio": false,
+              "tipo": "TEXT"
             }
           ],
           "restricciones": [
             {
-              "groovy": "return [\"entregado\",\"cerrado\"].contains(resultado)",
-              "mensaje": "El resultado debe ser entregado o cerrado",
+              "groovy": "return [\"viable\",\"bloqueado\",\"no_viable\"].contains(resultado)",
+              "mensaje": "El resultado debe ser viable, bloqueado o no viable",
               "nombre": "resultado_valido"
+            },
+            {
+              "groovy": "return notaValidacion != null && !notaValidacion.trim().isEmpty()",
+              "mensaje": "La nota de validación es obligatoria",
+              "nombre": "notaValidacion_presente"
+            },
+            {
+              "groovy": "return resultado == \"bloqueado\" ? true : (conceptoViabilidad != null && !conceptoViabilidad.trim().isEmpty())",
+              "mensaje": "El concepto de viabilidad es obligatorio si la solicitud es viable o no viable",
+              "nombre": "conceptoViabilidad_si_concluye"
+            }
+          ]
+        },
+        "20_disenarPropuesta": {
+          "inputs": [
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "valoracionOperaciones",
+              "obligatorio": true,
+              "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "urlPptaPreventa",
+              "obligatorio": true,
+              "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "linkRepoPreventa",
+              "obligatorio": true,
+              "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": false,
+              "nombre": "notaPropuesta",
+              "obligatorio": false,
+              "tipo": "TEXT"
+            },
+            {
+              "hijos": [],
+              "multiple": true,
+              "nombre": "adjuntos",
+              "obligatorio": false,
+              "tipo": "FILE"
+            }
+          ],
+          "restricciones": [
+            {
+              "groovy": "return valoracionOperaciones != null && !valoracionOperaciones.trim().isEmpty()",
+              "mensaje": "La valoración de operaciones es obligatoria",
+              "nombre": "valoracionOperaciones_presente"
+            },
+            {
+              "groovy": "return (urlPptaPreventa ?: \"\").trim().matches(\"(?i)https?://.+\")",
+              "mensaje": "La URL de la propuesta debe empezar por http:// o https://",
+              "nombre": "urlPptaPreventa_valida"
+            },
+            {
+              "groovy": "return (linkRepoPreventa ?: \"\").trim().matches(\"(?i)https?://.+\")",
+              "mensaje": "El enlace al repositorio debe empezar por http:// o https://",
+              "nombre": "linkRepoPreventa_valido"
             }
           ]
         }
       },
+      "documentos": [
+        {
+          "aportan": [
+            "20_disenarPropuesta"
+          ],
+          "atributo": null,
+          "multiple": true,
+          "nombre": "adjuntosPropuesta"
+        }
+      ],
       "iniciador": "Orquestador",
       "lanes": [
         {
           "actor": "Orquestador",
           "actor_bonita": "orquestador",
           "nombre": "Orquestador"
+        },
+        {
+          "actor": "Consultora",
+          "actor_bonita": "consultora",
+          "filtro": "filtroConsultoraDelCaso",
+          "nombre": "Consultoras"
         }
       ],
       "nodos": [
@@ -477,7 +1450,7 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "Comprueba que el ticket existe y lee su asunto",
+          "documentacion": "Comprueba que el ticket existe y lee su asunto y el Negocio asociado",
           "duracion": null,
           "id": "3_consultarTicket",
           "interruptor": null,
@@ -488,7 +1461,7 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "Cuenta en HubSpot los tickets de cada consultor de param_consultores en los stages «En validación» y «Asignado/En diseño» y devuelve el elegido (regla completa bajo la tabla de conectores)",
+          "documentacion": "Suma en HubSpot la carga **ponderada por prioridad** de cada consultor de param_consultores en los stages «En validación» y «Asignado/En diseño» y devuelve el de menor carga (regla y pesos completos bajo la tabla de conectores)",
           "duracion": null,
           "id": "4_verificarDisponibilidad",
           "interruptor": null,
@@ -521,14 +1494,69 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "Tarea añadida por el diseño (en el insumo A18 la hace la consultora en HubSpot, no el orquestador). No la abre una persona: la completa el middleware por la API cuando HubSpot avisa. Es la espera del caso. Sin temporizador a propósito (nota bajo Eventos)",
+          "documentacion": "La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto lo escriben 11 o 13",
           "duracion": null,
-          "id": "18_esperarArtefactos",
+          "id": "10_validarSolicitud",
+          "interruptor": null,
+          "lane": "Consultoras",
+          "llamado": null,
+          "nombre": "Validar la solicitud",
+          "tipo": "humana"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Antes la movía a mano la consultora; ahora Bonita al validar viable. Escribe también concepto_viabilidad en el Negocio",
+          "duracion": null,
+          "id": "11_pasarADiseno",
           "interruptor": null,
           "lane": "Orquestador",
           "llamado": null,
-          "nombre": "Esperar la carga de artefactos en el negocio",
+          "nombre": "Pasar el ticket a «Asignado/En diseño»",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Validación bloqueada por falta de información del lead; el caso vuelve a 10_validarSolicitud",
+          "duracion": null,
+          "id": "12_pasarAEnEspera",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Pasar el ticket a «En espera información del lead»",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Escribe concepto_viabilidad en el Negocio y pasa el ticket a «Closed» (4), «cerrado por viabilidad»",
+          "duracion": null,
+          "id": "13_registrarNoViable",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Cerrar por viabilidad",
+          "tipo": "servicio"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta",
+          "duracion": null,
+          "id": "20_disenarPropuesta",
+          "interruptor": null,
+          "lane": "Consultoras",
+          "llamado": null,
+          "nombre": "Diseñar la propuesta",
           "tipo": "humana"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Solo si la consultora adjuntó documentos (gwXor_2): el conector exige una lista no vacía",
+          "duracion": null,
+          "id": "21_subirAdjuntos",
+          "interruptor": null,
+          "lane": "Orquestador",
+          "llamado": null,
+          "nombre": "Subir los adjuntos de la propuesta al Negocio",
+          "tipo": "servicio"
         },
         {
           "anfitrion": null,
@@ -543,13 +1571,24 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "Decide: resultadoPreventa (process variable, de ctr_18_esperarArtefactos)",
+          "documentacion": "Decide: Preventa.resultadoValidacion (de ctr_10_validarSolicitud)",
           "duracion": null,
           "id": "gwXor_1",
           "interruptor": null,
-          "lane": "Orquestador",
+          "lane": "Consultoras",
           "llamado": null,
           "nombre": "gwXor_1",
+          "tipo": "xor"
+        },
+        {
+          "anfitrion": null,
+          "documentacion": "Decide: Preventa.cantidadAdjuntos (de ctr_20_disenarPropuesta)",
+          "duracion": null,
+          "id": "gwXor_2",
+          "interruptor": null,
+          "lane": "Consultoras",
+          "llamado": null,
+          "nombre": "gwXor_2",
           "tipo": "xor"
         },
         {
@@ -567,11 +1606,11 @@
           "anfitrion": null,
           "documentacion": "",
           "duracion": null,
-          "id": "fin_cerrada",
+          "id": "fin_noViable",
           "interruptor": null,
           "lane": "Orquestador",
           "llamado": null,
-          "nombre": "fin_cerrada",
+          "nombre": "fin_noViable",
           "tipo": "fin"
         }
       ],
@@ -591,24 +1630,114 @@
               "tipo": "literal",
               "valor": "recibida"
             }
+          },
+          {
+            "destino": "preventa.fechaRecepcion",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return java.time.OffsetDateTime.now()"
+            }
           }
         ],
-        "18_esperarArtefactos": [
+        "10_validarSolicitud": [
           {
-            "destino": "resultadoPreventa",
+            "destino": "preventa.resultadoValidacion",
             "expresion": {
               "tipo": "input",
               "valor": "resultado"
             }
           },
           {
+            "destino": "preventa.conceptoViabilidad",
+            "expresion": {
+              "tipo": "input",
+              "valor": "conceptoViabilidad"
+            }
+          },
+          {
+            "destino": "preventa.notaValidacion",
+            "expresion": {
+              "tipo": "input",
+              "valor": "notaValidacion"
+            }
+          },
+          {
+            "destino": "preventa.supuestos",
+            "expresion": {
+              "tipo": "input",
+              "valor": "supuestos"
+            }
+          },
+          {
             "destino": "preventa.estado",
             "expresion": {
               "tipo": "groovy",
-              "valor": "return resultado == \"entregado\" ? \"artefactosCargados\" : \"cerrada\""
+              "valor": "return resultado == \"viable\" ? \"validada\" : (resultado == \"bloqueado\" ? \"bloqueada\" : \"noViable\")"
+            }
+          },
+          {
+            "destino": "preventa.fechaValidacion",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return java.time.OffsetDateTime.now()"
             }
           }
         ],
+        "11_pasarADiseno": [],
+        "12_pasarAEnEspera": [],
+        "13_registrarNoViable": [],
+        "20_disenarPropuesta": [
+          {
+            "destino": "preventa.valoracionOperaciones",
+            "expresion": {
+              "tipo": "input",
+              "valor": "valoracionOperaciones"
+            }
+          },
+          {
+            "destino": "preventa.urlPptaPreventa",
+            "expresion": {
+              "tipo": "input",
+              "valor": "urlPptaPreventa"
+            }
+          },
+          {
+            "destino": "preventa.linkRepoPreventa",
+            "expresion": {
+              "tipo": "input",
+              "valor": "linkRepoPreventa"
+            }
+          },
+          {
+            "destino": "preventa.notaPropuesta",
+            "expresion": {
+              "tipo": "input",
+              "valor": "notaPropuesta"
+            }
+          },
+          {
+            "destino": "preventa.estado",
+            "expresion": {
+              "tipo": "literal",
+              "valor": "propuestaDisenada"
+            }
+          },
+          {
+            "destino": "preventa.fechaPropuesta",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return java.time.OffsetDateTime.now()"
+            }
+          },
+          {
+            "destino": "preventa.cantidadAdjuntos",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return adjuntos ? adjuntos.size() : 0"
+            }
+          }
+        ],
+        "21_subirAdjuntos": [],
         "3_consultarTicket": [],
         "40_entregarAVentas": [
           {
@@ -616,6 +1745,13 @@
             "expresion": {
               "tipo": "literal",
               "valor": "entregadaAVentas"
+            }
+          },
+          {
+            "destino": "preventa.fechaEntrega",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return java.time.OffsetDateTime.now()"
             }
           }
         ],
@@ -639,11 +1775,26 @@
             "destino": "preventa.consultor",
             "expresion": {
               "tipo": "groovy",
-              "valor": "def nombre = \"\"; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\",2); if (kv.length == 2 && kv[0] == ownerElegido) nombre = kv[1] }; return nombre"
+              "valor": "def nombre = \"\"; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\"); if (kv.length >= 2 && kv[0] == ownerElegido) nombre = kv[1] }; return nombre"
+            }
+          },
+          {
+            "destino": "preventa.fechaAsignacion",
+            "expresion": {
+              "tipo": "groovy",
+              "valor": "return java.time.OffsetDateTime.now()"
             }
           }
         ],
         "6_actualizarTicket": []
+      },
+      "operaciones_documento": {
+        "20_disenarPropuesta": [
+          {
+            "documento": "adjuntosPropuesta",
+            "input": "adjuntos"
+          }
+        ]
       },
       "parametros": [
         {
@@ -692,12 +1843,30 @@
           }
         },
         {
+          "nombre": "param_stageEnEspera",
+          "tipo": "String",
+          "valores": {
+            "Local": "1425810257",
+            "Production": "1425810257",
+            "Qualification": "1425810257"
+          }
+        },
+        {
+          "nombre": "param_stageCerrado",
+          "tipo": "String",
+          "valores": {
+            "Local": "4",
+            "Production": "4",
+            "Qualification": "4"
+          }
+        },
+        {
           "nombre": "param_consultores",
           "tipo": "String",
           "valores": {
-            "Local": "89450376:Linda;89450377:Viviana",
-            "Production": "89450376:Linda;89450377:Viviana",
-            "Qualification": "89450376:Linda;89450377:Viviana"
+            "Local": "89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez",
+            "Production": "89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez",
+            "Qualification": "89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez"
           }
         },
         {
@@ -739,25 +1908,73 @@
           "defecto": false,
           "desde": "6_actualizarTicket",
           "expresion": null,
-          "hacia": "18_esperarArtefactos"
+          "hacia": "10_validarSolicitud"
         },
         {
           "defecto": false,
-          "desde": "18_esperarArtefactos",
+          "desde": "10_validarSolicitud",
           "expresion": null,
           "hacia": "gwXor_1"
         },
         {
           "defecto": false,
           "desde": "gwXor_1",
-          "expresion": "return resultadoPreventa == \"entregado\"",
-          "hacia": "40_entregarAVentas"
+          "expresion": "return preventa.resultadoValidacion == \"viable\"",
+          "hacia": "11_pasarADiseno"
+        },
+        {
+          "defecto": false,
+          "desde": "gwXor_1",
+          "expresion": "return preventa.resultadoValidacion == \"bloqueado\"",
+          "hacia": "12_pasarAEnEspera"
         },
         {
           "defecto": true,
           "desde": "gwXor_1",
           "expresion": null,
-          "hacia": "fin_cerrada"
+          "hacia": "13_registrarNoViable"
+        },
+        {
+          "defecto": false,
+          "desde": "13_registrarNoViable",
+          "expresion": null,
+          "hacia": "fin_noViable"
+        },
+        {
+          "defecto": false,
+          "desde": "11_pasarADiseno",
+          "expresion": null,
+          "hacia": "20_disenarPropuesta"
+        },
+        {
+          "defecto": false,
+          "desde": "12_pasarAEnEspera",
+          "expresion": null,
+          "hacia": "10_validarSolicitud"
+        },
+        {
+          "defecto": false,
+          "desde": "20_disenarPropuesta",
+          "expresion": null,
+          "hacia": "gwXor_2"
+        },
+        {
+          "defecto": false,
+          "desde": "gwXor_2",
+          "expresion": "return (preventa.cantidadAdjuntos ?: 0) > 0",
+          "hacia": "21_subirAdjuntos"
+        },
+        {
+          "defecto": true,
+          "desde": "gwXor_2",
+          "expresion": null,
+          "hacia": "40_entregarAVentas"
+        },
+        {
+          "defecto": false,
+          "desde": "21_subirAdjuntos",
+          "expresion": null,
+          "hacia": "40_entregarAVentas"
         },
         {
           "defecto": false,
@@ -772,15 +1989,9 @@
           "nombre": "ownerElegido",
           "tipo": "TEXT",
           "transitoria": false
-        },
-        {
-          "defecto": null,
-          "nombre": "resultadoPreventa",
-          "tipo": "TEXT",
-          "transitoria": false
         }
       ],
-      "version": "1.0"
+      "version": "1.1"
     }
   ],
   "proyecto": {

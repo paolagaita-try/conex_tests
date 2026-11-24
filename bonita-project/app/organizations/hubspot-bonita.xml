@@ -8,6 +8,20 @@
       <enabled>true</enabled>
       <password encrypted="false">bpm</password>
     </user>
+    <user userName="linda.lozano">
+      <firstName>Linda.lozano</firstName>
+      <lastName>Consultora</lastName>
+      <jobTitle>Consultora</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
+    <user userName="viviana.velasquez">
+      <firstName>Viviana.velasquez</firstName>
+      <lastName>Consultora</lastName>
+      <jobTitle>Consultora</jobTitle>
+      <enabled>true</enabled>
+      <password encrypted="false">bpm</password>
+    </user>
     <user userName="walter.bates">
       <firstName>Walter.bates</firstName>
       <lastName>Administrador</lastName>
@@ -20,6 +34,9 @@
     <role name="integracion">
       <displayName>Integracion</displayName>
     </role>
+    <role name="consultora">
+      <displayName>Consultora</displayName>
+    </role>
     <role name="administrador">
       <displayName>Administrador</displayName>
     </role>
@@ -31,12 +48,27 @@
     <group name="integracion" parentPath="/trycore">
       <displayName>Integracion</displayName>
     </group>
+    <group name="preventa" parentPath="/trycore">
+      <displayName>Preventa</displayName>
+    </group>
   </groups>
   <memberships>
     <membership>
       <userName>ofelia.bot</userName>
       <roleName>integracion</roleName>
       <groupName>integracion</groupName>
+      <groupParentPath>/trycore</groupParentPath>
+    </membership>
+    <membership>
+      <userName>linda.lozano</userName>
+      <roleName>consultora</roleName>
+      <groupName>preventa</groupName>
+      <groupParentPath>/trycore</groupParentPath>
+    </membership>
+    <membership>
+      <userName>viviana.velasquez</userName>
+      <roleName>consultora</roleName>
+      <groupName>preventa</groupName>
       <groupParentPath>/trycore</groupParentPath>
     </membership>
     <membership>
