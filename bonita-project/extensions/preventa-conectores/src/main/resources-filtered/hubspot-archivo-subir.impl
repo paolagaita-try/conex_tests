@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0">
+  <implementationId>hubspot-archivo-subir-impl</implementationId>
+  <implementationVersion>1.0.0</implementationVersion>
+  <definitionId>hubspot-archivo-subir</definitionId>
+  <definitionVersion>1.0.0</definitionVersion>
+  <implementationClassname>co.trycore.preventa.conectores.HubspotArchivoSubir</implementationClassname>
+  <hasSources>false</hasSources>
+  <description>Sube documentos a la Files API y los adjunta en una nota del Negocio y el ticket.</description>
+  <jarDependencies>
+    <jarDependency>${project.artifactId}-${project.version}.jar</jarDependency>
+  </jarDependencies>
+</implementation:connectorImplementation>

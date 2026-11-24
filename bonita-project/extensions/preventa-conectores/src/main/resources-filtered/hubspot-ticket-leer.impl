@@ -6,7 +6,7 @@
   <definitionVersion>1.0.0</definitionVersion>
   <implementationClassname>co.trycore.preventa.conectores.HubspotTicketLeer</implementationClassname>
   <hasSources>false</hasSources>
-  <description>Lee el ticket de preventa en HubSpot y devuelve su asunto.</description>
+  <description>Lee el ticket de preventa en HubSpot y devuelve su asunto y el id del primer Negocio asociado (dealId).</description>
   <jarDependencies>
     <jarDependency>${project.artifactId}-${project.version}.jar</jarDependency>
   </jarDependencies>

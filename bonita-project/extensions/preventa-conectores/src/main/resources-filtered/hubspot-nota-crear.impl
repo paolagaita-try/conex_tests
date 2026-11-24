@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0">
+  <implementationId>hubspot-nota-crear-impl</implementationId>
+  <implementationVersion>1.0.0</implementationVersion>
+  <definitionId>hubspot-nota-crear</definitionId>
+  <definitionVersion>1.0.0</definitionVersion>
+  <implementationClassname>co.trycore.preventa.conectores.HubspotNotaCrear</implementationClassname>
+  <hasSources>false</hasSources>
+  <description>Crea una nota asociada al ticket y al Negocio.</description>
+  <jarDependencies>
+    <jarDependency>${project.artifactId}-${project.version}.jar</jarDependency>
+  </jarDependencies>
+</implementation:connectorImplementation>

@@ -1,28 +1,609 @@
 {
   "GET /hubspot/crm/v3/objects/tickets/T-001": {
     "status": 200,
-    "json": { "id": "T-001", "properties": { "subject": "Preventa cliente ACME" } }
+    "json": {
+      "id": "T-001",
+      "properties": {
+        "subject": "Preventa cliente ACME",
+        "hs_pipeline": "0",
+        "hs_pipeline_stage": "2",
+        "hubspot_owner_id": "89450376",
+        "hs_ticket_priority": "HIGH",
+        "content": "Solicitud de preventa de ACME"
+      },
+      "associations": {
+        "deals": {
+          "results": [
+            {
+              "id": "D-001",
+              "type": "ticket_to_deal"
+            }
+          ]
+        },
+        "companies": {
+          "results": [
+            {
+              "id": "C-001",
+              "type": "ticket_to_company"
+            }
+          ]
+        },
+        "contacts": {
+          "results": [
+            {
+              "id": "P-001",
+              "type": "ticket_to_contact"
+            }
+          ]
+        }
+      }
+    }
   },
   "GET /hubspot/crm/v3/objects/tickets/T-002": {
     "status": 200,
-    "json": { "id": "T-002", "properties": { "subject": "Preventa cliente GLOBEX" } }
+    "json": {
+      "id": "T-002",
+      "properties": {
+        "subject": "Preventa cliente GLOBEX",
+        "hs_pipeline": "0",
+        "hs_pipeline_stage": "2",
+        "hubspot_owner_id": "89450376",
+        "hs_ticket_priority": "HIGH",
+        "content": "Solicitud de preventa de GLOBEX"
+      },
+      "associations": {
+        "deals": {
+          "results": [
+            {
+              "id": "D-002",
+              "type": "ticket_to_deal"
+            }
+          ]
+        },
+        "companies": {
+          "results": [
+            {
+              "id": "C-002",
+              "type": "ticket_to_company"
+            }
+          ]
+        },
+        "contacts": {
+          "results": [
+            {
+              "id": "P-002",
+              "type": "ticket_to_contact"
+            }
+          ]
+        }
+      }
+    }
   },
   "POST /hubspot/crm/v3/objects/tickets/search": {
     "status": 200,
     "json": {
       "total": 2,
       "results": [
-        { "id": "T-900", "properties": { "hubspot_owner_id": "89450377" } },
-        { "id": "T-901", "properties": { "hubspot_owner_id": "89450377" } }
+        {
+          "id": "T-900",
+          "properties": {
+            "hubspot_owner_id": "89450377"
+          }
+        },
+        {
+          "id": "T-901",
+          "properties": {
+            "hubspot_owner_id": "89450377"
+          }
+        }
       ]
     }
   },
   "PATCH /hubspot/crm/v3/objects/tickets/T-001": {
     "status": 200,
-    "json": { "id": "T-001", "properties": { "hs_pipeline_stage": "2" } }
+    "json": {
+      "id": "T-001",
+      "properties": {
+        "hs_pipeline_stage": "2"
+      }
+    }
   },
   "PATCH /hubspot/crm/v3/objects/tickets/T-002": {
     "status": 200,
-    "json": { "id": "T-002", "properties": { "hs_pipeline_stage": "2" } }
+    "json": {
+      "id": "T-002",
+      "properties": {
+        "hs_pipeline_stage": "2"
+      }
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-001/associations/deals": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "D-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 28,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-001/associations/companies": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "C-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 339,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-001/associations/contacts": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "P-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 16,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v3/objects/deals/D-001": {
+    "status": 200,
+    "json": {
+      "id": "D-001",
+      "properties": {
+        "dealname": "Preventa ACME",
+        "amount": "50000000",
+        "dealstage": "appointmentscheduled",
+        "pipeline": "default",
+        "hubspot_owner_id": "89450377",
+        "concepto_viabilidad": null,
+        "closedate": null
+      },
+      "associations": {
+        "companies": {
+          "results": [
+            {
+              "id": "C-001",
+              "type": "deal_to_company"
+            }
+          ]
+        },
+        "contacts": {
+          "results": [
+            {
+              "id": "P-001",
+              "type": "deal_to_contact"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "PATCH /hubspot/crm/v3/objects/deals/D-001": {
+    "status": 200,
+    "json": {
+      "id": "D-001",
+      "properties": {
+        "concepto_viabilidad": "Viable"
+      }
+    }
+  },
+  "GET /hubspot/crm/v3/objects/companies/C-001": {
+    "status": 200,
+    "json": {
+      "id": "C-001",
+      "properties": {
+        "name": "ACME",
+        "domain": "acme.example.com",
+        "industry": "COMPUTER_SOFTWARE",
+        "city": "Bogotá"
+      }
+    }
+  },
+  "GET /hubspot/crm/v3/objects/contacts/P-001": {
+    "status": 200,
+    "json": {
+      "id": "P-001",
+      "properties": {
+        "firstname": "Contacto",
+        "lastname": "De prueba ACME",
+        "email": "contacto@acme.example.com",
+        "jobtitle": "Gerente TI"
+      }
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-002/associations/deals": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "D-002",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 28,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-002/associations/companies": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "C-002",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 339,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-002/associations/contacts": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "P-002",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 16,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v3/objects/deals/D-002": {
+    "status": 200,
+    "json": {
+      "id": "D-002",
+      "properties": {
+        "dealname": "Preventa GLOBEX",
+        "amount": "50000000",
+        "dealstage": "appointmentscheduled",
+        "pipeline": "default",
+        "hubspot_owner_id": "89450377",
+        "concepto_viabilidad": null,
+        "closedate": null
+      },
+      "associations": {
+        "companies": {
+          "results": [
+            {
+              "id": "C-002",
+              "type": "deal_to_company"
+            }
+          ]
+        },
+        "contacts": {
+          "results": [
+            {
+              "id": "P-002",
+              "type": "deal_to_contact"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "PATCH /hubspot/crm/v3/objects/deals/D-002": {
+    "status": 200,
+    "json": {
+      "id": "D-002",
+      "properties": {
+        "concepto_viabilidad": "Viable"
+      }
+    }
+  },
+  "GET /hubspot/crm/v3/objects/companies/C-002": {
+    "status": 200,
+    "json": {
+      "id": "C-002",
+      "properties": {
+        "name": "GLOBEX",
+        "domain": "globex.example.com",
+        "industry": "COMPUTER_SOFTWARE",
+        "city": "Bogotá"
+      }
+    }
+  },
+  "GET /hubspot/crm/v3/objects/contacts/P-002": {
+    "status": 200,
+    "json": {
+      "id": "P-002",
+      "properties": {
+        "firstname": "Contacto",
+        "lastname": "De prueba GLOBEX",
+        "email": "contacto@globex.example.com",
+        "jobtitle": "Gerente TI"
+      }
+    }
+  },
+  "POST /hubspot/crm/v3/objects/notes": {
+    "status": 201,
+    "json": {
+      "id": "N-001",
+      "properties": {
+        "hs_note_body": "(simulada)"
+      }
+    }
+  },
+  "POST /hubspot/files/v3/files": {
+    "status": 201,
+    "json": {
+      "id": "F-001",
+      "name": "documento",
+      "access": "PRIVATE",
+      "url": "https://example.invalid/F-001"
+    }
+  },
+  "GET /hubspot/crm/v3/owners/89450376": {
+    "status": 200,
+    "json": {
+      "id": "89450376",
+      "firstName": "Linda",
+      "lastName": "Lozano",
+      "email": "linda@example.invalid",
+      "archived": false,
+      "userId": 90001
+    }
+  },
+  "GET /hubspot/crm/v3/owners/89450377": {
+    "status": 200,
+    "json": {
+      "id": "89450377",
+      "firstName": "Viviana",
+      "lastName": "Velásquez",
+      "email": "viviana@example.invalid",
+      "archived": false,
+      "userId": 90002
+    }
+  },
+  "GET /hubspot/crm/v3/properties/deals": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "name": "dealname",
+          "label": "Deal Name",
+          "type": "string",
+          "fieldType": "text",
+          "groupName": "dealinformation"
+        },
+        {
+          "name": "amount",
+          "label": "Amount",
+          "type": "number",
+          "fieldType": "number",
+          "groupName": "dealinformation"
+        },
+        {
+          "name": "dealstage",
+          "label": "Deal Stage",
+          "type": "enumeration",
+          "fieldType": "select",
+          "groupName": "dealinformation",
+          "options": []
+        },
+        {
+          "name": "concepto_viabilidad",
+          "label": "Concepto de viabilidad",
+          "type": "string",
+          "fieldType": "textarea",
+          "groupName": "dealinformation"
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v3/properties/tickets": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "name": "subject",
+          "label": "Ticket name",
+          "type": "string",
+          "fieldType": "text",
+          "groupName": "ticketinformation"
+        },
+        {
+          "name": "content",
+          "label": "Ticket description",
+          "type": "string",
+          "fieldType": "textarea",
+          "groupName": "ticketinformation"
+        },
+        {
+          "name": "hs_pipeline_stage",
+          "label": "Ticket status",
+          "type": "enumeration",
+          "fieldType": "select",
+          "groupName": "ticketinformation",
+          "options": [
+            {
+              "label": "Solicitud recibida",
+              "value": "1"
+            },
+            {
+              "label": "En validación",
+              "value": "2"
+            },
+            {
+              "label": "Asignado/En diseño",
+              "value": "3"
+            },
+            {
+              "label": "En espera información del lead",
+              "value": "1425810257"
+            },
+            {
+              "label": "Entregado a ventas",
+              "value": "1425810258"
+            },
+            {
+              "label": "Closed",
+              "value": "4"
+            }
+          ]
+        },
+        {
+          "name": "hs_ticket_priority",
+          "label": "Priority",
+          "type": "enumeration",
+          "fieldType": "select",
+          "groupName": "ticketinformation",
+          "options": [
+            {
+              "label": "LOW",
+              "value": "LOW"
+            },
+            {
+              "label": "MEDIUM",
+              "value": "MEDIUM"
+            },
+            {
+              "label": "HIGH",
+              "value": "HIGH"
+            },
+            {
+              "label": "URGENT",
+              "value": "URGENT"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v3/objects/tickets/T-003": {
+    "status": 200,
+    "json": {
+      "id": "T-003",
+      "properties": {
+        "subject": "Preventa cliente ACME",
+        "hs_pipeline": "0",
+        "hs_pipeline_stage": "2",
+        "hubspot_owner_id": "89450376",
+        "hs_ticket_priority": "HIGH",
+        "content": "Solicitud de preventa de ACME"
+      },
+      "associations": {
+        "deals": {
+          "results": [
+            {
+              "id": "D-001",
+              "type": "ticket_to_deal"
+            }
+          ]
+        },
+        "companies": {
+          "results": [
+            {
+              "id": "C-001",
+              "type": "ticket_to_company"
+            }
+          ]
+        },
+        "contacts": {
+          "results": [
+            {
+              "id": "P-001",
+              "type": "ticket_to_contact"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "PATCH /hubspot/crm/v3/objects/tickets/T-003": {
+    "status": 200,
+    "json": {
+      "id": "T-003",
+      "properties": {
+        "hs_pipeline_stage": "2"
+      }
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-003/associations/deals": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "D-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 28,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-003/associations/companies": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "C-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 339,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-003/associations/contacts": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "P-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 16,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
   }
 }
