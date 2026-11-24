@@ -53,6 +53,19 @@ PYTHONUTF8=1 PYTHONPATH=../tools/arnes python -m custodios.check_formularios ..
 `docs/08-construccion/formularios/`: `<pantalla>-escritorio.png`, `<pantalla>-movil.png` y, para las dos tareas,
 `<pantalla>-errores.png`.
 
+## Excepción: permiso `extension/preventa` (opción B, temporal)
+
+- **Qué**: las entradas `frm10ValidarSolicitud`, `frm20DisenarPropuesta` y `frmOverview` de
+  `frontend/forms.manifest.json` llevan además el permiso `GET|extension/preventa`.
+- **Por qué**: las tres pantallas precargan el contexto del caso con la REST API extension propia `preventaContexto`
+  (`/API/extension/preventa`). El generador del arnés solo escribe los permisos de sus extensiones (`consultas`,
+  `parametros`); sin este permiso Bonita responde 403 y la pantalla queda sin datos.
+- **Cómo re-aplicar**: el manifiesto es generado y `tools/arnes.sh generar` lo reescribe. Después de cada `generar`:
+  `PYTHONUTF8=1 python scripts/parche-manifest-preventa.py` (idempotente: si el permiso ya está, no cambia nada)
+  y luego el build.
+- **Retirada**: cuando el arnés soporte la propuesta P-3 (`docs/08-construccion/propuestas-al-arnes.md`), se declara
+  «Lee de» en la matriz de formularios, se borra el script y esta sección.
+
 ## Pendiente / no verificado
 
 - Envío al contrato real y lectura real: sin Bonita corriendo; solo con dobles (`enviar`, `cargar`, `subir`).
