@@ -1,4 +1,6 @@
-//! Store JSON en disco: ticketId -> { caseId, validacionDesde, disenoHecho, entregado }.
+//! Store JSON en disco: ticketId -> { caseId }.
+//! Lectura tolerante: un store.json antiguo con campos retirados (validacionDesde, disenoHecho,
+//! entregado) se sigue leyendo; serde ignora los campos desconocidos.
 //! Escritura atómica (tmp + rename), protegido con Mutex para read-modify-write seguro.
 
 use serde::{Deserialize, Serialize};
@@ -9,12 +11,6 @@ use tokio::sync::Mutex;
 pub struct Entry {
     #[serde(rename = "caseId")]
     pub case_id: i64,
-    #[serde(rename = "validacionDesde", default)]
-    pub validacion_desde: i64,
-    #[serde(rename = "disenoHecho", default)]
-    pub diseno_hecho: bool,
-    #[serde(default)]
-    pub entregado: bool,
 }
 
 pub type Mapa = BTreeMap<String, Entry>;
@@ -58,31 +54,13 @@ impl Store {
         self.leer_sync().get(ticket).map(|e| e.case_id)
     }
 
-    pub async fn recordar(&self, ticket: &str, case_id: i64, ahora: i64) {
+    pub async fn recordar(&self, ticket: &str, case_id: i64) {
         let _g = self.lock.lock().await;
         let mut m = self.leer_sync();
         m.insert(
             ticket.to_string(),
-            Entry { case_id, validacion_desde: ahora, diseno_hecho: false, entregado: false },
+            Entry { case_id },
         );
         self.escribir_sync(&m);
-    }
-
-    pub async fn marcar_diseno(&self, ticket: &str) {
-        let _g = self.lock.lock().await;
-        let mut m = self.leer_sync();
-        if let Some(e) = m.get_mut(ticket) {
-            e.diseno_hecho = true;
-            self.escribir_sync(&m);
-        }
-    }
-
-    pub async fn marcar_entregado(&self, ticket: &str) {
-        let _g = self.lock.lock().await;
-        let mut m = self.leer_sync();
-        if let Some(e) = m.get_mut(ticket) {
-            e.entregado = true;
-            self.escribir_sync(&m);
-        }
     }
 }

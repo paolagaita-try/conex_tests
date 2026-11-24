@@ -6,10 +6,10 @@ Puente entre HubSpot y Bonita para la integración de preventa. Servicio **Rust*
 
 1. **Entrada** — `POST /webhooks/ticket-created`: webhook de app `ticket.creation` → instancia el caso en Bonita (`POST /API/bpm/process/{id}/instantiation`). **Idempotente** por `ticketId` (store en `data/store.json`). **Blindaje de pipeline:** solo actúa sobre el pipeline de Preventa (`HUBSPOT_PIPELINE`); ignora otros (p. ej. «Comercio»).
 2. **Avance a diseño (manual)** — el paso «En validación» → «Asignado/En diseño» lo hace **la consultora** en el tablero de HubSpot. El middleware **no** lo automatiza (antes había un temporizador; se eliminó porque ensuciaba los tiempos por etapa y saturaba el trabajo en curso).
-3. **Espera** — `POST /webhooks/artifacts-loaded`: las **4 fuentes** viven en el **Negocio (Deal)**. Con `deal.propertyChange`, si las 4 (`concepto_viabilidad`, `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa`) tienen valor, busca el ticket asociado (cardinalidad 1 Negocio→N tickets, elige el activo de Preventa) y completa la espera → «Entregado a ventas». `ticket.propertyChange` a stage cerrado → `cerrado`. **Detector propio** cada `ARTEFACTOS_CHECK_MS` como red de seguridad (entrega sin depender del webhook).
+3. **Artefactos de preventa** — ya **no** pasan por el middleware: entran por **formularios de Bonita** (premisa v2 «Bonita first», ver `docs/08-construccion/plan-v2-bonita-first.md`). Se retiraron el webhook `/webhooks/artifacts-loaded`, la suscripción `deal.propertyChange` y el detector periódico de artefactos.
 4. **Reconciliación** — barrido periódico (log). `GET /health` → `{ok:true}`.
 
-El **Negocio nunca se mueve**; solo se escribe el **ticket**.
+El middleware **no escribe** en HubSpot: solo lee el ticket (blindaje de pipeline y reconciliación).
 
 ## Correr
 
@@ -28,11 +28,10 @@ Variables de entorno: ver [`.env.example`](.env.example). Secretos (`HUBSPOT_PRI
 
 ## Configurar en HubSpot (Free/Starter — sin costo)
 
-Dos **suscripciones de webhook** de la app → al host del middleware:
+Una sola **suscripción de webhook** de la app → al host del middleware:
 - `ticket.creation` → `/webhooks/ticket-created`
-- `deal.propertyChange` sobre las 4 fuentes del Negocio → `/webhooks/artifacts-loaded`
 
-Las 4 propiedades **ya existen** en el Negocio (grupo `dealinformation`); no hay que crearlas. El Negocio debe estar **asociado** al ticket.
+Si la app tenía la suscripción `deal.propertyChange` (versión anterior), hay que **quitarla** en HubSpot: el endpoint ya no existe.
 
 ## Despliegue
 

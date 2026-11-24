@@ -12,20 +12,19 @@ pub struct Bonita {
     pass: String,
     process_name: String,
     process_version: String,
-    tarea_espera: String,
     token: Mutex<Option<String>>,
     user_id: Mutex<Option<String>>,
     process_id: Mutex<Option<String>>,
 }
 
 impl Bonita {
-    pub fn new(base: String, user: String, pass: String, process_name: String, process_version: String, tarea_espera: String) -> Self {
+    pub fn new(base: String, user: String, pass: String, process_name: String, process_version: String) -> Self {
         let client = reqwest::Client::builder()
             .cookie_store(true)
             .build()
             .expect("reqwest client");
         Bonita {
-            client, base, user, pass, process_name, process_version, tarea_espera,
+            client, base, user, pass, process_name, process_version,
             token: Mutex::new(None), user_id: Mutex::new(None), process_id: Mutex::new(None),
         }
     }
@@ -129,43 +128,6 @@ impl Bonita {
         r.get("caseId").or_else(|| r.get("id"))
             .and_then(|v| v.as_i64().or_else(|| v.as_str().and_then(|s| s.parse().ok())))
             .ok_or_else(|| "instanciación sin caseId".to_string())
-    }
-
-    pub async fn completar_espera(&self, case_id: i64, resultado: &str) -> AppResult<()> {
-        let uid = self.user_id().await;
-        let filtro_uid = uid.clone().map(|u| format!("&f=user_id={u}")).unwrap_or_default();
-        // reintentos: la tarea puede no estar lista justo tras instanciar
-        let mut task: Option<Value> = None;
-        for intento in 0..10 {
-            if intento > 0 {
-                tokio::time::sleep(std::time::Duration::from_millis(1500)).await;
-            }
-            let path = format!("/bpm/humanTask?p=0&c=50&f=rootCaseId={case_id}{filtro_uid}");
-            let tareas = self.api(reqwest::Method::GET, &path, None).await?;
-            if let Some(arr) = tareas.as_array() {
-                task = arr.iter().find(|t| t.get("name").and_then(|n| n.as_str()) == Some(self.tarea_espera.as_str())).cloned();
-            }
-            if task.is_some() {
-                break;
-            }
-        }
-        let task = task.ok_or_else(|| format!("No hay tarea «{}» para el caso {case_id}", self.tarea_espera))?;
-        let task_id = task.get("id").and_then(|v| v.as_str()).ok_or_else(|| "tarea sin id".to_string())?.to_string();
-        // Bonita exige la tarea ASIGNADA antes de ejecutarla. Se asigna a ofelia (usuario técnico):
-        // se resuelve el user_id (reintentando si login no lo dejó) y se asigna propagando el error.
-        let mut u = uid;
-        if u.is_none() {
-            if let Ok(Some(s)) = self.enviar(reqwest::Method::GET, "/system/session/unusedId", None).await {
-                u = s.get("user_id").and_then(|v| v.as_str()).map(|x| x.to_string());
-                if u.is_some() {
-                    *self.user_id.lock().await = u.clone();
-                }
-            }
-        }
-        let u = u.ok_or_else(|| "no se pudo resolver el user_id para asignar la tarea".to_string())?;
-        self.api(reqwest::Method::PUT, &format!("/bpm/humanTask/{task_id}"), Some(json!({ "assigned_id": u }))).await?;
-        self.api(reqwest::Method::POST, &format!("/bpm/userTask/{task_id}/execution"), Some(json!({ "resultado": resultado }))).await?;
-        Ok(())
     }
 
     pub async fn casos_activos(&self) -> AppResult<usize> {

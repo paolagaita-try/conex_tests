@@ -17,7 +17,6 @@ use tracing::info;
 
 enum Ruta {
     TicketCreated,
-    ArtifactsLoaded,
 }
 
 #[tokio::main]
@@ -39,24 +38,21 @@ async fn main() {
             cfg.bonita_password.clone(),
             cfg.process_name.clone(),
             cfg.process_version.clone(),
-            cfg.tarea_espera.clone(),
         ),
-        hubspot: Hubspot::new(cfg.hs_base.clone(), cfg.hs_token.clone(), cfg.artefacto_props.clone()),
+        hubspot: Hubspot::new(cfg.hs_base.clone(), cfg.hs_token.clone()),
         cfg,
     });
 
-    // jobs periódicos (reconciliación y detector de artefactos). El avance a diseño es manual: no hay job.
+    // job periódico: reconciliación. El avance a diseño es manual: no hay job.
     spawn_cada(state.clone(), state.cfg.reconcile_ms, |s| async move { handlers::reconciliar(&s).await });
-    spawn_cada(state.clone(), state.cfg.artefactos_check_ms, |s| async move { handlers::revisar_artefactos(&s).await });
 
     let app = Router::new()
         .route("/health", get(|| async { Json(json!({ "ok": true })) }))
         .route("/webhooks/ticket-created", post(ticket_created))
-        .route("/webhooks/artifacts-loaded", post(artifacts_loaded))
         .with_state(state);
 
     let addr = format!("0.0.0.0:{port}");
-    info!("preventa-middleware escuchando en :{port} (validación -> diseño es MANUAL; detector de artefactos activo)");
+    info!("preventa-middleware escuchando en :{port} (entrada: ticket.creation)");
     let listener = tokio::net::TcpListener::bind(&addr).await.expect("bind");
     axum::serve(listener, app).await.expect("serve");
 }
@@ -77,10 +73,6 @@ where
 
 async fn ticket_created(State(st): State<Shared>, headers: HeaderMap, OriginalUri(uri): OriginalUri, body: Bytes) -> impl IntoResponse {
     procesar(st, Ruta::TicketCreated, headers, uri, body).await
-}
-
-async fn artifacts_loaded(State(st): State<Shared>, headers: HeaderMap, OriginalUri(uri): OriginalUri, body: Bytes) -> impl IntoResponse {
-    procesar(st, Ruta::ArtifactsLoaded, headers, uri, body).await
 }
 
 async fn procesar(st: Shared, ruta: Ruta, headers: HeaderMap, uri: axum::http::Uri, body: Bytes) -> (StatusCode, Json<Value>) {
@@ -109,7 +101,6 @@ async fn procesar(st: Shared, ruta: Ruta, headers: HeaderMap, uri: axum::http::U
     };
     let res = match ruta {
         Ruta::TicketCreated => handlers::on_ticket_created(&st, &payload).await,
-        Ruta::ArtifactsLoaded => handlers::on_artifacts_loaded(&st, &payload).await,
     };
     match res {
         Ok(mut v) => {
