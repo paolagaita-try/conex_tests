@@ -1,5 +1,5 @@
 ---
-actualizado: 2026-11-24
+actualizado: 2026-11-25
 capa: 2
 motor: Bonita
 deriva_de: docs/07-bonita/bpmn.md, docs/07-bonita/bdm.md, docs/07-bonita/insumo-preventa/reunion-socializacion.md, docs/08-construccion/plan-v2-bonita-first.md
@@ -21,7 +21,7 @@ total_contratos: 3
 
 ## Contrato de instanciación — `ctr_instanciacion`
 
-### `GestionPreventa` 1.2
+### `GestionPreventa` 1.3
 
 Formulario asociado (capa 3): `frm_instanciacion` (`No form`). Fuente: el middleware instancia el caso por la API REST al recibir el webhook `ticket.creation` de HubSpot.
 
@@ -47,7 +47,7 @@ Operaciones al instanciar: según plantilla `asignacion-directa` con literales: 
 | Input | Tipo | Múltiple | Obligatorio | Hijos (si COMPLEX) | Destino | Fuente (T-… → Entradas / Salidas) |
 |---|---|---|---|---|---|---|
 | `resultado` | TEXT | no | sí | — | `Preventa.resultadoValidacion` | consultora → `viable`, `bloqueado` (falta información del lead) o `no_viable` |
-| `conceptoViabilidad` | TEXT | no | no | — | `Preventa.conceptoViabilidad` | consultora → concepto que va a la propiedad `concepto_viabilidad` del Negocio |
+| `conceptoViabilidad` | TEXT | no | no | — | `Preventa.conceptoViabilidad` | consultora → una de las cuatro opciones de la propiedad `concepto_viabilidad` del Negocio (enumeración de HubSpot; valor interno = etiqueta): «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)» o «Requiere más información» |
 | `notaValidacion` | TEXT | no | sí | — | `Preventa.notaValidacion` | consultora → nota (texto largo) que queda en el ticket y el Negocio |
 | `supuestos` | TEXT | no | no | — | `Preventa.supuestos` | consultora → supuestos de la validación |
 
@@ -56,6 +56,8 @@ Operaciones al instanciar: según plantilla `asignacion-directa` con literales: 
 | `resultado_valido` | resultado es viable, bloqueado o no_viable | El resultado debe ser viable, bloqueado o no viable | plan v2 paso 3 (compuerta de validación) |
 | `notaValidacion_presente` | notaValidacion no está vacía | La nota de validación es obligatoria | plan v2 paso 3 (nota de validación en ticket y Negocio) |
 | `conceptoViabilidad_si_concluye` | si resultado es viable o no_viable, conceptoViabilidad no está vacío | El concepto de viabilidad es obligatorio si la solicitud es viable o no viable | plan v2 paso 3 (`concepto_viabilidad`) |
+| `conceptoViabilidad_valido` | conceptoViabilidad está vacío o es Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información | El concepto de viabilidad debe ser Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información | versión 1.3 (opciones de `concepto_viabilidad` en HubSpot, 2026-11-25) |
+| `conceptoViabilidad_noViable` | si resultado es no_viable, conceptoViabilidad es No Viable (Rechazado) | Si la solicitud no es viable, el concepto debe ser No Viable (Rechazado) | versión 1.3; camino «no viable» (cerrado por viabilidad) |
 
 **Datos de solo lectura que el formulario consulta** (no son inputs): `Preventa` (ticket, asunto, consultor, validación anterior si hubo bloqueo) y, por `preventaContexto`, el ticket, el Negocio, la empresa, los contactos y el owner.
 
@@ -72,7 +74,7 @@ Operaciones al instanciar: según plantilla `asignacion-directa` con literales: 
 
 | Input | Tipo | Múltiple | Obligatorio | Hijos (si COMPLEX) | Destino | Fuente (T-… → Entradas / Salidas) |
 |---|---|---|---|---|---|---|
-| `valoracionOperaciones` | TEXT | no | sí | — | `Preventa.valoracionOperaciones` | consultora → propiedad `valoracion_operaciones` del Negocio |
+| `valoracionOperaciones` | TEXT | no | sí | — | `Preventa.valoracionOperaciones` | consultora → propiedad `valoracion_operaciones` del Negocio (enlace al documento de la valoración; HubSpot responde 400 `INVALID_URL` si no es una URL) |
 | `urlPptaPreventa` | TEXT | no | sí | — | `Preventa.urlPptaPreventa` | consultora → propiedad `url_ppta_preventa` del Negocio (URL de la presentación) |
 | `linkRepoPreventa` | TEXT | no | sí | — | `Preventa.linkRepoPreventa` | consultora → propiedad `link_repo_preventa` del Negocio (URL del repositorio) |
 | `notaPropuesta` | TEXT | no | no | — | `Preventa.notaPropuesta` | consultora → nota de la propuesta |
@@ -80,7 +82,7 @@ Operaciones al instanciar: según plantilla `asignacion-directa` con literales: 
 
 | Constraint | Expresión | Mensaje de error | AC que la origina |
 |---|---|---|---|
-| `valoracionOperaciones_presente` | valoracionOperaciones no está vacía | La valoración de operaciones es obligatoria | plan v2 paso 4 (cuatro artefactos del Negocio) |
+| `valoracionOperaciones_valida` | valoracionOperaciones empieza por http:// o https:// | La valoración de operaciones debe ser un enlace que empiece por http:// o https:// | plan v2 paso 4 (cuatro artefactos del Negocio); versión 1.3 (`valoracion_operaciones` es una URL en HubSpot) |
 | `urlPptaPreventa_valida` | urlPptaPreventa empieza por http:// o https:// | La URL de la propuesta debe empezar por http:// o https:// | plan v2 paso 4 |
 | `linkRepoPreventa_valido` | linkRepoPreventa empieza por http:// o https:// | El enlace al repositorio debe empezar por http:// o https:// | plan v2 paso 4 |
 
@@ -111,7 +113,7 @@ Los scripts de `5_asignarConsultor` leen solo la process variable `ownerElegido`
 | Tarea humana | Contrato | Formulario (capa 3) | Inputs | Constraints |
 |---|---|---|---|---|
 | (instanciación) | `ctr_instanciacion` | `frm_instanciacion` | 1 | 1 |
-| `10_validarSolicitud` | `ctr_10_validarSolicitud` | `frm_10_validarSolicitud` | 4 | 3 |
+| `10_validarSolicitud` | `ctr_10_validarSolicitud` | `frm_10_validarSolicitud` | 4 | 5 |
 | `20_disenarPropuesta` | `ctr_20_disenarPropuesta` | `frm_20_disenarPropuesta` | 5 | 3 |
 
 ## Cobertura de las reglas de validación de los AC
@@ -122,12 +124,14 @@ Los scripts de `5_asignarConsultor` leen solo la process variable `ownerElegido`
 | `A04`, `A05` | El ticket se asigna a quien tiene menor carga ponderada en «En validación» y «Asignado/En diseño» | `conn_hubspotCarga` (regla completa en `bpmn.md` → Conectores por tarea) | tarea de servicio |
 | `A06` | Al asignar, el ticket queda con propietario y en «En validación» | `conn_hubspotActualizar` en `6_actualizarTicket` | tarea de servicio |
 | plan v2 paso 3 | La validación solo concluye viable, bloqueado o no viable, siempre con nota | `resultado_valido`, `notaValidacion_presente`, `conceptoViabilidad_si_concluye` | constraint de contrato |
+| versión 1.3 | El concepto de viabilidad es una de las cuatro opciones de HubSpot; «no viable» lleva «No Viable (Rechazado)» | `conceptoViabilidad_valido`, `conceptoViabilidad_noViable` | constraint de contrato |
 | plan v2 paso 3 | Solo la consultora asignada ve y hace la validación y el diseño | actor filter `filtroConsultoraDelCaso` | asignación |
 | plan v2 paso 3 | Viable → «Asignado/En diseño»; bloqueado → «En espera información del lead» y vuelve a validar | `gwXor_1`, `11_pasarADiseno`, `12_pasarAEnEspera` | flujo y tarea de servicio |
 | plan v2 paso 3 (decisión de la usuaria, 2026-11-24) | No viable → nota «Cerrado por viabilidad: …» y ticket a «Closed» | `conn_hubspotNota` en `10_validarSolicitud` y `13_registrarNoViable` | tarea de servicio |
-| plan v2 paso 4 | Las URLs de los artefactos son enlaces | `urlPptaPreventa_valida`, `linkRepoPreventa_valido` | constraint de contrato |
+| plan v2 paso 4; versión 1.3 | La valoración de operaciones y las URLs de los artefactos son enlaces | `valoracionOperaciones_valida`, `urlPptaPreventa_valida`, `linkRepoPreventa_valido` | constraint de contrato |
 | `A40` | Con la propuesta diseñada, el ticket pasa a «Entregado a ventas» | `conn_hubspotActualizar` en `40_entregarAVentas` | tarea de servicio |
 
 ## Pendientes de definición
 
+- **Concepto de viabilidad frente al resultado**: solo «no viable» está atado a un concepto («No Viable (Rechazado)»); qué conceptos admiten «viable» y «bloqueado» está pendiente de negocio (`bpmn.md` › Pendientes).
 - **Tamaño y tipo de los adjuntos**: sin límite en el contrato; el límite de subida de Bonita y el de la API de archivos de HubSpot aplican `[no verificado]`.

@@ -7,7 +7,7 @@ import type { Lectura } from '$lib/bonita/caso';
 import type { ValorDeCampo, ValoresDelFormulario } from '$lib/ui/valores';
 
 /** Identidad del formulario: su id en la matriz, su página, su tarea, su contrato y su proceso. */
-export const FORMULARIO = { id: "frm_20_disenarPropuesta", pagina: "frm20DisenarPropuesta", tipo: "tarea", tarea: "20_disenarPropuesta", contrato: "ctr_20_disenarPropuesta", proceso: "GestionPreventa", version: "1.2" } as const;
+export const FORMULARIO = { id: "frm_20_disenarPropuesta", pagina: "frm20DisenarPropuesta", tipo: "tarea", tarea: "20_disenarPropuesta", contrato: "ctr_20_disenarPropuesta", proceso: "GestionPreventa", version: "1.3" } as const;
 
 /** Todos los inputs del contrato, en su orden: el cuerpo los lleva siempre. */
 export const ENTRADAS = ["valoracionOperaciones", "urlPptaPreventa", "linkRepoPreventa", "notaPropuesta", "adjuntos"] as const;
@@ -52,7 +52,7 @@ export interface CampoDeContrato {
 
 /** Los campos de la matriz que escriben en el contrato, en el orden de la matriz. */
 export const CAMPOS: readonly CampoDeContrato[] = [
-  { ruta: "valoracionOperaciones", grupo: "datos", nombre: "valoracionOperaciones", etiqueta: "Valoración de operaciones", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "La valoración de operaciones es obligatoria" },
+  { ruta: "valoracionOperaciones", grupo: "datos", nombre: "valoracionOperaciones", etiqueta: "Valoración de operaciones", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "La valoración de operaciones debe ser un enlace que empiece por http:// o https://" },
   { ruta: "urlPptaPreventa", grupo: "datos", nombre: "urlPptaPreventa", etiqueta: "URL propuesta (presentación)", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "La URL de la propuesta debe empezar por http:// o https://" },
   { ruta: "linkRepoPreventa", grupo: "datos", nombre: "linkRepoPreventa", etiqueta: "Link repositorio preventa", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "El enlace al repositorio debe empezar por http:// o https://" },
   { ruta: "notaPropuesta", grupo: "datos", nombre: "notaPropuesta", etiqueta: "Nota de propuesta", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "no", requeridoSiempre: false, constraint: "" },

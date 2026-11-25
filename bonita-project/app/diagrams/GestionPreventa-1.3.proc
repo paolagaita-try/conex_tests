@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:process="http://www.bonitasoft.org/ns/bpm/process" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0" xmlns:expression="http://www.bonitasoft.org/ns/bpm/expression" xmlns:decision="http://www.bonitasoft.org/ns/bpm/process/decision" xmlns:parameter="http://www.bonitasoft.org/ns/bpm/parameter" xmlns:connectorconfiguration="http://www.bonitasoft.org/model/connector/configuration">
+  <process:MainProcess xmi:id="_he18cd4490001" name="GestionPreventa" bonitaModelVersion="9">
+    <elements xmi:type="process:Pool" xmi:id="_he18cd4490002" name="GestionPreventa" version="1.3">
+      <elements xmi:type="process:Lane" xmi:id="_he18cd4490005" name="Orquestador" actor="_he18cd4490003">
+        <elements xmi:type="process:StartEvent" xmi:id="_he18cd4490016" documentation="instanciación por el actor Orquestador al crearse el ticket en HubSpot (ctr_instanciacion)" name="inicio" outgoing="_he18cd4490474">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490017" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490018" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490019" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490020" documentation="Comprueba que el ticket existe y lee su asunto y el Negocio asociado" name="Consultar el ticket de preventa en HubSpot" incoming="_he18cd4490474" outgoing="_he18cd4490477">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490021" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490022" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490023" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490024" name="conn_hubspotLeer" definitionId="hubspot-ticket-leer" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490025" definitionId="hubspot-ticket-leer" version="1.0.0" name="conn_hubspotLeer">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490026" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490027" name="urlBase_conn_hubspotLeer()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490028" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490029" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490030" name="rutaTickets_conn_hubspotLeer()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490031" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490032" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490033" name="ticketId_conn_hubspotLeer()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490034" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+            <outputs xmi:type="expression:Operation" xmi:id="_he18cd4490035">
+              <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490036" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490037" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              </leftOperand>
+              <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490038" name="set_asunto()" content="preventa.asunto = {&#10;return asunto&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490039" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490040" name="asunto" content="asunto" type="CONNECTOR_OUTPUT_TYPE" returnType="java.lang.String" />
+              </rightOperand>
+              <operator xmi:type="expression:Operator" xmi:id="_he18cd4490041" type="ASSIGNMENT" />
+            </outputs>
+            <outputs xmi:type="expression:Operation" xmi:id="_he18cd4490042">
+              <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490043" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490044" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              </leftOperand>
+              <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490045" name="set_dealId()" content="preventa.dealId = {&#10;return dealId&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490046" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490047" name="dealId" content="dealId" type="CONNECTOR_OUTPUT_TYPE" returnType="java.lang.String" />
+              </rightOperand>
+              <operator xmi:type="expression:Operator" xmi:id="_he18cd4490048" type="ASSIGNMENT" />
+            </outputs>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490049" documentation="Suma en HubSpot la carga **ponderada por prioridad** de cada consultor de param_consultores en los stages «En validación» y «Asignado/En diseño» y devuelve el de menor carga (regla y pesos completos bajo la tabla de conectores)" name="Verificar la carga de los consultores" incoming="_he18cd4490477" outgoing="_he18cd4490480">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490050" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490051" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490052" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490053" name="conn_hubspotCarga" definitionId="hubspot-consultores-menor-carga" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490054" definitionId="hubspot-consultores-menor-carga" version="1.0.0" name="conn_hubspotCarga">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490055" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490056" name="urlBase_conn_hubspotCarga()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490057" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490058" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490059" name="rutaTickets_conn_hubspotCarga()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490060" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490061" key="pipelineId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490062" name="pipelineId_conn_hubspotCarga()" content="return param_pipelineTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490063" name="param_pipelineTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490064" key="ownerIds">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490065" name="ownerIds_conn_hubspotCarga()" content="def owners = []; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;,2); if (kv.length != 2) throw new RuntimeException(&quot;param_consultores mal formado&quot;); if (kv[0].isEmpty()) throw new RuntimeException(&quot;param_consultores mal formado&quot;); if (owners.contains(kv[0])) throw new RuntimeException(&quot;param_consultores mal formado&quot;); owners.add(kv[0]) }; return owners.join(&quot;,&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490066" name="param_consultores" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490067" key="stages">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490068" name="stages_conn_hubspotCarga()" content="return param_stageEnValidacion + &quot;,&quot; + param_stageEnDiseno" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490069" name="param_stageEnValidacion" typeClassname="java.lang.String" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490070" name="param_stageEnDiseno" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490071" key="ultimoOwnerId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490072" name="ultimoOwnerId_conn_hubspotCarga()" content="def r = preventaDAO.findAsignadasRecientes(0, 1); return (!r) ? &quot;&quot; : (r[0].consultorOwnerId ?: &quot;&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490073" name="preventaDAO" content="preventaDAO" type="TYPE_BUSINESS_OBJECT_DAO" returnType="co.trycore.preventa.model.PreventaDAO" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490074" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490075" name="ticketId_conn_hubspotCarga()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490076" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+            <outputs xmi:type="expression:Operation" xmi:id="_he18cd4490077">
+              <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490078" name="ownerElegido" content="ownerElegido" type="TYPE_VARIABLE" returnType="java.lang.String">
+                <referencedElements xmi:type="process:Data" xmi:id="_he18cd4490079" name="ownerElegido" dataType="_he18cd4490012" />
+              </leftOperand>
+              <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490080" name="set_ownerElegido()" content="return ownerElegido" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String">
+                <referencedElements xmi:type="process:Data" xmi:id="_he18cd4490081" name="ownerElegido" dataType="_he18cd4490012" />
+                <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490082" name="ownerElegido" content="ownerElegido" type="CONNECTOR_OUTPUT_TYPE" returnType="java.lang.String" />
+              </rightOperand>
+              <operator xmi:type="expression:Operator" xmi:id="_he18cd4490083" type="ASSIGNMENT" />
+            </outputs>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ScriptTask" xmi:id="_he18cd4490084" documentation="Guarda en el caso al consultor que eligió 4_verificarDisponibilidad" name="Asignar consultor preventa" incoming="_he18cd4490480" outgoing="_he18cd4490483">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490085" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490086" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490087" name="" content="" returnTypeFixed="true" />
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490088">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490089" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490090" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490091" name="set_estado()" content="preventa.estado = 'asignada'&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490092" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490093" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490094">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490095" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490096" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490097" name="set_consultorOwnerId()" content="preventa.consultorOwnerId = {&#10;return ownerElegido&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490098" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:Data" xmi:id="_he18cd4490099" name="ownerElegido" dataType="_he18cd4490012" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490100" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490101">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490102" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490103" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490104" name="set_consultor()" content="preventa.consultor = {&#10;def nombre = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 2 &amp;&amp; kv[0] == ownerElegido) nombre = kv[1] }; return nombre&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490105" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:Data" xmi:id="_he18cd4490106" name="ownerElegido" dataType="_he18cd4490012" />
+              <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490107" name="param_consultores" typeClassname="java.lang.String" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490108" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490109">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490110" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490111" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490112" name="set_fechaAsignacion()" content="preventa.fechaAsignacion = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490113" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490114" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490115" documentation="Fija el propietario y pasa el ticket a «En validación»" name="Actualizar estado y propietario del ticket en HubSpot" incoming="_he18cd4490483" outgoing="_he18cd4490486">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490116" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490117" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490118" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490119" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490120" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490121" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490122" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490123" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490124" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490125" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490126" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490127" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490128" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490129" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490130" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490131" name="stageId_conn_hubspotActualizar()" content="return param_stageEnValidacion" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490132" name="param_stageEnValidacion" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490133" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490134" name="ownerId_conn_hubspotActualizar()" content="if (!preventa.consultorOwnerId?.trim()) throw new RuntimeException(&quot;el caso no tiene consultor asignado&quot;); return preventa.consultorOwnerId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490135" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490215" documentation="Antes la movía a mano la consultora; ahora Bonita al validar viable. Escribe también concepto_viabilidad en el Negocio" name="Pasar el ticket a «Asignado/En diseño»" incoming="_he18cd4490492" outgoing="_he18cd4490505">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490216" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490217" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490218" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490219" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490220" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490221" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490222" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490223" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490224" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490225" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490226" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490227" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490228" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490229" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490230" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490231" name="stageId_conn_hubspotActualizar()" content="return param_stageEnDiseno" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490232" name="param_stageEnDiseno" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490233" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490234" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490235" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490236" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490237" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490238" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490239" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490240" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490241" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490242" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490243" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490244" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490245" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490246" documentation="Validación bloqueada por falta de información del lead; el caso vuelve a 10_validarSolicitud" name="Pasar el ticket a «En espera información del lead»" incoming="_he18cd4490496" outgoing="_he18cd4490508">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490247" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490248" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490249" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490250" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490251" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490252" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490253" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490254" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490255" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490256" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490257" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490258" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490259" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490260" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490261" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490262" name="stageId_conn_hubspotActualizar()" content="return param_stageEnEspera" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490263" name="param_stageEnEspera" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490264" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490265" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490266" documentation="Escribe concepto_viabilidad en el Negocio y pasa el ticket a «Closed» (4), «cerrado por viabilidad»" name="Cerrar por viabilidad" incoming="_he18cd4490500" outgoing="_he18cd4490502">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490267" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490268" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490269" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490270" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490271" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490272" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490273" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490274" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490275" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490276" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490277" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490278" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490279" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490280" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490281" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490282" name="stageId_conn_hubspotActualizar()" content="return param_stageCerrado" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490283" name="param_stageCerrado" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490284" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490285" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490286" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490287" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490288" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490289" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490290" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490291" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490292" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490293" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490294" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490295" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490296" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490401" documentation="Solo si la consultora adjuntó documentos (gwXor_2): el conector exige una lista no vacía" name="Subir los adjuntos de la propuesta al Negocio" incoming="_he18cd4490514" outgoing="_he18cd4490520">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490402" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490403" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490404" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490405" name="conn_hubspotArchivos" definitionId="hubspot-archivo-subir" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490406" definitionId="hubspot-archivo-subir" version="1.0.0" name="conn_hubspotArchivos">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490407" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490408" name="urlBase_conn_hubspotArchivos()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490409" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490410" key="documentos">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490411" name="documentos_conn_hubspotArchivos()" content="return apiAccessor.processAPI.getDocumentList(processInstanceId, &quot;adjuntosPropuesta&quot;, 0, 100)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.util.List" returnTypeFixed="true">
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490412" name="apiAccessor" content="apiAccessor" type="TYPE_ENGINE_CONSTANT" returnType="org.bonitasoft.engine.api.APIAccessor" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490413" name="processInstanceId" content="processInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490414" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490415" name="dealId_conn_hubspotArchivos()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490416" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490417" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490418" name="ticketId_conn_hubspotArchivos()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490419" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_he18cd4490420" documentation="No cambia el propietario" name="Cambiar estado del ticket a «Entregado a ventas»" incoming="_he18cd4490518 _he18cd4490520" outgoing="_he18cd4490523">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490421" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490422" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490423" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490424" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490425" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490426" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490427" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490428" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490429" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490430" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490431" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490432" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490433" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490434" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490435" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490436" name="stageId_conn_hubspotActualizar()" content="return param_stageEntregado" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490437" name="param_stageEntregado" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490438" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490439" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490440">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490441" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490442" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490443" name="set_estado()" content="preventa.estado = 'entregadaAVentas'&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490444" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490445" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490446">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490447" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490448" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490449" name="set_fechaEntrega()" content="preventa.fechaEntrega = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490450" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490451" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:EndEvent" xmi:id="_he18cd4490460" name="fin_entregada" incoming="_he18cd4490523">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490461" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490462" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490463" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:EndEvent" xmi:id="_he18cd4490464" name="fin_noViable" incoming="_he18cd4490502">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490465" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490466" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490467" name="" content="" returnTypeFixed="true" />
+        </elements>
+      </elements>
+      <elements xmi:type="process:Lane" xmi:id="_he18cd4490006" name="Consultoras" actor="_he18cd4490004">
+        <elements xmi:type="process:Task" xmi:id="_he18cd4490136" documentation="La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto (una de las cuatro opciones de concepto_viabilidad) lo escriben 11 o 13" name="Validar la solicitud" overrideActorsOfTheLane="false" priority="1" incoming="_he18cd4490486 _he18cd4490508" outgoing="_he18cd4490489">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490137" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490138" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490139" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490140" name="conn_hubspotNota" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490141" definitionId="hubspot-nota-crear" version="1.0.0" name="conn_hubspotNota">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490142" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490143" name="urlBase_conn_hubspotNota()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490144" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490145" key="cuerpo">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490146" name="cuerpo_conn_hubspotNota()" content="def esc = { String x -&gt; (x ?: &quot;&quot;).replace(&quot;&amp;&quot;,&quot;&amp;amp;&quot;).replace(&quot;&lt;&quot;,&quot;&amp;lt;&quot;).replace(&quot;&gt;&quot;,&quot;&amp;gt;&quot;).replace(String.valueOf((char) 10), &quot;&lt;&quot; + &quot;br&gt;&quot;) }; def r = [viable: &quot;Viable&quot;, bloqueado: &quot;Bloqueado (falta información del lead)&quot;, no_viable: &quot;No viable&quot;][preventa.resultadoValidacion] ?: preventa.resultadoValidacion; def partes = []; if (preventa.resultadoValidacion == &quot;no_viable&quot;) partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Cerrado por viabilidad:&lt;/strong&gt; &quot; + esc(preventa.conceptoViabilidad) + &quot;&lt;/p&gt;&quot;; partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Validación de preventa (Bonita):&lt;/strong&gt; &quot; + esc(r) + &quot;&lt;/p&gt;&quot;; if (preventa.conceptoViabilidad?.trim()) partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Concepto de viabilidad:&lt;/strong&gt; &quot; + esc(preventa.conceptoViabilidad) + &quot;&lt;/p&gt;&quot;; partes &lt;&lt; &quot;&lt;p&gt;&quot; + esc(preventa.notaValidacion) + &quot;&lt;/p&gt;&quot;; if (preventa.supuestos?.trim()) partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Supuestos:&lt;/strong&gt; &quot; + esc(preventa.supuestos) + &quot;&lt;/p&gt;&quot;; return partes.join(&quot;&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490147" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490148" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490149" name="ticketId_conn_hubspotNota()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490150" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490151" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490152" name="dealId_conn_hubspotNota()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490153" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <filters xmi:type="process:ActorFilter" xmi:id="_he18cd4490154" name="filtroConsultoraDelCaso" definitionId="usuario-por-nombre" definitionVersion="1.0.0">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490155" definitionId="usuario-por-nombre" version="1.0.0" name="filtroConsultoraDelCaso">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490156" key="usuario">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490157" name="usuario_filtroConsultoraDelCaso()" content="def usuario = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 3 &amp;&amp; kv[0] == ownerElegido) usuario = kv[2] }; if (!usuario) throw new RuntimeException(&quot;param_consultores no da usuario de Bonita al owner &quot; + ownerElegido); return usuario" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:Data" xmi:id="_he18cd4490158" name="ownerElegido" dataType="_he18cd4490012" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490159" name="param_consultores" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+            </configuration>
+          </filters>
+          <formMapping xmi:type="process:FormMapping" xmi:id="_he18cd4490160" type="URL" url="/bonita/portal/resource/app/hubspotBonita/frm10ValidarSolicitud/content/">
+            <targetForm xmi:type="expression:Expression" xmi:id="_he18cd4490161" name="/bonita/portal/resource/app/hubspotBonita/frm10ValidarSolicitud/content/" content="/bonita/portal/resource/app/hubspotBonita/frm10ValidarSolicitud/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+          </formMapping>
+          <contract xmi:type="process:Contract" xmi:id="_he18cd4490162">
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490163" name="resultado" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490164" name="conceptoViabilidad" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490165" name="notaValidacion" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490166" name="supuestos" type="TEXT" />
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490167" name="resultado_valido" expression="return [&quot;viable&quot;,&quot;bloqueado&quot;,&quot;no_viable&quot;].contains(resultado)" errorMessage="El resultado debe ser viable, bloqueado o no viable">
+              <inputNames>resultado</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490168" name="notaValidacion_presente" expression="return notaValidacion != null &amp;&amp; !notaValidacion.trim().isEmpty()" errorMessage="La nota de validación es obligatoria">
+              <inputNames>notaValidacion</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490169" name="conceptoViabilidad_si_concluye" expression="return resultado == &quot;bloqueado&quot; ? true : (conceptoViabilidad != null &amp;&amp; !conceptoViabilidad.trim().isEmpty())" errorMessage="El concepto de viabilidad es obligatorio si la solicitud es viable o no viable">
+              <inputNames>resultado</inputNames>
+              <inputNames>conceptoViabilidad</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490170" name="conceptoViabilidad_valido" expression="def c = conceptoViabilidad ?: &quot;&quot;; return c.isEmpty() ? true : [&quot;Aprobado (Viable)&quot;,&quot;Aprobado con Condiciones&quot;,&quot;No Viable (Rechazado)&quot;,&quot;Requiere más información&quot;].contains(c)" errorMessage="El concepto de viabilidad debe ser Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información">
+              <inputNames>conceptoViabilidad</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490171" name="conceptoViabilidad_noViable" expression="return resultado == &quot;no_viable&quot; ? conceptoViabilidad == &quot;No Viable (Rechazado)&quot; : true" errorMessage="Si la solicitud no es viable, el concepto debe ser No Viable (Rechazado)">
+              <inputNames>resultado</inputNames>
+              <inputNames>conceptoViabilidad</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490172" name="mandatory_resultado" expression="resultado != null" errorMessage="resultado es obligatorio">
+              <inputNames>resultado</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490173" name="mandatory_notaValidacion" expression="notaValidacion != null" errorMessage="notaValidacion es obligatorio">
+              <inputNames>notaValidacion</inputNames>
+            </constraints>
+          </contract>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490174">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490175" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490176" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490177" name="set_resultadoValidacion()" content="preventa.resultadoValidacion = resultado&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490178" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490179" name="resultado" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490180" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490181">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490182" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490183" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490184" name="set_conceptoViabilidad()" content="preventa.conceptoViabilidad = conceptoViabilidad&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490185" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490186" name="conceptoViabilidad" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490187" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490188">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490189" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490190" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490191" name="set_notaValidacion()" content="preventa.notaValidacion = notaValidacion&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490192" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490193" name="notaValidacion" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490194" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490195">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490196" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490197" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490198" name="set_supuestos()" content="preventa.supuestos = supuestos&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490199" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490200" name="supuestos" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490201" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490202">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490203" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490204" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490205" name="set_estado()" content="preventa.estado = {&#10;return resultado == &quot;viable&quot; ? &quot;validada&quot; : (resultado == &quot;bloqueado&quot; ? &quot;bloqueada&quot; : &quot;noViable&quot;)&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490206" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490207" name="resultado" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490208" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490209">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490210" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490211" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490212" name="set_fechaValidacion()" content="preventa.fechaValidacion = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490213" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490214" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:Task" xmi:id="_he18cd4490297" documentation="La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta" name="Diseñar la propuesta" overrideActorsOfTheLane="false" priority="1" incoming="_he18cd4490505" outgoing="_he18cd4490511">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490298" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490299" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490300" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490301" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490302" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490303" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490304" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490305" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490306" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490307" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490308" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490309" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490310" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [concepto_viabilidad: preventa.conceptoViabilidad, valoracion_operaciones: preventa.valoracionOperaciones, url_ppta_preventa: preventa.urlPptaPreventa, link_repo_preventa: preventa.linkRepoPreventa].findAll { k, v -&gt; v?.trim() }; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490311" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_he18cd4490312" name="conn_hubspotNota" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490313" definitionId="hubspot-nota-crear" version="1.0.0" name="conn_hubspotNota">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490314" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490315" name="urlBase_conn_hubspotNota()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490316" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490317" key="cuerpo">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490318" name="cuerpo_conn_hubspotNota()" content="def esc = { String x -&gt; (x ?: &quot;&quot;).replace(&quot;&amp;&quot;,&quot;&amp;amp;&quot;).replace(&quot;&lt;&quot;,&quot;&amp;lt;&quot;).replace(&quot;&gt;&quot;,&quot;&amp;gt;&quot;).replace(String.valueOf((char) 10), &quot;&lt;&quot; + &quot;br&gt;&quot;) }; def partes = [&quot;&lt;p&gt;&lt;strong&gt;Propuesta de preventa (Bonita)&lt;/strong&gt;&lt;/p&gt;&quot;, &quot;&lt;p&gt;&lt;strong&gt;Valoración de operaciones:&lt;/strong&gt; &quot; + esc(preventa.valoracionOperaciones) + &quot;&lt;/p&gt;&quot;, &quot;&lt;p&gt;&lt;strong&gt;Propuesta:&lt;/strong&gt; &quot; + esc(preventa.urlPptaPreventa) + &quot;&lt;/p&gt;&quot;, &quot;&lt;p&gt;&lt;strong&gt;Repositorio:&lt;/strong&gt; &quot; + esc(preventa.linkRepoPreventa) + &quot;&lt;/p&gt;&quot;]; if (preventa.notaPropuesta?.trim()) partes &lt;&lt; &quot;&lt;p&gt;&quot; + esc(preventa.notaPropuesta) + &quot;&lt;/p&gt;&quot;; return partes.join(&quot;&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490319" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490320" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490321" name="ticketId_conn_hubspotNota()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490322" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490323" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490324" name="dealId_conn_hubspotNota()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490325" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <filters xmi:type="process:ActorFilter" xmi:id="_he18cd4490326" name="filtroConsultoraDelCaso" definitionId="usuario-por-nombre" definitionVersion="1.0.0">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_he18cd4490327" definitionId="usuario-por-nombre" version="1.0.0" name="filtroConsultoraDelCaso">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_he18cd4490328" key="usuario">
+                <expression xmi:type="expression:Expression" xmi:id="_he18cd4490329" name="usuario_filtroConsultoraDelCaso()" content="def usuario = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 3 &amp;&amp; kv[0] == ownerElegido) usuario = kv[2] }; if (!usuario) throw new RuntimeException(&quot;param_consultores no da usuario de Bonita al owner &quot; + ownerElegido); return usuario" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:Data" xmi:id="_he18cd4490330" name="ownerElegido" dataType="_he18cd4490012" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_he18cd4490331" name="param_consultores" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+            </configuration>
+          </filters>
+          <formMapping xmi:type="process:FormMapping" xmi:id="_he18cd4490332" type="URL" url="/bonita/portal/resource/app/hubspotBonita/frm20DisenarPropuesta/content/">
+            <targetForm xmi:type="expression:Expression" xmi:id="_he18cd4490333" name="/bonita/portal/resource/app/hubspotBonita/frm20DisenarPropuesta/content/" content="/bonita/portal/resource/app/hubspotBonita/frm20DisenarPropuesta/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+          </formMapping>
+          <contract xmi:type="process:Contract" xmi:id="_he18cd4490334">
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490335" name="valoracionOperaciones" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490336" name="urlPptaPreventa" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490337" name="linkRepoPreventa" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490338" name="notaPropuesta" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490339" name="adjuntos" type="FILE" multiple="true" />
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490340" name="valoracionOperaciones_valida" expression="return (valoracionOperaciones ?: &quot;&quot;).trim().matches(&quot;(?i)https?://.+&quot;)" errorMessage="La valoración de operaciones debe ser un enlace que empiece por http:// o https://">
+              <inputNames>valoracionOperaciones</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490341" name="urlPptaPreventa_valida" expression="return (urlPptaPreventa ?: &quot;&quot;).trim().matches(&quot;(?i)https?://.+&quot;)" errorMessage="La URL de la propuesta debe empezar por http:// o https://">
+              <inputNames>urlPptaPreventa</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490342" name="linkRepoPreventa_valido" expression="return (linkRepoPreventa ?: &quot;&quot;).trim().matches(&quot;(?i)https?://.+&quot;)" errorMessage="El enlace al repositorio debe empezar por http:// o https://">
+              <inputNames>linkRepoPreventa</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490343" name="mandatory_valoracionOperaciones" expression="valoracionOperaciones != null" errorMessage="valoracionOperaciones es obligatorio">
+              <inputNames>valoracionOperaciones</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490344" name="mandatory_urlPptaPreventa" expression="urlPptaPreventa != null" errorMessage="urlPptaPreventa es obligatorio">
+              <inputNames>urlPptaPreventa</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490345" name="mandatory_linkRepoPreventa" expression="linkRepoPreventa != null" errorMessage="linkRepoPreventa es obligatorio">
+              <inputNames>linkRepoPreventa</inputNames>
+            </constraints>
+          </contract>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490346">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490347" name="adjuntosPropuesta" content="adjuntosPropuesta" type="DOCUMENT_REF_TYPE" returnType="java.util.List">
+              <referencedElements xmi:type="process:Document" xmi:id="_he18cd4490348" name="adjuntosPropuesta" multiple="true" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490349" name="doc_adjuntosPropuesta()" content="def __archivos = adjuntos&#10;if (__archivos != null) {&#10;def __valores = __archivos.collect { a -&gt; a.id == null ? new org.bonitasoft.engine.bpm.document.DocumentValue(a.content, a.contentType, a.fileName) : a.content != null ? new org.bonitasoft.engine.bpm.document.DocumentValue(Long.valueOf(a.id), a.content, a.contentType, a.fileName) : new org.bonitasoft.engine.bpm.document.DocumentValue(Long.valueOf(a.id)) }&#10;apiAccessor.processAPI.setDocumentList(processInstanceId, 'adjuntosPropuesta', __valores)&#10;}&#10;try {&#10;return apiAccessor.processAPI.getDocumentList(processInstanceId, 'adjuntosPropuesta', 0, Integer.MAX_VALUE).collect { d -&gt; new org.bonitasoft.engine.bpm.document.DocumentValue(d.id) }&#10;} catch (org.bonitasoft.engine.bpm.document.DocumentNotFoundException e) {&#10;return []&#10;}" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.util.List">
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490350" name="adjuntos" type="FILE" multiple="true" />
+              <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490351" name="apiAccessor" content="apiAccessor" type="TYPE_ENGINE_CONSTANT" returnType="org.bonitasoft.engine.api.APIAccessor" />
+              <referencedElements xmi:type="expression:Expression" xmi:id="_he18cd4490352" name="processInstanceId" content="processInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490353" type="DOCUMENT_LIST_SET" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490354">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490355" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490356" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490357" name="set_valoracionOperaciones()" content="preventa.valoracionOperaciones = valoracionOperaciones&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490358" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490359" name="valoracionOperaciones" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490360" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490361">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490362" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490363" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490364" name="set_urlPptaPreventa()" content="preventa.urlPptaPreventa = urlPptaPreventa&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490365" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490366" name="urlPptaPreventa" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490367" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490368">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490369" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490370" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490371" name="set_linkRepoPreventa()" content="preventa.linkRepoPreventa = linkRepoPreventa&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490372" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490373" name="linkRepoPreventa" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490374" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490375">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490376" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490377" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490378" name="set_notaPropuesta()" content="preventa.notaPropuesta = notaPropuesta&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490379" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490380" name="notaPropuesta" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490381" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490382">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490383" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490384" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490385" name="set_estado()" content="preventa.estado = 'propuestaDisenada'&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490386" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490387" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490388">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490389" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490390" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490391" name="set_fechaPropuesta()" content="preventa.fechaPropuesta = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490392" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490393" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_he18cd4490394">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_he18cd4490395" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490396" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_he18cd4490397" name="set_cantidadAdjuntos()" content="preventa.cantidadAdjuntos = {&#10;return adjuntos ? adjuntos.size() : 0&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490398" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490399" name="adjuntos" type="FILE" multiple="true" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_he18cd4490400" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:XORGateway" xmi:id="_he18cd4490452" documentation="Decide: Preventa.resultadoValidacion (de ctr_10_validarSolicitud)" name="gwXor_1" incoming="_he18cd4490489" outgoing="_he18cd4490492 _he18cd4490496 _he18cd4490500">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490453" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490454" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490455" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:XORGateway" xmi:id="_he18cd4490456" documentation="Decide: Preventa.cantidadAdjuntos (de ctr_20_disenarPropuesta)" name="gwXor_2" incoming="_he18cd4490511" outgoing="_he18cd4490514 _he18cd4490518">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_he18cd4490457" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_he18cd4490458" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_he18cd4490459" name="" content="" returnTypeFixed="true" />
+        </elements>
+      </elements>
+      <data xmi:type="process:Data" xmi:id="_he18cd4490468" name="ownerElegido" dataType="_he18cd4490012">
+        <defaultValue xmi:type="expression:Expression" xmi:id="_he18cd4490469" name="" content="" returnType="" />
+      </data>
+      <data xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490470" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa">
+        <defaultValue xmi:type="expression:Expression" xmi:id="_he18cd4490471" name="init_preventa()" content="def preventa = new co.trycore.preventa.model.Preventa()&#10;preventa.ticketId = ticketId&#10;preventa.estado = 'recibida'&#10;preventa.fechaRecepcion = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa" returnTypeFixed="true">
+          <referencedElements xmi:type="process:ContractInput" xmi:id="_he18cd4490472" name="ticketId" type="TEXT" />
+        </defaultValue>
+      </data>
+      <documents xmi:type="process:Document" xmi:id="_he18cd4490473" name="adjuntosPropuesta" multiple="true" />
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490474" target="_he18cd4490020" source="_he18cd4490016">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490475" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490476" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490477" target="_he18cd4490049" source="_he18cd4490020">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490478" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490479" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490480" target="_he18cd4490084" source="_he18cd4490049">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490481" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490482" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490483" target="_he18cd4490115" source="_he18cd4490084">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490484" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490485" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490486" target="_he18cd4490136" source="_he18cd4490115">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490487" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490488" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490489" target="_he18cd4490452" source="_he18cd4490136">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490490" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490491" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490492" target="_he18cd4490215" source="_he18cd4490452">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490493" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490494" name="condicion_gwXor_1_11_pasarADiseno()" content="return preventa.resultadoValidacion == &quot;viable&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+          <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490495" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+        </condition>
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490496" target="_he18cd4490246" source="_he18cd4490452">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490497" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490498" name="condicion_gwXor_1_12_pasarAEnEspera()" content="return preventa.resultadoValidacion == &quot;bloqueado&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+          <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490499" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+        </condition>
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490500" target="_he18cd4490266" source="_he18cd4490452" isDefault="true">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490501" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490502" target="_he18cd4490464" source="_he18cd4490266">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490503" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490504" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490505" target="_he18cd4490297" source="_he18cd4490215">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490506" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490507" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490508" target="_he18cd4490136" source="_he18cd4490246">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490509" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490510" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490511" target="_he18cd4490456" source="_he18cd4490297">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490512" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490513" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490514" target="_he18cd4490401" source="_he18cd4490456">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490515" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490516" name="condicion_gwXor_2_21_subirAdjuntos()" content="return (preventa.cantidadAdjuntos ?: 0) &gt; 0" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+          <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_he18cd4490517" name="preventa" dataType="_he18cd4490015" className="co.trycore.preventa.model.Preventa" />
+        </condition>
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490518" target="_he18cd4490420" source="_he18cd4490456" isDefault="true">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490519" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490520" target="_he18cd4490420" source="_he18cd4490401">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490521" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490522" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_he18cd4490523" target="_he18cd4490460" source="_he18cd4490420">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_he18cd4490524" />
+        <condition xmi:type="expression:Expression" xmi:id="_he18cd4490525" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <formMapping xmi:type="process:FormMapping" xmi:id="_he18cd4490526" type="NONE" />
+      <overviewFormMapping xmi:type="process:FormMapping" xmi:id="_he18cd4490527" type="URL" url="/bonita/portal/resource/app/hubspotBonita/frmOverview/content/">
+        <targetForm xmi:type="expression:Expression" xmi:id="_he18cd4490528" name="/bonita/portal/resource/app/hubspotBonita/frmOverview/content/" content="/bonita/portal/resource/app/hubspotBonita/frmOverview/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+      </overviewFormMapping>
+      <actors xmi:type="process:Actor" xmi:id="_he18cd4490003" name="orquestador" initiator="true" />
+      <actors xmi:type="process:Actor" xmi:id="_he18cd4490004" name="consultora" />
+      <configurations xmi:id="_he18cd4490529" name="Qualification" version="9">
+        <actorMappings>
+          <actorMapping name="orquestador">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/integracion</group>
+                <role>integracion</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+          <actorMapping name="consultora">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/preventa</group>
+                <role>consultora</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+        </actorMappings>
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-leer" definitionVersion="1.0.0" implementationId="hubspot-ticket-leer-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-consultores-menor-carga" definitionVersion="1.0.0" implementationId="hubspot-consultores-menor-carga-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" implementationId="hubspot-ticket-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" implementationId="hubspot-nota-crear-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" implementationId="hubspot-negocio-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-archivo-subir" definitionVersion="1.0.0" implementationId="hubspot-archivo-subir-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="ACTOR_FILTER" definitionId="usuario-por-nombre" definitionVersion="1.0.0" implementationId="usuario-por-nombre-impl" implementationVersion="1.0.0" />
+        <processDependencies id="CONNECTOR" />
+        <processDependencies id="ACTOR_FILTER" />
+        <processDependencies id="OTHER" />
+        <parameters name="param_hubspotUrlBase" value="https://api.hubapi.com" typeClassname="java.lang.String" />
+        <parameters name="param_hubspotRutaTickets" value="/crm/v3/objects/tickets" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnValidacion" value="2" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnDiseno" value="3" typeClassname="java.lang.String" />
+        <parameters name="param_stageEntregado" value="1425810258" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnEspera" value="1425810257" typeClassname="java.lang.String" />
+        <parameters name="param_stageCerrado" value="4" typeClassname="java.lang.String" />
+        <parameters name="param_consultores" value="89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez" typeClassname="java.lang.String" />
+        <parameters name="param_pipelineTickets" value="0" typeClassname="java.lang.String" />
+      </configurations>
+      <configurations xmi:id="_he18cd4490530" name="Production" version="9">
+        <actorMappings>
+          <actorMapping name="orquestador">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/integracion</group>
+                <role>integracion</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+          <actorMapping name="consultora">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/preventa</group>
+                <role>consultora</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+        </actorMappings>
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-leer" definitionVersion="1.0.0" implementationId="hubspot-ticket-leer-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-consultores-menor-carga" definitionVersion="1.0.0" implementationId="hubspot-consultores-menor-carga-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" implementationId="hubspot-ticket-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" implementationId="hubspot-nota-crear-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" implementationId="hubspot-negocio-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-archivo-subir" definitionVersion="1.0.0" implementationId="hubspot-archivo-subir-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="ACTOR_FILTER" definitionId="usuario-por-nombre" definitionVersion="1.0.0" implementationId="usuario-por-nombre-impl" implementationVersion="1.0.0" />
+        <processDependencies id="CONNECTOR" />
+        <processDependencies id="ACTOR_FILTER" />
+        <processDependencies id="OTHER" />
+        <parameters name="param_hubspotUrlBase" value="https://api.hubapi.com" typeClassname="java.lang.String" />
+        <parameters name="param_hubspotRutaTickets" value="/crm/v3/objects/tickets" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnValidacion" value="2" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnDiseno" value="3" typeClassname="java.lang.String" />
+        <parameters name="param_stageEntregado" value="1425810258" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnEspera" value="1425810257" typeClassname="java.lang.String" />
+        <parameters name="param_stageCerrado" value="4" typeClassname="java.lang.String" />
+        <parameters name="param_consultores" value="89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez" typeClassname="java.lang.String" />
+        <parameters name="param_pipelineTickets" value="0" typeClassname="java.lang.String" />
+      </configurations>
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490531" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490532" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490533" name="param_stageEnValidacion" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490534" name="param_stageEnDiseno" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490535" name="param_stageEntregado" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490536" name="param_stageEnEspera" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490537" name="param_stageCerrado" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490538" name="param_consultores" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_he18cd4490539" name="param_pipelineTickets" typeClassname="java.lang.String" />
+      <contract xmi:type="process:Contract" xmi:id="_he18cd4490540">
+        <inputs xmi:type="process:ContractInput" xmi:id="_he18cd4490541" name="ticketId" type="TEXT" />
+        <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490542" name="ticketId_presente" expression="return ticketId != null &amp;&amp; !ticketId.trim().isEmpty()" errorMessage="El identificador del ticket es obligatorio">
+          <inputNames>ticketId</inputNames>
+        </constraints>
+        <constraints xmi:type="process:ContractConstraint" xmi:id="_he18cd4490543" name="mandatory_ticketId" expression="ticketId != null" errorMessage="ticketId es obligatorio">
+          <inputNames>ticketId</inputNames>
+        </constraints>
+      </contract>
+    </elements>
+    <datatypes xmi:type="process:BooleanType" xmi:id="_he18cd4490007" name="Boolean" />
+    <datatypes xmi:type="process:DateType" xmi:id="_he18cd4490008" name="Date" />
+    <datatypes xmi:type="process:IntegerType" xmi:id="_he18cd4490009" name="Integer" />
+    <datatypes xmi:type="process:LongType" xmi:id="_he18cd4490010" name="Long" />
+    <datatypes xmi:type="process:DoubleType" xmi:id="_he18cd4490011" name="Double" />
+    <datatypes xmi:type="process:StringType" xmi:id="_he18cd4490012" name="Text" />
+    <datatypes xmi:type="process:JavaType" xmi:id="_he18cd4490013" name="Java_object" />
+    <datatypes xmi:type="process:XMLType" xmi:id="_he18cd4490014" name="XML" />
+    <datatypes xmi:type="process:BusinessObjectType" xmi:id="_he18cd4490015" name="Business_Object" />
+  </process:MainProcess>
+  <notation:Diagram xmi:id="_he18cd4490544" type="Process" element="_he18cd4490001" name="GestionPreventa" measurementUnit="Pixel">
+    <children xmi:type="notation:Node" xmi:id="_he18cd4490545" type="2007" element="_he18cd4490002">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490546" type="5008" />
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490547" type="7001">
+        <children xmi:type="notation:Node" xmi:id="_he18cd4490548" type="3007" element="_he18cd4490005">
+          <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490549" type="5007" />
+          <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490550" type="7002">
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490551" type="3002" element="_he18cd4490016">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490552" type="5024">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490553" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490554" x="109" y="55" width="30" height="30" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490555" type="3027" element="_he18cd4490020" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490556" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490557" x="240" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490558" type="3027" element="_he18cd4490049" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490559" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490560" x="420" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490561" type="3028" element="_he18cd4490084" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490562" type="5018" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490563" x="600" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490564" type="3027" element="_he18cd4490115" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490565" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490566" x="780" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490567" type="3027" element="_he18cd4490215" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490568" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490569" x="1320" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490570" type="3027" element="_he18cd4490246" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490571" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490572" x="1320" y="138" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490573" type="3027" element="_he18cd4490266" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490574" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490575" x="1320" y="238" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490576" type="3027" element="_he18cd4490401" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490577" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490578" x="1860" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490579" type="3027" element="_he18cd4490420" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490580" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490581" x="2040" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490582" type="3003" element="_he18cd4490460">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490583" type="5025">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490584" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490585" x="2269" y="55" width="30" height="30" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490586" type="3003" element="_he18cd4490464">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490587" type="5025">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490588" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490589" x="1549" y="55" width="30" height="30" />
+            </children>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_he18cd4490590" />
+          <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490591" />
+          <styles xmi:type="notation:LineStyle" xmi:id="_he18cd4490592" lineColor="12632256" />
+          <styles xmi:type="notation:FillStyle" xmi:id="_he18cd4490593" />
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490594" width="2329" height="340" />
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_he18cd4490595" type="3007" element="_he18cd4490006">
+          <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490596" type="5007" />
+          <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490597" type="7002">
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490598" type="3005" element="_he18cd4490136" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490599" type="5005" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490600" x="960" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490601" type="3005" element="_he18cd4490297" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490602" type="5005" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490603" x="1500" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490604" type="3008" element="_he18cd4490452">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490605" type="5026">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490606" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490607" x="1182" y="48" width="43" height="43" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_he18cd4490608" type="3008" element="_he18cd4490456">
+              <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490609" type="5026">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490610" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490611" x="1722" y="48" width="43" height="43" />
+            </children>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_he18cd4490612" />
+          <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490613" />
+          <styles xmi:type="notation:LineStyle" xmi:id="_he18cd4490614" lineColor="12632256" />
+          <styles xmi:type="notation:FillStyle" xmi:id="_he18cd4490615" />
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490616" width="2329" height="140" />
+        </children>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_he18cd4490617" />
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490618" />
+      <styles xmi:type="notation:LineStyle" xmi:id="_he18cd4490619" lineColor="12632256" />
+      <styles xmi:type="notation:FillStyle" xmi:id="_he18cd4490620" />
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_he18cd4490621" width="2359" height="480" />
+    </children>
+    <styles xmi:type="notation:DiagramStyle" xmi:id="_he18cd4490622" />
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490623" type="4001" element="_he18cd4490474" source="_he18cd4490551" target="_he18cd4490555" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490624" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490625" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490626" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490627" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490628" type="4001" element="_he18cd4490477" source="_he18cd4490555" target="_he18cd4490558" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490629" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490630" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490631" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490632" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490633" type="4001" element="_he18cd4490480" source="_he18cd4490558" target="_he18cd4490561" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490634" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490635" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490636" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490637" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490638" type="4001" element="_he18cd4490483" source="_he18cd4490561" target="_he18cd4490564" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490639" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490640" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490641" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490642" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490643" type="4001" element="_he18cd4490486" source="_he18cd4490564" target="_he18cd4490598" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490644" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490645" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490646" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490647" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490648" type="4001" element="_he18cd4490489" source="_he18cd4490598" target="_he18cd4490604" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490649" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490650" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490651" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490652" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490653" type="4001" element="_he18cd4490492" source="_he18cd4490604" target="_he18cd4490567" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490654" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490655" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490656" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490657" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490658" type="4001" element="_he18cd4490496" source="_he18cd4490604" target="_he18cd4490570" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490659" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490660" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490661" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490662" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490663" type="4001" element="_he18cd4490500" source="_he18cd4490604" target="_he18cd4490573" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490664" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490665" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490666" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490667" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490668" type="4001" element="_he18cd4490502" source="_he18cd4490573" target="_he18cd4490586" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490669" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490670" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490671" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490672" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490673" type="4001" element="_he18cd4490505" source="_he18cd4490567" target="_he18cd4490601" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490674" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490675" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490676" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490677" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490678" type="4001" element="_he18cd4490508" source="_he18cd4490570" target="_he18cd4490598" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490679" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490680" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490681" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490682" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490683" type="4001" element="_he18cd4490511" source="_he18cd4490601" target="_he18cd4490608" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490684" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490685" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490686" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490687" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490688" type="4001" element="_he18cd4490514" source="_he18cd4490608" target="_he18cd4490576" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490689" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490690" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490691" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490692" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490693" type="4001" element="_he18cd4490518" source="_he18cd4490608" target="_he18cd4490579" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490694" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490695" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490696" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490697" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490698" type="4001" element="_he18cd4490520" source="_he18cd4490576" target="_he18cd4490579" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490699" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490700" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490701" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490702" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_he18cd4490703" type="4001" element="_he18cd4490523" source="_he18cd4490579" target="_he18cd4490582" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_he18cd4490704" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_he18cd4490705" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_he18cd4490706" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_he18cd4490707" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+  </notation:Diagram>
+</xmi:XMI>

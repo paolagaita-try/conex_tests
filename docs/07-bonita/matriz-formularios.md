@@ -1,5 +1,5 @@
 ---
-actualizado: 2026-11-24
+actualizado: 2026-11-25
 capa: 3
 motor: Bonita
 deriva_de: docs/07-bonita/contratos.md, docs/07-bonita/bpmn.md, docs/07-bonita/bdm.md, docs/00-parametros/catalogo-parametros.md, docs/08-construccion/plan-v2-bonita-first.md
@@ -25,8 +25,8 @@ umbral_campos_unidad_propia: 10
 | Formulario | Tipo | Tarea BPMN | Actor | Contrato | Entradas del contrato | Objetos de negocio (lee / escribe) | Form mapping | Familia | Validaciones (resumen) | Componentes de galería |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `frm_instanciacion` | Instantiation form | (inicio) | — (lo instancia el middleware) | `ctr_instanciacion` | `ticketId` | — / `Preventa` | No form | — | — | — |
-| `frm_10_validarSolicitud` | Task form | `10_validarSolicitud` | Consultora (la asignada) | `ctr_10_validarSolicitud` | `resultado`, `conceptoViabilidad`, `notaValidacion`, `supuestos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `resultado_valido`, `notaValidacion_presente`, `conceptoViabilidad_si_concluye` | — |
-| `frm_20_disenarPropuesta` | Task form | `20_disenarPropuesta` | Consultora (la asignada) | `ctr_20_disenarPropuesta` | `valoracionOperaciones`, `urlPptaPreventa`, `linkRepoPreventa`, `notaPropuesta`, `adjuntos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `valoracionOperaciones_presente`, `urlPptaPreventa_valida`, `linkRepoPreventa_valido` | — |
+| `frm_10_validarSolicitud` | Task form | `10_validarSolicitud` | Consultora (la asignada) | `ctr_10_validarSolicitud` | `resultado`, `conceptoViabilidad`, `notaValidacion`, `supuestos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `resultado_valido`, `notaValidacion_presente`, `conceptoViabilidad_si_concluye`, `conceptoViabilidad_valido`, `conceptoViabilidad_noViable` | — |
+| `frm_20_disenarPropuesta` | Task form | `20_disenarPropuesta` | Consultora (la asignada) | `ctr_20_disenarPropuesta` | `valoracionOperaciones`, `urlPptaPreventa`, `linkRepoPreventa`, `notaPropuesta`, `adjuntos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `valoracionOperaciones_valida`, `urlPptaPreventa_valida`, `linkRepoPreventa_valido` | — |
 | `frm_overview` | Case overview | (pool) | Consultora | — | — | `Preventa` + `preventaContexto` / — | Svelte | FAM-consultoras | — | — |
 
 ## Detalle por formulario
@@ -48,8 +48,8 @@ umbral_campos_unidad_propia: 10
 | Comercial / owner | Text (solo lectura) | — | `ctx.owner` | — | — | — | — | — |
 | Consultora asignada | Text (solo lectura) | — | `Preventa.consultor`, `Preventa.fechaAsignacion` | — | — | — | — | — |
 | Validación anterior | Text (solo lectura, solo si hubo bloqueo) | — | `Preventa.resultadoValidacion`, `Preventa.notaValidacion`, `Preventa.fechaValidacion` | — | — | — | — | — |
-| Resultado | Radio buttons (viable / bloqueado / no viable) | `resultado` | — | sí | espeja `resultado_valido` | — | — | — |
-| Concepto de viabilidad | Text area | `conceptoViabilidad` | `Preventa.conceptoViabilidad` (valor inicial) | no | espeja `conceptoViabilidad_si_concluye` | Resultado | — | — |
+| Resultado | Radio buttons (viable / bloqueado / no_viable) | `resultado` | — | sí | espeja `resultado_valido` | — | — | — |
+| Concepto de viabilidad | Desplegable con las cuatro opciones de `concepto_viabilidad`: «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)», «Requiere más información» | `conceptoViabilidad` | `Preventa.conceptoViabilidad` (valor inicial) | no | espeja `conceptoViabilidad_si_concluye`; espeja `conceptoViabilidad_valido`; espeja `conceptoViabilidad_noViable` | Resultado | — | — |
 | Nota de validación | Text area (texto largo) | `notaValidacion` | — | sí | espeja `notaValidacion_presente` | — | — | — |
 | Supuestos | Text area | `supuestos` | `Preventa.supuestos` (valor inicial) | no | — | — | — | — |
 
@@ -70,7 +70,7 @@ umbral_campos_unidad_propia: 10
 | Empresa | Text (solo lectura) | — | `ctx.company.*` | — | — | — | — | — |
 | Contactos | Tabla (solo lectura) | — | `ctx.contacts[]` | — | — | — | — | — |
 | Validación | Text (solo lectura) | — | `Preventa.resultadoValidacion`, `Preventa.conceptoViabilidad`, `Preventa.notaValidacion`, `Preventa.supuestos`, `Preventa.fechaValidacion` | — | — | — | — | — |
-| Valoración de operaciones | Text area | `valoracionOperaciones` | `ctx.deal.valoracion_operaciones` (valor inicial) | sí | espeja `valoracionOperaciones_presente` | — | — | — |
+| Valoración de operaciones | Text (URL) | `valoracionOperaciones` | `ctx.deal.valoracion_operaciones` (valor inicial) | sí | espeja `valoracionOperaciones_valida` | — | — | — |
 | URL propuesta (presentación) | Text (URL) | `urlPptaPreventa` | `ctx.deal.url_ppta_preventa` (valor inicial) | sí | espeja `urlPptaPreventa_valida` | — | — | — |
 | Link repositorio preventa | Text (URL) | `linkRepoPreventa` | `ctx.deal.link_repo_preventa` (valor inicial) | sí | espeja `linkRepoPreventa_valido` | — | — | — |
 | Nota de propuesta | Text area | `notaPropuesta` | — | no | — | — | — | — |

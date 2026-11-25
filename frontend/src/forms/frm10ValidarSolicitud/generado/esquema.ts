@@ -14,7 +14,7 @@ const ENTERO = 'Escriba un número entero.';
  * Lo que la matriz no usa debe ir a `null`. Las constraints del contrato las valida el motor al enviar.
  */
 export const esquema = z.object({
-  resultado: z.enum(["viable", "bloqueado", "no viable"], { errorMap: () => ({ message: OPCION }) }),
+  resultado: z.enum(["viable", "bloqueado", "no_viable"], { errorMap: () => ({ message: OPCION }) }),
   conceptoViabilidad: z.string({ required_error: OBLIGATORIO, invalid_type_error: OBLIGATORIO }).nullable(),
   notaValidacion: z.string({ required_error: OBLIGATORIO, invalid_type_error: OBLIGATORIO }).min(1, OBLIGATORIO),
   supuestos: z.string({ required_error: OBLIGATORIO, invalid_type_error: OBLIGATORIO }).nullable(),

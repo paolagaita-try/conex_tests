@@ -6,7 +6,7 @@ import type { Lectura } from '$lib/bonita/caso';
 import type { ValorDeCampo, ValoresDelFormulario } from '$lib/ui/valores';
 
 /** Identidad del formulario: su id en la matriz, su página, su tarea, su contrato y su proceso. */
-export const FORMULARIO = { id: "frm_10_validarSolicitud", pagina: "frm10ValidarSolicitud", tipo: "tarea", tarea: "10_validarSolicitud", contrato: "ctr_10_validarSolicitud", proceso: "GestionPreventa", version: "1.2" } as const;
+export const FORMULARIO = { id: "frm_10_validarSolicitud", pagina: "frm10ValidarSolicitud", tipo: "tarea", tarea: "10_validarSolicitud", contrato: "ctr_10_validarSolicitud", proceso: "GestionPreventa", version: "1.3" } as const;
 
 /** Todos los inputs del contrato, en su orden: el cuerpo los lleva siempre. */
 export const ENTRADAS = ["resultado", "conceptoViabilidad", "notaValidacion", "supuestos"] as const;
@@ -49,8 +49,8 @@ export interface CampoDeContrato {
 
 /** Los campos de la matriz que escriben en el contrato, en el orden de la matriz. */
 export const CAMPOS: readonly CampoDeContrato[] = [
-  { ruta: "resultado", grupo: "datos", nombre: "resultado", etiqueta: "Resultado", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "∈ {viable, bloqueado, no viable}; El resultado debe ser viable, bloqueado o no viable" },
-  { ruta: "conceptoViabilidad", grupo: "datos", nombre: "conceptoViabilidad", etiqueta: "Concepto de viabilidad", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "no", requeridoSiempre: false, constraint: "El concepto de viabilidad es obligatorio si la solicitud es viable o no viable" },
+  { ruta: "resultado", grupo: "datos", nombre: "resultado", etiqueta: "Resultado", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "∈ {viable, bloqueado, no_viable}; El resultado debe ser viable, bloqueado o no viable" },
+  { ruta: "conceptoViabilidad", grupo: "datos", nombre: "conceptoViabilidad", etiqueta: "Concepto de viabilidad", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "no", requeridoSiempre: false, constraint: "El concepto de viabilidad es obligatorio si la solicitud es viable o no viable; El concepto de viabilidad debe ser Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información; Si la solicitud no es viable, el concepto debe ser No Viable (Rechazado)" },
   { ruta: "notaValidacion", grupo: "datos", nombre: "notaValidacion", etiqueta: "Nota de validación", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "sí", requeridoSiempre: true, constraint: "La nota de validación es obligatoria" },
   { ruta: "supuestos", grupo: "datos", nombre: "supuestos", etiqueta: "Supuestos", tipo: "TEXT", tipoContrato: "TEXT", multiple: false, obligatorio: "no", requeridoSiempre: false, constraint: "" },
 ];
