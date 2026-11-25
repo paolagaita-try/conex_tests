@@ -92,7 +92,6 @@ Variables de entorno del **middleware**: ver [`middleware/.env.example`](middlew
 ## Estado
 
 - Proceso v2 (validación y propuesta en formularios Bonita), conectores de escritura, `preventaContexto` y formularios construidos; journey verde contra el mock (caminos entregada, bloqueada y no viable): `docs/08-construccion/evidencia-v2-proceso.md`.
-- Prueba de punta a punta contra HubSpot real con objetos de prueba desechables: `docs/08-construccion/prueba-real-v2.md`.
 - Middleware Rust: solo la entrada `ticket.creation`; `cargo test` en CI.
 - Pendiente: despliegue (middleware público, Bonita prod, registro del webhook); rotar el token de pruebas.
 
