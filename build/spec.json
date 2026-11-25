@@ -439,6 +439,11 @@
             "nombre": "ultimoOwnerId",
             "obligatoria": false,
             "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
           }
         ],
         "implementacion": {
@@ -1092,6 +1097,7 @@
             "pipelineId": "return param_pipelineTickets",
             "rutaTickets": "return param_hubspotRutaTickets",
             "stages": "return param_stageEnValidacion + \",\" + param_stageEnDiseno",
+            "ticketId": "return preventa.ticketId",
             "ultimoOwnerId": "def r = preventaDAO.findAsignadasRecientes(0, 1); return (!r) ? \"\" : (r[0].consultorOwnerId ?: \"\")",
             "urlBase": "return param_hubspotUrlBase"
           },
