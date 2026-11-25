@@ -5,9 +5,9 @@ Puente entre HubSpot y Bonita para la integración de preventa. Servicio **Rust*
 ## Qué hace
 
 1. **Entrada** — `POST /webhooks/ticket-created`: webhook de app `ticket.creation` → instancia el caso en Bonita (`POST /API/bpm/process/{id}/instantiation`). **Idempotente** por `ticketId` (store en `data/store.json`). **Blindaje de pipeline:** solo actúa sobre el pipeline de Preventa (`HUBSPOT_PIPELINE`); ignora otros (p. ej. «Comercio»).
-2. **Avance a diseño (manual)** — el paso «En validación» → «Asignado/En diseño» lo hace **la consultora** en el tablero de HubSpot. El middleware **no** lo automatiza (antes había un temporizador; se eliminó porque ensuciaba los tiempos por etapa y saturaba el trabajo en curso).
-3. **Artefactos de preventa** — ya **no** pasan por el middleware: entran por **formularios de Bonita** (premisa v2 «Bonita first», ver `docs/08-construccion/plan-v2-bonita-first.md`). Se retiraron el webhook `/webhooks/artifacts-loaded`, la suscripción `deal.propertyChange` y el detector periódico de artefactos.
-4. **Reconciliación** — barrido periódico (log). `GET /health` → `{ok:true}`.
+2. **Reconciliación** — barrido periódico (`RECONCILE_MS`) que compara casos activos de Bonita con tickets del pipeline y lo deja en el log; no actúa. `GET /health` → `{ok:true}`.
+
+La entrada es lo **único** que el middleware hace sobre el caso: con la premisa v2 «Bonita-first» (`docs/08-construccion/plan-v2-bonita-first.md`) el caso avanza dentro de Bonita. La consultora valida la solicitud y diseña la propuesta en **formularios de Bonita**, y son los conectores de Bonita los que mueven el ticket de stage y escriben en el Negocio. Por eso no hay en el middleware avance a diseño, webhook de artefactos (`/webhooks/artifacts-loaded`), suscripción `deal.propertyChange` ni detector periódico: se retiraron.
 
 El middleware **no escribe** en HubSpot: solo lee el ticket (blindaje de pipeline y reconciliación).
 

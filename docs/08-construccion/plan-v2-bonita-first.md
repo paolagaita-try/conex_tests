@@ -1,6 +1,7 @@
 # Plan v2 · Bonita-first (el equipo trabaja en Bonita; HubSpot solo se alimenta)
 
-> Estado: **propuesto, pendiente de aprobación** (2026-11-24). Reemplaza el alcance «solo carril del orquestador» del
+> Estado: **aprobado** por la usuaria el 2026-11-24 («construye»; ver `docs/07-bonita/handoff.md`) y construido en el
+> pool `GestionPreventa` 1.2. Reemplaza el alcance «solo carril del orquestador» del
 > `docs/07-bonita/handoff.md` (reunión del 12-nov). Editar `docs/07-bonita/` (fuente aprobada) requiere el OK de la
 > usuaria antes de cada cambio.
 

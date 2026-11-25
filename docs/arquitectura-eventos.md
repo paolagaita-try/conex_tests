@@ -1,38 +1,36 @@
-# Arquitectura de orquestación por eventos — HubSpot ↔ Bonita
+# Arquitectura de eventos — HubSpot ↔ Bonita (v2 «Bonita-first»)
 
 ## Resumen
 
-El **núcleo del flujo es dirigido por eventos (event-driven)**: HubSpot emite eventos de webhook y el middleware reacciona instanciando/avanzando casos en Bonita. Hay además dos piezas **basadas en tiempo** (un temporizador de negocio y un detector de seguridad) que se documentan aquí con honestidad.
+Desde la v2 (`docs/08-construccion/plan-v2-bonita-first.md`) el equipo de Preventa trabaja **solo en Bonita**. HubSpot
+emite **un único evento** hacia el sistema: la creación del ticket, que el middleware convierte en un caso de Bonita.
+Todo lo demás avanza **dentro del proceso Bonita** (tareas automáticas y las tareas humanas de la consultora en
+formularios), y Bonita escribe en HubSpot con sus conectores REST. No hay temporizadores ni sondeos que muevan el
+caso; la única pieza periódica es una reconciliación que solo informa.
 
-## Eventos (primario)
+## Eventos
 
 ```
-HubSpot ──ticket.creation──────────────► Middleware ──► Bonita: instancia el caso (idempotente)
-HubSpot ──deal.propertyChange (4 fuentes)► Middleware ──► Bonita: completa la espera → «Entregado a ventas»
-HubSpot ──ticket.propertyChange (cerrado)► Middleware ──► Bonita: completa la espera → «cerrado»
-Bonita  ──conectores REST──────────────► HubSpot: PATCH del ticket (En validación / Entregado)
+HubSpot ──ticket.creation──► Middleware ──► Bonita: instancia el caso (idempotente)
+Bonita  ──conectores REST──► HubSpot: PATCH del ticket (stage/owner), PATCH del Negocio (propiedades),
+                                      notas en ticket y Negocio, carga de adjuntos
 ```
 
-- **Entrada**: `ticket.creation` → `POST /webhooks/ticket-created` → instanciación. 100% evento.
-- **Artefactos**: `deal.propertyChange` sobre las 4 fuentes del Negocio → `POST /webhooks/artifacts-loaded` → si las 4 están, completa la espera. 100% evento.
-- **Cierre sin entrega**: `ticket.propertyChange` a stage cerrado → `cerrado`. 100% evento.
+- **Entrada**: `ticket.creation` → `POST /webhooks/ticket-created` → instanciación. Es la única entrada HubSpot→Bonita.
+- **Avance del caso**: lo deciden las tareas humanas en Bonita (`10_validarSolicitud`, `20_disenarPropuesta`); a su
+  salida, el mismo caso ejecuta los conectores que escriben en HubSpot. No se escuchan cambios hechos en HubSpot.
+- **Cierre por el comercial**: se hace en HubSpot y no genera evento hacia Bonita.
 
-## Piezas basadas en tiempo (no evento) — y por qué
+## Piezas basadas en tiempo
 
 | Pieza | Qué hace | Naturaleza | Nota |
 |---|---|---|---|
-| `avanzar_a_diseno` | Tras ~5 min en «En validación», mueve el ticket a «Diseño» | **Temporizador de negocio** | Requisito explícito de Preventa (evitar que quede parado). Es tiempo, no evento, **por diseño**. Puede migrarse a un **evento temporizador dentro del proceso Bonita** si se quiere 100% en el pool. |
-| `revisar_artefactos` | Revisa los casos en espera y entrega si las 4 fuentes están | **Polling (red de seguridad)** | El webhook `deal.propertyChange` es el primario e instantáneo; este polling es el respaldo por si se pierde un webhook. |
-| `reconciliar` | Compara casos activos vs tickets del pipeline (log) | **Polling diario** | Barrido de consistencia; no actúa, solo reporta. |
+| `reconciliar` (middleware) | Compara casos activos de Bonita con tickets del pipeline (log) | **Barrido periódico** (`RECONCILE_MS`, por defecto diario) | No actúa, solo reporta. |
 
 ## Garantías
 
 - **Idempotencia**: la entrada no duplica casos (store `ticketId → caseId`).
-- **Durabilidad**: el reloj del avance a «Diseño» vive en el store (sobrevive a reinicios).
-- **Blindaje de pipeline**: solo actúa sobre el pipeline de Preventa; ignora otros (p. ej. «Comercio»).
-- **Separación de objetos**: Bonita solo **escribe el ticket**; el **Negocio nunca se mueve**.
-
-## Para que sea 100% event-driven (opcional)
-
-1. Mover el temporizador de 5 min al **proceso Bonita** (evento temporizador de borde entre `6_actualizarTicket` y la espera, con una service task que PATChea a «Diseño»). Elimina el polling `avanzar_a_diseno` del middleware.
-2. Confiar solo en `deal.propertyChange` y bajar la frecuencia de `revisar_artefactos` a reconciliación (el polling quedaría como pura red de seguridad).
+- **Blindaje de pipeline**: el middleware solo actúa sobre el pipeline de Preventa; ignora los demás.
+- **Una sola dirección de escritura**: el middleware no escribe en HubSpot; escriben los conectores de Bonita.
+- **Separación de objetos**: Bonita mueve de stage solo el **ticket**; del **Negocio** escribe propiedades, notas y
+  adjuntos, nunca su etapa.

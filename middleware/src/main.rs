@@ -43,7 +43,7 @@ async fn main() {
         cfg,
     });
 
-    // job periódico: reconciliación. El avance a diseño es manual: no hay job.
+    // job periódico: reconciliación. El avance del caso ocurre en Bonita: no hay más jobs.
     spawn_cada(state.clone(), state.cfg.reconcile_ms, |s| async move { handlers::reconciliar(&s).await });
 
     let app = Router::new()
