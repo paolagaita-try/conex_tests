@@ -1,6 +1,7 @@
 {
   "generados": [
-    "bonita-project\\app\\diagrams\\GestionPreventa-1.0.proc",
-    "bonita-project\\app\\process_configurations\\_h155681b40002.conf"
+    "bonita-project\\app\\applications\\hubspotBonita.xml",
+    "bonita-project\\app\\diagrams\\GestionPreventa-1.2.proc",
+    "bonita-project\\app\\process_configurations\\_h7f7ab9dd0002.conf"
   ]
 }

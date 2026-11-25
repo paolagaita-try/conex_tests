@@ -156,6 +156,104 @@
           ]
         },
         {
+          "name": "0. id de linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/identity/user?f=userName=linda.lozano&p=0&c=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "identity",
+                "user"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "userName=linda.lozano"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const u = pm.response.json();",
+                  "pm.test(\"el archive no se instaló: falta el usuario linda.lozano de la organización\", () => pm.expect(u.length).to.eql(1));",
+                  "pm.collectionVariables.set(\"userId_linda.lozano\", u[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "0. id de viviana.velasquez",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/identity/user?f=userName=viviana.velasquez&p=0&c=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "identity",
+                "user"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "userName=viviana.velasquez"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const u = pm.response.json();",
+                  "pm.test(\"el archive no se instaló: falta el usuario viviana.velasquez de la organización\", () => pm.expect(u.length).to.eql(1));",
+                  "pm.collectionVariables.set(\"userId_viviana.velasquez\", u[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "0. usuarios en el perfil User",
           "request": {
             "method": "GET",
@@ -201,7 +299,7 @@
               "script": {
                 "exec": [
                   "const miembros = pm.response.json().map((m) => String(m.user_id));",
-                  "const faltan = [pm.variables.get(\"userId_ofelia.bot\")].map(String).filter((id) => !miembros.includes(id));",
+                  "const faltan = [pm.variables.get(\"userId_ofelia.bot\"), pm.variables.get(\"userId_linda.lozano\"), pm.variables.get(\"userId_viviana.velasquez\")].map(String).filter((id) => !miembros.includes(id));",
                   "pm.test(\"cada usuario en el perfil User (lo mapea tools/arnes.sh perfiles tras el despliegue)\", () => pm.expect(faltan).to.eql([]));"
                 ]
               }
@@ -301,7 +399,7 @@
           ]
         },
         {
-          "name": "[entregada] 1. proceso GestionPreventa 1.0",
+          "name": "[entregada] 1. proceso GestionPreventa 1.2",
           "request": {
             "method": "GET",
             "header": [
@@ -311,7 +409,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.0&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.2&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -327,7 +425,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.0"
+                  "value": "version=1.2"
                 },
                 {
                   "key": "f",
@@ -350,8 +448,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.0 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.0\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.2 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.2\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -442,7 +540,7 @@
           ]
         },
         {
-          "name": "[entregada] 2. login ofelia.bot",
+          "name": "[entregada] 2. login viviana.velasquez",
           "request": {
             "method": "POST",
             "header": [
@@ -466,7 +564,7 @@
               "urlencoded": [
                 {
                   "key": "username",
-                  "value": "ofelia.bot"
+                  "value": "viviana.velasquez"
                 },
                 {
                   "key": "password",
@@ -484,7 +582,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"login 204 de ofelia.bot\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"login 204 de viviana.velasquez\", () => pm.response.to.have.status(204));",
                   "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
                 ]
               }
@@ -492,7 +590,7 @@
           ]
         },
         {
-          "name": "[entregada] 2. tarea 18_esperarArtefactos",
+          "name": "[entregada] 2. tarea 10_validarSolicitud",
           "request": {
             "method": "GET",
             "header": [
@@ -502,7 +600,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_ofelia.bot}}&p=0&c=50",
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&p=0&c=50",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -515,10 +613,6 @@
                 {
                   "key": "f",
                   "value": "rootCaseId={{caseId}}"
-                },
-                {
-                  "key": "f",
-                  "value": "user_id={{userId_ofelia.bot}}"
                 },
                 {
                   "key": "p",
@@ -538,15 +632,15 @@
                 "exec": [
                   "const r = pm.response.code === 200 ? pm.response.json() : [];",
                   "const caso = String(pm.variables.get(\"caseId\"));",
-                  "const t = r.filter(x => x.name === \"Esperar la carga de artefactos en el negocio\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const t = r.filter(x => x.name === \"Validar la solicitud\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
                   "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
                   "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
                   "const listo = t.length > 0;",
-                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 2. tarea 18_esperarArtefactos\"); return; }",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 2. tarea 10_validarSolicitud\"); return; }",
                   "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
                   "const esperaMs = Date.now() - inicio;",
                   "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"tarea «Esperar la carga de artefactos en el negocio» (18_esperarArtefactos) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "pm.test(\"tarea «Validar la solicitud» (10_validarSolicitud) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
                   "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
                 ]
               }
@@ -554,7 +648,7 @@
           ]
         },
         {
-          "name": "[entregada] 2. 18_esperarArtefactos pendiente para ofelia.bot",
+          "name": "[entregada] 2. 10_validarSolicitud no pendiente para viviana.velasquez",
           "request": {
             "method": "GET",
             "header": [
@@ -564,7 +658,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_ofelia.bot}}&p=0&c=50",
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_viviana.velasquez}}&p=0&c=50",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -580,7 +674,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "user_id={{userId_ofelia.bot}}"
+                  "value": "user_id={{userId_viviana.velasquez}}"
                 },
                 {
                   "key": "p",
@@ -598,104 +692,18 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
                   "const r = pm.response.code === 200 ? pm.response.json() : [];",
                   "const caso = String(pm.variables.get(\"caseId\"));",
                   "const id = String(pm.variables.get(\"taskId\"));",
-                  "pm.test(\"«Esperar la carga de artefactos en el negocio» es una tarea pendiente de ofelia.bot (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                  "pm.test(\"«Validar la solicitud» no es una tarea pendiente de viviana.velasquez\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso), \"pendientes: \" + r.map(x => x.name).join(\", \")).to.eql(false));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "[entregada] 2. asignar 18_esperarArtefactos a ofelia.bot",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "X-Bonita-API-Token",
-                "value": "{{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "API",
-                "bpm",
-                "humanTask",
-                "{{taskId}}"
-              ],
-              "query": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\"assigned_id\": \"{{userId_ofelia.bot}}\"}"
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "[entregada] 2. ejecutar 18_esperarArtefactos",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "X-Bonita-API-Token",
-                "value": "{{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "API",
-                "bpm",
-                "userTask",
-                "{{taskId}}",
-                "execution"
-              ],
-              "query": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\"resultado\": \"entregado\"}"
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"ejecutada 18_esperarArtefactos (204)\", () => pm.response.to.have.status(204));"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "[entregada] 2. logout ofelia.bot",
+          "name": "[entregada] 2. logout viviana.velasquez",
           "request": {
             "method": "GET",
             "header": [
@@ -732,7 +740,633 @@
           ]
         },
         {
-          "name": "[entregada] 3. login ofelia.bot (comprobación)",
+          "name": "[entregada] 3. login linda.lozano",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "linda.lozano"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de linda.lozano\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 3. tarea 10_validarSolicitud",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const t = r.filter(x => x.name === \"Validar la solicitud\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = t.length > 0;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 3. tarea 10_validarSolicitud\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"tarea «Validar la solicitud» (10_validarSolicitud) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 3. 10_validarSolicitud pendiente para linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const id = String(pm.variables.get(\"taskId\"));",
+                  "pm.test(\"«Validar la solicitud» es una tarea pendiente de linda.lozano (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 3. asignar 10_validarSolicitud a linda.lozano",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask",
+                "{{taskId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"assigned_id\": \"{{userId_linda.lozano}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 3. ejecutar 10_validarSolicitud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "userTask",
+                "{{taskId}}",
+                "execution"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"resultado\": \"viable\", \"conceptoViabilidad\": \"Viable con DocFly\", \"notaValidacion\": \"Requerimiento claro; se valida.\", \"supuestos\": \"Cliente entrega muestras\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"ejecutada 10_validarSolicitud (204)\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 3. logout linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. login linda.lozano",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "linda.lozano"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de linda.lozano\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. tarea 20_disenarPropuesta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const t = r.filter(x => x.name === \"Diseñar la propuesta\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = t.length > 0;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 4. tarea 20_disenarPropuesta\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"tarea «Diseñar la propuesta» (20_disenarPropuesta) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. 20_disenarPropuesta pendiente para linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const id = String(pm.variables.get(\"taskId\"));",
+                  "pm.test(\"«Diseñar la propuesta» es una tarea pendiente de linda.lozano (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. asignar 20_disenarPropuesta a linda.lozano",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask",
+                "{{taskId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"assigned_id\": \"{{userId_linda.lozano}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. subir propuesta.pdf (1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data; boundary=----trycoreJourneyLimite"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/formFileUpload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "formFileUpload"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "------trycoreJourneyLimite\r\nContent-Disposition: form-data; name=\"file\"; filename=\"propuesta.pdf\"\r\nContent-Type: application/pdf\r\n\r\n%PDF-1.4\n% archivo sintético del journey: propuesta.pdf\n%%EOF\r\n------trycoreJourneyLimite--\r\n"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"formFileUpload 200 (propuesta.pdf)\", () => pm.response.to.have.status(200));",
+                  "let r = null;",
+                  "try { r = pm.response.json(); } catch (e) { r = null; }",
+                  "const tempPath = r && typeof r === \"object\" ? r.tempPath : pm.response.text().trim();",
+                  "pm.test(\"tempPath de propuesta.pdf\", () => pm.expect(Boolean(tempPath), pm.response.text()).to.be.true);",
+                  "pm.collectionVariables.set(\"archivo_4_1\", JSON.stringify({filename: \"propuesta.pdf\", tempPath: tempPath, contentType: \"application/pdf\"}));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. ejecutar 20_disenarPropuesta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "userTask",
+                "{{taskId}}",
+                "execution"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valoracionOperaciones\": \"40 h de fábrica\", \"urlPptaPreventa\": \"https://example.com/ppta\", \"linkRepoPreventa\": \"https://example.com/repo\", \"notaPropuesta\": \"Propuesta lista\", \"adjuntos\": [{{archivo_4_1}}]}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"ejecutada 20_disenarPropuesta (204)\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 4. logout linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[entregada] 5. login ofelia.bot (comprobación)",
           "request": {
             "method": "POST",
             "header": [
@@ -782,7 +1416,7 @@
           ]
         },
         {
-          "name": "[entregada] 3. caso archivado",
+          "name": "[entregada] 5. caso archivado",
           "request": {
             "method": "GET",
             "header": [
@@ -826,7 +1460,7 @@
                   "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
                   "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
                   "const listo = r.length > 0;",
-                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 3. caso archivado\"); return; }",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 5. caso archivado\"); return; }",
                   "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
                   "const esperaMs = Date.now() - inicio;",
                   "pm.test(\"caso terminado (archivado)\", () => pm.expect(r.length).to.eql(1));",
@@ -837,7 +1471,7 @@
           ]
         },
         {
-          "name": "[entregada] 3. fin fin_entregada",
+          "name": "[entregada] 5. fin fin_entregada",
           "request": {
             "method": "GET",
             "header": [
@@ -885,7 +1519,7 @@
                   "const hay = (n, e) => delCaso.some(x => x.name === n && (!e || x.state === e));",
                   "const alcanzado = (alts) => alts.some(a => hay(a.nodo, a.estado) && a.sin.every(n => !hay(n)));",
                   "// Los eventos no se archivan: cada fin se deduce de lo que lo precede (evidencia_de_fin).",
-                  "const FINES = {\"fin_entregada\": [{\"nodo\": \"Cambiar estado del ticket a «Entregado a ventas»\", \"estado\": \"completed\", \"sin\": []}], \"fin_cerrada\": [{\"nodo\": \"gwXor_1\", \"estado\": \"completed\", \"sin\": [\"Cambiar estado del ticket a «Entregado a ventas»\"]}]};",
+                  "const FINES = {\"fin_entregada\": [{\"nodo\": \"Cambiar estado del ticket a «Entregado a ventas»\", \"estado\": \"completed\", \"sin\": []}], \"fin_noViable\": [{\"nodo\": \"Cerrar por viabilidad\", \"estado\": \"completed\", \"sin\": []}]};",
                   "const vistos = delCaso.map(x => x.name + \"/\" + x.state).join(\", \");",
                   "pm.test(\"el caso termina en fin_entregada\", () => pm.expect(alcanzado(FINES[\"fin_entregada\"]), \"flow nodes archivados: \" + vistos).to.be.true);",
                   "pm.test(\"ningún otro fin del pool\", () => pm.expect(Object.keys(FINES).filter(f => f !== \"fin_entregada\" && alcanzado(FINES[f]))).to.eql([]));"
@@ -895,7 +1529,7 @@
           ]
         },
         {
-          "name": "[entregada] 3. contexto del caso archivado",
+          "name": "[entregada] 5. contexto del caso archivado",
           "request": {
             "method": "GET",
             "header": [
@@ -933,7 +1567,7 @@
           ]
         },
         {
-          "name": "[entregada] 3. preventa de este caso en el BDM",
+          "name": "[entregada] 5. preventa de este caso en el BDM",
           "request": {
             "method": "GET",
             "header": [
@@ -967,14 +1601,17 @@
                   "pm.test(\"preventa.estado = entregadaAVentas\", () => pm.expect(String(o[\"estado\"])).to.eql(String(\"entregadaAVentas\")));",
                   "pm.test(\"preventa.consultorOwnerId = 89450376\", () => pm.expect(String(o[\"consultorOwnerId\"])).to.eql(String(\"89450376\")));",
                   "pm.test(\"preventa.consultor = Linda\", () => pm.expect(String(o[\"consultor\"])).to.eql(String(\"Linda\")));",
-                  "pm.test(\"preventa.asunto = Preventa cliente ACME\", () => pm.expect(String(o[\"asunto\"])).to.eql(String(\"Preventa cliente ACME\")));"
+                  "pm.test(\"preventa.asunto = Preventa cliente ACME\", () => pm.expect(String(o[\"asunto\"])).to.eql(String(\"Preventa cliente ACME\")));",
+                  "pm.test(\"preventa.resultadoValidacion = viable\", () => pm.expect(String(o[\"resultadoValidacion\"])).to.eql(String(\"viable\")));",
+                  "pm.test(\"preventa.urlPptaPreventa = https://example.com/ppta\", () => pm.expect(String(o[\"urlPptaPreventa\"])).to.eql(String(\"https://example.com/ppta\")));",
+                  "pm.test(\"preventa.cantidadAdjuntos = 1\", () => pm.expect(String(o[\"cantidadAdjuntos\"])).to.eql(String(1)));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "[entregada] 3. logout ofelia.bot (comprobación)",
+          "name": "[entregada] 5. logout ofelia.bot (comprobación)",
           "request": {
             "method": "GET",
             "header": [
@@ -1013,10 +1650,10 @@
       ]
     },
     {
-      "name": "cerrada",
+      "name": "bloqueada",
       "item": [
         {
-          "name": "[cerrada] 1. login ofelia.bot",
+          "name": "[bloqueada] 1. login ofelia.bot",
           "request": {
             "method": "POST",
             "header": [
@@ -1066,7 +1703,7 @@
           ]
         },
         {
-          "name": "[cerrada] 1. proceso GestionPreventa 1.0",
+          "name": "[bloqueada] 1. proceso GestionPreventa 1.2",
           "request": {
             "method": "GET",
             "header": [
@@ -1076,7 +1713,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.0&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.2&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1092,7 +1729,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.0"
+                  "value": "version=1.2"
                 },
                 {
                   "key": "f",
@@ -1115,8 +1752,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.0 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.0\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.2 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.2\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -1125,7 +1762,1351 @@
           ]
         },
         {
-          "name": "[cerrada] 1. instanciar como ofelia.bot",
+          "name": "[bloqueada] 1. instanciar como ofelia.bot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/process/{{processId}}/instantiation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "process",
+                "{{processId}}",
+                "instantiation"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"ticketId\": \"T-003\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"instanciado (200)\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"caseId\", String(pm.response.json().caseId));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 1. logout ofelia.bot",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 2. login linda.lozano",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "linda.lozano"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de linda.lozano\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 2. tarea 10_validarSolicitud",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const t = r.filter(x => x.name === \"Validar la solicitud\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = t.length > 0;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[bloqueada] 2. tarea 10_validarSolicitud\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"tarea «Validar la solicitud» (10_validarSolicitud) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 2. 10_validarSolicitud pendiente para linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const id = String(pm.variables.get(\"taskId\"));",
+                  "pm.test(\"«Validar la solicitud» es una tarea pendiente de linda.lozano (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 2. asignar 10_validarSolicitud a linda.lozano",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask",
+                "{{taskId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"assigned_id\": \"{{userId_linda.lozano}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 2. ejecutar 10_validarSolicitud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "userTask",
+                "{{taskId}}",
+                "execution"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"resultado\": \"bloqueado\", \"conceptoViabilidad\": \"\", \"notaValidacion\": \"Falta el volumen de documentos.\", \"supuestos\": \"\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"ejecutada 10_validarSolicitud (204)\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 2. logout linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 3. login linda.lozano",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "linda.lozano"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de linda.lozano\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 3. tarea 10_validarSolicitud",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const t = r.filter(x => x.name === \"Validar la solicitud\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = t.length > 0;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[bloqueada] 3. tarea 10_validarSolicitud\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"tarea «Validar la solicitud» (10_validarSolicitud) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 3. 10_validarSolicitud pendiente para linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const id = String(pm.variables.get(\"taskId\"));",
+                  "pm.test(\"«Validar la solicitud» es una tarea pendiente de linda.lozano (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 3. asignar 10_validarSolicitud a linda.lozano",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask",
+                "{{taskId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"assigned_id\": \"{{userId_linda.lozano}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 3. ejecutar 10_validarSolicitud",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "userTask",
+                "{{taskId}}",
+                "execution"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"resultado\": \"viable\", \"conceptoViabilidad\": \"Viable\", \"notaValidacion\": \"El lead completó la información.\", \"supuestos\": \"\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"ejecutada 10_validarSolicitud (204)\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 3. logout linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 4. login linda.lozano",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "linda.lozano"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de linda.lozano\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 4. tarea 20_disenarPropuesta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const t = r.filter(x => x.name === \"Diseñar la propuesta\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = t.length > 0;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[bloqueada] 4. tarea 20_disenarPropuesta\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"tarea «Diseñar la propuesta» (20_disenarPropuesta) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 4. 20_disenarPropuesta pendiente para linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "rootCaseId={{caseId}}"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_linda.lozano}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const id = String(pm.variables.get(\"taskId\"));",
+                  "pm.test(\"«Diseñar la propuesta» es una tarea pendiente de linda.lozano (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 4. asignar 20_disenarPropuesta a linda.lozano",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/humanTask/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "humanTask",
+                "{{taskId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"assigned_id\": \"{{userId_linda.lozano}}\"}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"asignada\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 4. ejecutar 20_disenarPropuesta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/userTask/{{taskId}}/execution",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "userTask",
+                "{{taskId}}",
+                "execution"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valoracionOperaciones\": \"20 h\", \"urlPptaPreventa\": \"https://example.com/ppta2\", \"linkRepoPreventa\": \"https://example.com/repo2\", \"notaPropuesta\": \"\", \"adjuntos\": []}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"ejecutada 20_disenarPropuesta (204)\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 4. logout linda.lozano",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 5. login ofelia.bot (comprobación)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "ofelia.bot"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de ofelia.bot\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 5. caso archivado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/archivedCase?f=sourceObjectId={{caseId}}&p=0&c=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "archivedCase"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "sourceObjectId={{caseId}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = r.length > 0;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[bloqueada] 5. caso archivado\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"caso terminado (archivado)\", () => pm.expect(r.length).to.eql(1));",
+                  "if (r.length) pm.collectionVariables.set(\"archivedCaseId\", String(r[0].id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 5. fin fin_entregada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/archivedFlowNode?f=caseId={{caseId}}&p=0&c=500",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "archivedFlowNode"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "caseId={{caseId}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "500"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"archivedFlowNode 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const caso = String(pm.variables.get(\"caseId\"));",
+                  "const proceso = String(pm.variables.get(\"processId\"));",
+                  "const delCaso = r.filter(x => String(x.rootCaseId) === caso && String(x.processId) === proceso);",
+                  "const hay = (n, e) => delCaso.some(x => x.name === n && (!e || x.state === e));",
+                  "const alcanzado = (alts) => alts.some(a => hay(a.nodo, a.estado) && a.sin.every(n => !hay(n)));",
+                  "// Los eventos no se archivan: cada fin se deduce de lo que lo precede (evidencia_de_fin).",
+                  "const FINES = {\"fin_entregada\": [{\"nodo\": \"Cambiar estado del ticket a «Entregado a ventas»\", \"estado\": \"completed\", \"sin\": []}], \"fin_noViable\": [{\"nodo\": \"Cerrar por viabilidad\", \"estado\": \"completed\", \"sin\": []}]};",
+                  "const vistos = delCaso.map(x => x.name + \"/\" + x.state).join(\", \");",
+                  "pm.test(\"el caso termina en fin_entregada\", () => pm.expect(alcanzado(FINES[\"fin_entregada\"]), \"flow nodes archivados: \" + vistos).to.be.true);",
+                  "pm.test(\"ningún otro fin del pool\", () => pm.expect(Object.keys(FINES).filter(f => f !== \"fin_entregada\" && alcanzado(FINES[f]))).to.eql([]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 5. contexto del caso archivado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/archivedCase/{{archivedCaseId}}/context",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "archivedCase",
+                "{{archivedCaseId}}",
+                "context"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const ctx = pm.response.json();",
+                  "pm.test(\"el caso tiene su referencia preventa_ref\", () => pm.expect(ctx[\"preventa_ref\"] && ctx[\"preventa_ref\"].storageId).to.be.ok);",
+                  "pm.collectionVariables.set(\"preventa_storageId\", String(ctx[\"preventa_ref\"].storageId_string || ctx[\"preventa_ref\"].storageId));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 5. preventa de este caso en el BDM",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bdm/businessData/co.trycore.preventa.model.Preventa/{{preventa_storageId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bdm",
+                "businessData",
+                "co.trycore.preventa.model.Preventa",
+                "{{preventa_storageId}}"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Preventa 200\", () => pm.response.to.have.status(200));",
+                  "const o = pm.response.json();",
+                  "pm.test(\"preventa.estado = entregadaAVentas\", () => pm.expect(String(o[\"estado\"])).to.eql(String(\"entregadaAVentas\")));",
+                  "pm.test(\"preventa.resultadoValidacion = viable\", () => pm.expect(String(o[\"resultadoValidacion\"])).to.eql(String(\"viable\")));",
+                  "pm.test(\"preventa.notaValidacion = El lead completó la información.\", () => pm.expect(String(o[\"notaValidacion\"])).to.eql(String(\"El lead completó la información.\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[bloqueada] 5. logout ofelia.bot (comprobación)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/logoutservice?redirect=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logoutservice"
+              ],
+              "query": [
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"logout\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "noViable",
+      "item": [
+        {
+          "name": "[noViable] 1. login ofelia.bot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loginservice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "loginservice"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "ofelia.bot"
+                },
+                {
+                  "key": "password",
+                  "value": "bpm"
+                },
+                {
+                  "key": "redirect",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"login 204 de ofelia.bot\", () => pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[noViable] 1. proceso GestionPreventa 1.2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Bonita-API-Token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.2&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "API",
+                "bpm",
+                "process"
+              ],
+              "query": [
+                {
+                  "key": "f",
+                  "value": "name=GestionPreventa"
+                },
+                {
+                  "key": "f",
+                  "value": "version=1.2"
+                },
+                {
+                  "key": "f",
+                  "value": "user_id={{userId_ofelia.bot}}"
+                },
+                {
+                  "key": "p",
+                  "value": "0"
+                },
+                {
+                  "key": "c",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const p = pm.response.json();",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.2 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.2\"));",
+                  "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
+                  "pm.collectionVariables.set(\"processId\", p[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[noViable] 1. instanciar como ofelia.bot",
           "request": {
             "method": "POST",
             "header": [
@@ -1170,7 +3151,7 @@
           ]
         },
         {
-          "name": "[cerrada] 1. logout ofelia.bot",
+          "name": "[noViable] 1. logout ofelia.bot",
           "request": {
             "method": "GET",
             "header": [
@@ -1207,7 +3188,7 @@
           ]
         },
         {
-          "name": "[cerrada] 2. login ofelia.bot",
+          "name": "[noViable] 2. login linda.lozano",
           "request": {
             "method": "POST",
             "header": [
@@ -1231,7 +3212,7 @@
               "urlencoded": [
                 {
                   "key": "username",
-                  "value": "ofelia.bot"
+                  "value": "linda.lozano"
                 },
                 {
                   "key": "password",
@@ -1249,7 +3230,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"login 204 de ofelia.bot\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"login 204 de linda.lozano\", () => pm.response.to.have.status(204));",
                   "pm.collectionVariables.set(\"token\", pm.cookies.get(\"X-Bonita-API-Token\"));"
                 ]
               }
@@ -1257,7 +3238,7 @@
           ]
         },
         {
-          "name": "[cerrada] 2. tarea 18_esperarArtefactos",
+          "name": "[noViable] 2. tarea 10_validarSolicitud",
           "request": {
             "method": "GET",
             "header": [
@@ -1267,7 +3248,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_ofelia.bot}}&p=0&c=50",
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1283,7 +3264,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "user_id={{userId_ofelia.bot}}"
+                  "value": "user_id={{userId_linda.lozano}}"
                 },
                 {
                   "key": "p",
@@ -1303,15 +3284,15 @@
                 "exec": [
                   "const r = pm.response.code === 200 ? pm.response.json() : [];",
                   "const caso = String(pm.variables.get(\"caseId\"));",
-                  "const t = r.filter(x => x.name === \"Esperar la carga de artefactos en el negocio\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
+                  "const t = r.filter(x => x.name === \"Validar la solicitud\" && String(x.rootCaseId) === caso && x.state === \"ready\");",
                   "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
                   "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
                   "const listo = t.length > 0;",
-                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[cerrada] 2. tarea 18_esperarArtefactos\"); return; }",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[noViable] 2. tarea 10_validarSolicitud\"); return; }",
                   "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
                   "const esperaMs = Date.now() - inicio;",
                   "pm.test(\"humanTask 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"tarea «Esperar la carga de artefactos en el negocio» (18_esperarArtefactos) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
+                  "pm.test(\"tarea «Validar la solicitud» (10_validarSolicitud) lista en el caso raíz\", () => pm.expect(t.length, \"tareas del caso: \" + r.map(x => x.name + \"/\" + x.state).join(\", \")).to.eql(1));",
                   "if (t.length) pm.collectionVariables.set(\"taskId\", t[0].id);"
                 ]
               }
@@ -1319,7 +3300,7 @@
           ]
         },
         {
-          "name": "[cerrada] 2. 18_esperarArtefactos pendiente para ofelia.bot",
+          "name": "[noViable] 2. 10_validarSolicitud pendiente para linda.lozano",
           "request": {
             "method": "GET",
             "header": [
@@ -1329,7 +3310,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_ofelia.bot}}&p=0&c=50",
+              "raw": "{{baseUrl}}/API/bpm/humanTask?f=rootCaseId={{caseId}}&f=user_id={{userId_linda.lozano}}&p=0&c=50",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1345,7 +3326,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "user_id={{userId_ofelia.bot}}"
+                  "value": "user_id={{userId_linda.lozano}}"
                 },
                 {
                   "key": "p",
@@ -1366,14 +3347,14 @@
                   "const r = pm.response.code === 200 ? pm.response.json() : [];",
                   "const caso = String(pm.variables.get(\"caseId\"));",
                   "const id = String(pm.variables.get(\"taskId\"));",
-                  "pm.test(\"«Esperar la carga de artefactos en el negocio» es una tarea pendiente de ofelia.bot (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
+                  "pm.test(\"«Validar la solicitud» es una tarea pendiente de linda.lozano (actor mapping)\", () => pm.expect(r.some(x => String(x.id) === id && String(x.rootCaseId) === caso)).to.be.true);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "[cerrada] 2. asignar 18_esperarArtefactos a ofelia.bot",
+          "name": "[noViable] 2. asignar 10_validarSolicitud a linda.lozano",
           "request": {
             "method": "PUT",
             "header": [
@@ -1401,7 +3382,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"assigned_id\": \"{{userId_ofelia.bot}}\"}"
+              "raw": "{\"assigned_id\": \"{{userId_linda.lozano}}\"}"
             }
           },
           "event": [
@@ -1416,7 +3397,7 @@
           ]
         },
         {
-          "name": "[cerrada] 2. ejecutar 18_esperarArtefactos",
+          "name": "[noViable] 2. ejecutar 10_validarSolicitud",
           "request": {
             "method": "POST",
             "header": [
@@ -1445,7 +3426,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"resultado\": \"cerrado\"}"
+              "raw": "{\"resultado\": \"no_viable\", \"conceptoViabilidad\": \"Fuera del alcance de los productos\", \"notaValidacion\": \"No aplica a DocFly ni Oriuno.\", \"supuestos\": \"\"}"
             }
           },
           "event": [
@@ -1453,14 +3434,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"ejecutada 18_esperarArtefactos (204)\", () => pm.response.to.have.status(204));"
+                  "pm.test(\"ejecutada 10_validarSolicitud (204)\", () => pm.response.to.have.status(204));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "[cerrada] 2. logout ofelia.bot",
+          "name": "[noViable] 2. logout linda.lozano",
           "request": {
             "method": "GET",
             "header": [
@@ -1497,7 +3478,7 @@
           ]
         },
         {
-          "name": "[cerrada] 3. login ofelia.bot (comprobación)",
+          "name": "[noViable] 3. login ofelia.bot (comprobación)",
           "request": {
             "method": "POST",
             "header": [
@@ -1547,7 +3528,7 @@
           ]
         },
         {
-          "name": "[cerrada] 3. caso archivado",
+          "name": "[noViable] 3. caso archivado",
           "request": {
             "method": "GET",
             "header": [
@@ -1591,7 +3572,7 @@
                   "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
                   "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
                   "const listo = r.length > 0;",
-                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[cerrada] 3. caso archivado\"); return; }",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[noViable] 3. caso archivado\"); return; }",
                   "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
                   "const esperaMs = Date.now() - inicio;",
                   "pm.test(\"caso terminado (archivado)\", () => pm.expect(r.length).to.eql(1));",
@@ -1602,7 +3583,7 @@
           ]
         },
         {
-          "name": "[cerrada] 3. fin fin_cerrada",
+          "name": "[noViable] 3. fin fin_noViable",
           "request": {
             "method": "GET",
             "header": [
@@ -1650,17 +3631,17 @@
                   "const hay = (n, e) => delCaso.some(x => x.name === n && (!e || x.state === e));",
                   "const alcanzado = (alts) => alts.some(a => hay(a.nodo, a.estado) && a.sin.every(n => !hay(n)));",
                   "// Los eventos no se archivan: cada fin se deduce de lo que lo precede (evidencia_de_fin).",
-                  "const FINES = {\"fin_entregada\": [{\"nodo\": \"Cambiar estado del ticket a «Entregado a ventas»\", \"estado\": \"completed\", \"sin\": []}], \"fin_cerrada\": [{\"nodo\": \"gwXor_1\", \"estado\": \"completed\", \"sin\": [\"Cambiar estado del ticket a «Entregado a ventas»\"]}]};",
+                  "const FINES = {\"fin_entregada\": [{\"nodo\": \"Cambiar estado del ticket a «Entregado a ventas»\", \"estado\": \"completed\", \"sin\": []}], \"fin_noViable\": [{\"nodo\": \"Cerrar por viabilidad\", \"estado\": \"completed\", \"sin\": []}]};",
                   "const vistos = delCaso.map(x => x.name + \"/\" + x.state).join(\", \");",
-                  "pm.test(\"el caso termina en fin_cerrada\", () => pm.expect(alcanzado(FINES[\"fin_cerrada\"]), \"flow nodes archivados: \" + vistos).to.be.true);",
-                  "pm.test(\"ningún otro fin del pool\", () => pm.expect(Object.keys(FINES).filter(f => f !== \"fin_cerrada\" && alcanzado(FINES[f]))).to.eql([]));"
+                  "pm.test(\"el caso termina en fin_noViable\", () => pm.expect(alcanzado(FINES[\"fin_noViable\"]), \"flow nodes archivados: \" + vistos).to.be.true);",
+                  "pm.test(\"ningún otro fin del pool\", () => pm.expect(Object.keys(FINES).filter(f => f !== \"fin_noViable\" && alcanzado(FINES[f]))).to.eql([]));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "[cerrada] 3. contexto del caso archivado",
+          "name": "[noViable] 3. contexto del caso archivado",
           "request": {
             "method": "GET",
             "header": [
@@ -1698,7 +3679,7 @@
           ]
         },
         {
-          "name": "[cerrada] 3. preventa de este caso en el BDM",
+          "name": "[noViable] 3. preventa de este caso en el BDM",
           "request": {
             "method": "GET",
             "header": [
@@ -1729,16 +3710,17 @@
                 "exec": [
                   "pm.test(\"Preventa 200\", () => pm.response.to.have.status(200));",
                   "const o = pm.response.json();",
-                  "pm.test(\"preventa.estado = cerrada\", () => pm.expect(String(o[\"estado\"])).to.eql(String(\"cerrada\")));",
+                  "pm.test(\"preventa.estado = noViable\", () => pm.expect(String(o[\"estado\"])).to.eql(String(\"noViable\")));",
                   "pm.test(\"preventa.consultorOwnerId = 89450376\", () => pm.expect(String(o[\"consultorOwnerId\"])).to.eql(String(\"89450376\")));",
-                  "pm.test(\"preventa.consultor = Linda\", () => pm.expect(String(o[\"consultor\"])).to.eql(String(\"Linda\")));"
+                  "pm.test(\"preventa.consultor = Linda\", () => pm.expect(String(o[\"consultor\"])).to.eql(String(\"Linda\")));",
+                  "pm.test(\"preventa.resultadoValidacion = no_viable\", () => pm.expect(String(o[\"resultadoValidacion\"])).to.eql(String(\"no_viable\")));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "[cerrada] 3. logout ofelia.bot (comprobación)",
+          "name": "[noViable] 3. logout ofelia.bot (comprobación)",
           "request": {
             "method": "GET",
             "header": [

@@ -5,5 +5,7 @@
   <input name="urlBase" type="java.lang.String" mandatory="true"/>
   <input name="rutaTickets" type="java.lang.String" mandatory="true"/>
   <input name="ticketId" type="java.lang.String" mandatory="true"/>
+  <input name="rutaAsociaciones" type="java.lang.String" mandatory="false"/>
   <output name="asunto" type="java.lang.String"/>
+  <output name="dealId" type="java.lang.String"/>
 </definition:ConnectorDefinition>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles:profiles xmlns:profiles="http://documentation.bonitasoft.com/profile-xml-schema/1.0">
+  <profile name="User" isDefault="false">
+    <description>Perfil User (roles: consultora)</description>
+    <profileMapping>
+      <roles>
+        <role>consultora</role>
+      </roles>
+    </profileMapping>
+  </profile>
+</profiles:profiles>

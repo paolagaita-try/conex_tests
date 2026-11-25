@@ -71,11 +71,26 @@
       <version>${project.version}</version>
       <type>zip</type>
     </dependency>
+    <!-- REST API extension preventaContexto (GET preventa/contexto?ticketId=): precarga de solo lectura del CRM
+         para los formularios de la consultora (v2 «Bonita-first»). -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-preventa-contexto-api-extension</artifactId>
+      <version>${project.version}</version>
+      <type>zip</type>
+    </dependency>
     <!-- Extensión del proyecto «preventa-conectores» (herramientas/registrar_extension.py): sus .def/.impl
          entran al .bar con su jar. -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>hubspot-bonita-preventa-conectores</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Extensión del proyecto «preventa-filtros» (herramientas/registrar_extension.py): sus .def/.impl
+         entran al .bar con su jar. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hubspot-bonita-preventa-filtros</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

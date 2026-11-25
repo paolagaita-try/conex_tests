@@ -8,6 +8,21 @@
         <field type="STRING" length="255" name="asunto" nullable="true" collection="false" />
         <field type="STRING" length="100" name="consultor" nullable="true" collection="false" />
         <field type="STRING" length="50" name="consultorOwnerId" nullable="true" collection="false" />
+        <field type="STRING" length="50" name="dealId" nullable="true" collection="false" />
+        <field type="STRING" length="20" name="resultadoValidacion" nullable="true" collection="false" />
+        <field type="TEXT" name="conceptoViabilidad" nullable="true" collection="false" />
+        <field type="TEXT" name="notaValidacion" nullable="true" collection="false" />
+        <field type="TEXT" name="supuestos" nullable="true" collection="false" />
+        <field type="TEXT" name="valoracionOperaciones" nullable="true" collection="false" />
+        <field type="STRING" length="1000" name="urlPptaPreventa" nullable="true" collection="false" />
+        <field type="STRING" length="1000" name="linkRepoPreventa" nullable="true" collection="false" />
+        <field type="TEXT" name="notaPropuesta" nullable="true" collection="false" />
+        <field type="INTEGER" name="cantidadAdjuntos" nullable="true" collection="false" />
+        <field type="OFFSETDATETIME" name="fechaRecepcion" nullable="true" collection="false" />
+        <field type="OFFSETDATETIME" name="fechaAsignacion" nullable="true" collection="false" />
+        <field type="OFFSETDATETIME" name="fechaValidacion" nullable="true" collection="false" />
+        <field type="OFFSETDATETIME" name="fechaPropuesta" nullable="true" collection="false" />
+        <field type="OFFSETDATETIME" name="fechaEntrega" nullable="true" collection="false" />
       </fields>
       <uniqueConstraints>
         <uniqueConstraint name="UK_PREVENTA_TICKETID">

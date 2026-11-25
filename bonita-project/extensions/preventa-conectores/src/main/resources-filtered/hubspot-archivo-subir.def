@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition:ConnectorDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1">
+  <id>hubspot-archivo-subir</id>
+  <version>1.0.0</version>
+  <input name="urlBase" type="java.lang.String" mandatory="true"/>
+  <input name="rutaArchivos" type="java.lang.String" mandatory="false"/>
+  <input name="rutaObjetos" type="java.lang.String" mandatory="false"/>
+  <input name="documentos" type="java.util.List" mandatory="true"/>
+  <input name="dealId" type="java.lang.String" mandatory="true"/>
+  <input name="ticketId" type="java.lang.String" mandatory="true"/>
+  <input name="carpeta" type="java.lang.String" mandatory="false"/>
+  <input name="cuerpoNota" type="java.lang.String" mandatory="false"/>
+  <output name="fileIds" type="java.lang.String"/>
+  <output name="noteId" type="java.lang.String"/>
+</definition:ConnectorDefinition>

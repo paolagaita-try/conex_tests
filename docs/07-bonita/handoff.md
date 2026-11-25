@@ -2,7 +2,7 @@
 estado: listo-para-construccion
 proyecto: hubspot-bonita
 generado_por: agent01
-fecha: 2026-11-12
+fecha: 2026-11-24
 ---
 
 # Handoff de construcción — Integración HubSpot ↔ Bonita
@@ -12,7 +12,44 @@ fecha: 2026-11-12
 > socialización de ese flujo. Fuentes: `docs/07-bonita/insumo-preventa/` (BPMN, manual, imagen y
 > `reunion-socializacion.md`) y `HANDOFF-SCAFFOLD.md`.
 
-## Qué se construye
+## Qué se construye (v2 «Bonita-first», decisión del 2026-11-24)
+
+> **La decisión del 2026-11-24 reemplaza el alcance del 12-nov** («Bonita automatiza solo el carril del orquestador»).
+> La usuaria aprobó el plan `docs/08-construccion/plan-v2-bonita-first.md` («construye»). El equipo de Preventa **no
+> vuelve a entrar a HubSpot**: trabaja en Bonita y Bonita alimenta el CRM.
+
+Proceso `GestionPreventa` **1.2** (`bpmn.md`):
+
+1. Al crearse un ticket en HubSpot se instancia el caso (middleware, webhook `ticket.creation`), con idempotencia
+   esperada por `ticketId` (`[no verificado]` en ejecución).
+2. Bonita **asigna por carga ponderada por prioridad** (sin cambios) y escribe owner + «En validación».
+3. **`10_validarSolicitud`** (tarea humana, solo la consultora elegida: actor filter `filtroConsultoraDelCaso`, owner
+   HubSpot → usuario Bonita por `param_consultores`): viable / bloqueado / no viable, con nota en ticket y Negocio.
+   - viable → `11_pasarADiseno`: stage «Asignado/En diseño» y `concepto_viabilidad` en el Negocio;
+   - bloqueado → `12_pasarAEnEspera`: stage «En espera información del lead» y vuelve a validación;
+   - no viable → `13_registrarNoViable`: `concepto_viabilidad` y ticket a **«Closed»** (cerrado por viabilidad;
+     nota «Cerrado por viabilidad: …»; decisión de la usuaria, 2026-11-24).
+4. **`20_disenarPropuesta`** (misma consultora): las cuatro propiedades del Negocio, nota y adjuntos
+   (`21_subirAdjuntos` si los hay); `40_entregarAVentas` pasa el ticket a «Entregado a ventas».
+5. El cierre lo hace el comercial en HubSpot, como hoy.
+
+Se retira la espera `18_esperarArtefactos` y la segunda entrada del middleware (artefactos→caso). Los formularios
+precargan todo el CRM de solo lectura por la REST API extension `preventaContexto` (`GET preventa/contexto?ticketId=`).
+Organización: grupo `/trycore/preventa`, rol `consultora`, usuarias `linda.lozano` (owner `89450376`) y
+`viviana.velasquez` (owner `89450377`). Evidencia: `docs/08-construccion/evidencia-v2-proceso.md`.
+
+## Arquitectura acordada
+
+- **Entrada (ticket→caso):** webhook `ticket.creation` → middleware externo →
+  `POST /bonita/API/bpm/process/{id}/instantiation`. Es la única entrada desde la v2.
+- **Salida:** conectores REST **propios** hacia HubSpot: leer el ticket, carga por consultora, `PATCH` del ticket,
+  `PATCH` del Negocio, notas asociadas a ticket y Negocio, subida de archivos. No se usa el conector oficial.
+- **Lectura para formularios:** REST API extension `preventaContexto` (token solo del lado servidor).
+- **Reconciliación:** job diario Bonita vs HubSpot (sin decidir dónde vive).
+
+### Alcance anterior (12-nov, reemplazado)
+
+#### Qué se construía
 
 Bonita automatiza **solo el carril del orquestador** del proceso de preventa. Todo lo demás lo hacen las personas en
 HubSpot, como hoy.
@@ -40,7 +77,7 @@ hace el comercial) y **no** toca las etapas del negocio.
 
 El borrador del proceso completo queda archivado, sin uso, en `insumo-preventa/borrador-proceso-completo/`.
 
-## Arquitectura acordada
+#### Arquitectura de entonces
 
 - **Entrada (ticket→caso):** un Workflow nativo de HubSpot (Sales Hub Pro) dispara un webhook al crearse el ticket; el
   middleware externo lo recibe y llama a `POST /bonita/API/bpm/process/{id}/instantiation`.
@@ -52,6 +89,9 @@ El borrador del proceso completo queda archivado, sin uso, en `insumo-preventa/b
 - **Reconciliación:** job diario Bonita vs HubSpot (sin decidir dónde vive).
 
 ## Decisiones vigentes
+
+- **v2 «Bonita-first» (2026-11-24):** reemplaza el alcance del 12-nov (ver «Qué se construye»). «No viable» cierra el
+  ticket («Closed», `4`) con nota «Cerrado por viabilidad:» (decisión de la usuaria, 2026-11-24).
 
 - **Plan de HubSpot = Sales Hub Pro (confirmado 2026-11-13):** no se compra Operations Hub Pro. El middleware es un
   servicio externo propio, disparado por Workflows nativos de HubSpot (incluidos en Sales Hub Pro) que llaman por

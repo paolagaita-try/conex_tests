@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition:ConnectorDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1">
+  <id>hubspot-negocio-actualizar</id>
+  <version>1.0.0</version>
+  <input name="urlBase" type="java.lang.String" mandatory="true"/>
+  <input name="rutaObjetos" type="java.lang.String" mandatory="false"/>
+  <input name="dealId" type="java.lang.String" mandatory="true"/>
+  <input name="propiedadesJson" type="java.lang.String" mandatory="true"/>
+  <output name="ok" type="java.lang.Boolean"/>
+</definition:ConnectorDefinition>
