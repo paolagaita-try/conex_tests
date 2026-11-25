@@ -62,6 +62,53 @@ class HubspotConsultoresMenorCargaSpec extends Specification {
         menorCarga(carga, candidatos) == '89450376'
     }
 
+    def "el ticket que se está asignando no cuenta en la carga de su dueño anterior (prueba real v2)"() {
+        given: "el ticket 51223233059 (HIGH) quedó en stage 3 a nombre de Linda tras una corrida fallida; nadie más tiene carga"
+        def candidatos = ['89450376', '89450377']
+        def resultados = [tkId('51223233059', '89450376', 'HIGH')]
+
+        expect: "sin excluirlo, Linda carga 3 y el reparto se va a Viviana (lo que pasó en la corrida 2)"
+        HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '') == ['89450376': 3, '89450377': 0]
+        HubspotConsultoresMenorCarga.elegir(['89450376': 3, '89450377': 0], candidatos, '') == '89450377'
+
+        and: "excluyéndolo, ambas cargan 0 y decide el desempate determinista (primera en el orden, sin último asignado)"
+        def carga = HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '51223233059')
+        carga == ['89450376': 0, '89450377': 0]
+        HubspotConsultoresMenorCarga.elegir(carga, candidatos, '') == '89450376'
+    }
+
+    @Unroll
+    def "el resultado no depende del dueño previo del propio ticket (dueño previo #duenoPrevio, stage #stage)"() {
+        given:
+        def candidatos = ['89450376', '89450377']
+        def resultados = [
+            tkId('51223233059', duenoPrevio, 'HIGH'),     // el que se asigna: no cuenta
+            tkId('900', '89450377', 'LOW'),               // carga real de Viviana: 1
+            tkId('901', '88449388', 'URGENT')             // el bot no es candidato: no cuenta
+        ]
+        expect:
+        HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '51223233059') == ['89450376': 0, '89450377': 1]
+        HubspotConsultoresMenorCarga.elegir(
+            HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '51223233059'), candidatos, '') == '89450376'
+        where:
+        duenoPrevio | stage
+        '89450376'  | '3'
+        '89450377'  | '2'
+        null        | '2'
+    }
+
+    def "desempate circular respecto del último asignado"() {
+        expect:
+        HubspotConsultoresMenorCarga.elegir(['a': 0, 'b': 0, 'c': 0], ['a', 'b', 'c'], 'b') == 'c'
+        HubspotConsultoresMenorCarga.elegir(['a': 0, 'b': 0, 'c': 0], ['a', 'b', 'c'], 'c') == 'a'
+        HubspotConsultoresMenorCarga.elegir(['a': 0, 'b': 5, 'c': 0], ['a', 'b', 'c'], 'a') == 'c'
+        HubspotConsultoresMenorCarga.elegir(['a': 0, 'b': 0], ['a', 'b'], 'zz') == 'a'
+    }
+
+    private static Map tkId(String id, String owner, String prioridad) {
+        [id: id, properties: [hubspot_owner_id: owner, hs_ticket_priority: prioridad]]
+    }
+
     // --- helpers que reproducen la suma del conector sin levantar el motor Bonita ---
 
     private static Map tk(String owner, String prioridad) {

@@ -605,5 +605,105 @@
         }
       ]
     }
+  },
+  "GET /hubspot/crm/v3/objects/tickets/T-004": {
+    "status": 200,
+    "json": {
+      "id": "T-004",
+      "properties": {
+        "subject": "Preventa cliente ACME (rechazos de contrato)",
+        "hs_pipeline": "0",
+        "hs_pipeline_stage": "2",
+        "hubspot_owner_id": "89450376",
+        "hs_ticket_priority": "HIGH",
+        "content": "Solicitud de preventa de ACME"
+      },
+      "associations": {
+        "deals": {
+          "results": [
+            {
+              "id": "D-001",
+              "type": "ticket_to_deal"
+            }
+          ]
+        },
+        "companies": {
+          "results": [
+            {
+              "id": "C-001",
+              "type": "ticket_to_company"
+            }
+          ]
+        },
+        "contacts": {
+          "results": [
+            {
+              "id": "P-001",
+              "type": "ticket_to_contact"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "PATCH /hubspot/crm/v3/objects/tickets/T-004": {
+    "status": 200,
+    "json": {
+      "id": "T-004",
+      "properties": {
+        "hs_pipeline_stage": "2"
+      }
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-004/associations/deals": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "D-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 28,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-004/associations/companies": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "C-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 339,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "GET /hubspot/crm/v4/objects/tickets/T-004/associations/contacts": {
+    "status": 200,
+    "json": {
+      "results": [
+        {
+          "toObjectId": "P-001",
+          "associationTypes": [
+            {
+              "category": "HUBSPOT_DEFINED",
+              "typeId": 16,
+              "label": null
+            }
+          ]
+        }
+      ]
+    }
   }
 }

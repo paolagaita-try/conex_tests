@@ -195,11 +195,13 @@
       "esperado": {
         "preventa.asunto": "Preventa cliente ACME",
         "preventa.cantidadAdjuntos": 1,
+        "preventa.conceptoViabilidad": "Aprobado (Viable)",
         "preventa.consultor": "Linda",
         "preventa.consultorOwnerId": "89450376",
         "preventa.estado": "entregadaAVentas",
         "preventa.resultadoValidacion": "viable",
-        "preventa.urlPptaPreventa": "https://example.com/ppta"
+        "preventa.urlPptaPreventa": "https://example.com/ppta",
+        "preventa.valoracionOperaciones": "https://example.com/valoracion"
       },
       "fin": "fin_entregada",
       "id": "entregada",
@@ -222,7 +224,7 @@
         {
           "evento": null,
           "payload": {
-            "conceptoViabilidad": "Viable con DocFly",
+            "conceptoViabilidad": "Aprobado (Viable)",
             "notaValidacion": "Requerimiento claro; se valida.",
             "resultado": "viable",
             "supuestos": "Cliente entrega muestras"
@@ -241,7 +243,7 @@
             "linkRepoPreventa": "https://example.com/repo",
             "notaPropuesta": "Propuesta lista",
             "urlPptaPreventa": "https://example.com/ppta",
-            "valoracionOperaciones": "40 h de fábrica"
+            "valoracionOperaciones": "https://example.com/valoracion"
           },
           "tarea": "20_disenarPropuesta",
           "usuario": "linda.lozano"
@@ -254,6 +256,7 @@
     },
     {
       "esperado": {
+        "preventa.conceptoViabilidad": "Aprobado con Condiciones",
         "preventa.estado": "entregadaAVentas",
         "preventa.notaValidacion": "El lead completó la información.",
         "preventa.resultadoValidacion": "viable"
@@ -283,7 +286,7 @@
         {
           "evento": null,
           "payload": {
-            "conceptoViabilidad": "Viable",
+            "conceptoViabilidad": "Aprobado con Condiciones",
             "notaValidacion": "El lead completó la información.",
             "resultado": "viable",
             "supuestos": ""
@@ -298,7 +301,7 @@
             "linkRepoPreventa": "https://example.com/repo2",
             "notaPropuesta": "",
             "urlPptaPreventa": "https://example.com/ppta2",
-            "valoracionOperaciones": "20 h"
+            "valoracionOperaciones": "https://example.com/valoracion2"
           },
           "tarea": "20_disenarPropuesta",
           "usuario": "linda.lozano"
@@ -312,6 +315,7 @@
     },
     {
       "esperado": {
+        "preventa.conceptoViabilidad": "No Viable (Rechazado)",
         "preventa.consultor": "Linda",
         "preventa.consultorOwnerId": "89450376",
         "preventa.estado": "noViable",
@@ -331,7 +335,7 @@
         {
           "evento": null,
           "payload": {
-            "conceptoViabilidad": "Fuera del alcance de los productos",
+            "conceptoViabilidad": "No Viable (Rechazado)",
             "notaValidacion": "No aplica a DocFly ni Oriuno.",
             "resultado": "no_viable",
             "supuestos": ""
@@ -437,6 +441,11 @@
           },
           {
             "nombre": "ultimoOwnerId",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
             "obligatoria": false,
             "tipo": "java.lang.String"
           }
@@ -768,7 +777,7 @@
           {
             "campo": "Resultado",
             "catalogo": null,
-            "control": "Radio buttons (viable / bloqueado / no viable)",
+            "control": "Radio buttons (viable / bloqueado / no_viable)",
             "depende": null,
             "escribe": "resultado",
             "lee": null,
@@ -779,12 +788,12 @@
           {
             "campo": "Concepto de viabilidad",
             "catalogo": null,
-            "control": "Text area",
+            "control": "Desplegable con las cuatro opciones de concepto_viabilidad: «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)», «Requiere más información»",
             "depende": "Resultado",
             "escribe": "conceptoViabilidad",
             "lee": "`Preventa.conceptoViabilidad` (valor inicial)",
             "obligatorio": false,
-            "validacion": "espeja conceptoViabilidad_si_concluye",
+            "validacion": "espeja conceptoViabilidad_si_concluye; espeja conceptoViabilidad_valido; espeja conceptoViabilidad_noViable",
             "visibilidad": null
           },
           {
@@ -881,12 +890,12 @@
           {
             "campo": "Valoración de operaciones",
             "catalogo": null,
-            "control": "Text area",
+            "control": "Text (URL)",
             "depende": null,
             "escribe": "valoracionOperaciones",
             "lee": "`ctx.deal.valoracion_operaciones` (valor inicial)",
             "obligatorio": true,
-            "validacion": "espeja valoracionOperaciones_presente",
+            "validacion": "espeja valoracionOperaciones_valida",
             "visibilidad": null
           },
           {
@@ -1092,6 +1101,7 @@
             "pipelineId": "return param_pipelineTickets",
             "rutaTickets": "return param_hubspotRutaTickets",
             "stages": "return param_stageEnValidacion + \",\" + param_stageEnDiseno",
+            "ticketId": "return preventa.ticketId",
             "ultimoOwnerId": "def r = preventaDAO.findAsignadasRecientes(0, 1); return (!r) ? \"\" : (r[0].consultorOwnerId ?: \"\")",
             "urlBase": "return param_hubspotUrlBase"
           },
@@ -1352,6 +1362,16 @@
               "groovy": "return resultado == \"bloqueado\" ? true : (conceptoViabilidad != null && !conceptoViabilidad.trim().isEmpty())",
               "mensaje": "El concepto de viabilidad es obligatorio si la solicitud es viable o no viable",
               "nombre": "conceptoViabilidad_si_concluye"
+            },
+            {
+              "groovy": "def c = conceptoViabilidad ?: \"\"; return c.isEmpty() ? true : [\"Aprobado (Viable)\",\"Aprobado con Condiciones\",\"No Viable (Rechazado)\",\"Requiere más información\"].contains(c)",
+              "mensaje": "El concepto de viabilidad debe ser Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información",
+              "nombre": "conceptoViabilidad_valido"
+            },
+            {
+              "groovy": "return resultado == \"no_viable\" ? conceptoViabilidad == \"No Viable (Rechazado)\" : true",
+              "mensaje": "Si la solicitud no es viable, el concepto debe ser No Viable (Rechazado)",
+              "nombre": "conceptoViabilidad_noViable"
             }
           ]
         },
@@ -1395,9 +1415,9 @@
           ],
           "restricciones": [
             {
-              "groovy": "return valoracionOperaciones != null && !valoracionOperaciones.trim().isEmpty()",
-              "mensaje": "La valoración de operaciones es obligatoria",
-              "nombre": "valoracionOperaciones_presente"
+              "groovy": "return (valoracionOperaciones ?: \"\").trim().matches(\"(?i)https?://.+\")",
+              "mensaje": "La valoración de operaciones debe ser un enlace que empiece por http:// o https://",
+              "nombre": "valoracionOperaciones_valida"
             },
             {
               "groovy": "return (urlPptaPreventa ?: \"\").trim().matches(\"(?i)https?://.+\")",
@@ -1494,7 +1514,7 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto lo escriben 11 o 13",
+          "documentacion": "La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto (una de las cuatro opciones de concepto_viabilidad) lo escriben 11 o 13",
           "duracion": null,
           "id": "10_validarSolicitud",
           "interruptor": null,
@@ -1991,7 +2011,7 @@
           "transitoria": false
         }
       ],
-      "version": "1.2"
+      "version": "1.3"
     }
   ],
   "proyecto": {

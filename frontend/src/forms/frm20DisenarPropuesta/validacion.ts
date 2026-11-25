@@ -20,10 +20,17 @@ export function erroresDe(cuerpo: CuerpoDelContrato): Record<string, string> {
 }
 
 
-/** Reglas propias: los enlaces deben ser URLs http(s) válidas (constraint del contrato). */
+/**
+ * Reglas propias: la valoración de operaciones y los dos enlaces deben ser URLs http(s) válidas (constraints
+ * `valoracionOperaciones_valida`, `urlPptaPreventa_valida` y `linkRepoPreventa_valido`; HubSpot responde 400
+ * `INVALID_URL` si no lo son).
+ */
 export function erroresDePantalla(cuerpo: CuerpoDelContrato): Record<string, string> {
   const errores = erroresDe({ ...cuerpo, adjuntos: cuerpo.adjuntos ?? [] });
   if (!cuerpo.valoracionOperaciones?.trim()) errores.valoracionOperaciones = 'La valoración de operaciones es obligatoria.';
+  else if (!esUrl(cuerpo.valoracionOperaciones)) {
+    errores.valoracionOperaciones = 'La valoración de operaciones debe ser un enlace que empiece por http:// o https://';
+  }
   if (!esUrl(cuerpo.urlPptaPreventa)) errores.urlPptaPreventa = 'Escriba una URL válida que empiece por http:// o https://';
   if (!esUrl(cuerpo.linkRepoPreventa)) errores.linkRepoPreventa = 'Escriba una URL válida que empiece por http:// o https://';
   return errores;

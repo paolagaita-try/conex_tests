@@ -29,7 +29,7 @@
   const RESULTADOS: Record<string, string> = {
     viable: 'Viable: pasa a diseño',
     bloqueado: 'Bloqueado: en espera información del lead',
-    'no viable': 'No viable: cerrado por viabilidad',
+    no_viable: 'No viable: cerrado por viabilidad',
   };
 
   /** Los hitos del caso, deducidos del objeto Preventa y del ticket. */
@@ -42,7 +42,7 @@
       { titulo: 'Caso asignado', detalle: `Consultora: ${valor(c.consultor)}`, fecha: (c.fechaAsignacion as string) ?? null, estado: c.consultor ? 'hecho' : 'actual' },
       { titulo: 'Validación de la solicitud', detalle: r ? (RESULTADOS[r] ?? r) : 'Pendiente', fecha: (c.fechaValidacion as string) ?? null, estado: r ? 'hecho' : c.consultor ? 'actual' : 'pendiente' },
     ];
-    if (r !== 'no viable') {
+    if (r !== 'no_viable') {
       lista.push({ titulo: 'Diseño de la propuesta', detalle: propuesta ? 'Artefactos entregados' : r === 'viable' ? 'En curso' : 'Pendiente', fecha: propuesta, estado: propuesta ? 'hecho' : r === 'viable' ? 'actual' : 'pendiente' });
     }
     return lista;

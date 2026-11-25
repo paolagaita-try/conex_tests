@@ -39,9 +39,8 @@ pub async fn on_ticket_created(st: &Shared, payload: &Value) -> AppResult<Value>
     Ok(json!({ "caseId": case_id }))
 }
 
-// El paso «En validación» -> «Asignado/En diseño» es MANUAL (lo hace la consultora en el tablero).
-// Antes había aquí un avance automático por temporizador; se eliminó a pedido de Preventa: el reloj
-// no debe empujar el ticket a diseño (ensuciaba los tiempos por etapa y saturaba el trabajo en curso).
+// El paso «En validación» -> «Asignado/En diseño» no es del middleware: lo hace Bonita
+// (11_pasarADiseno) cuando la consultora valida «viable» en su formulario (premisa v2 «Bonita-first»).
 
 /// Reconciliación: cuenta casos activos vs tickets del pipeline (log).
 pub async fn reconciliar(st: &Shared) {

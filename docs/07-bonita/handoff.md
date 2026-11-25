@@ -18,7 +18,7 @@ fecha: 2026-11-24
 > La usuaria aprobó el plan `docs/08-construccion/plan-v2-bonita-first.md` («construye»). El equipo de Preventa **no
 > vuelve a entrar a HubSpot**: trabaja en Bonita y Bonita alimenta el CRM.
 
-Proceso `GestionPreventa` **1.2** (`bpmn.md`):
+Proceso `GestionPreventa` **1.3** (`bpmn.md`; la 1.3 cierra las opciones de `concepto_viabilidad` y exige que `valoracion_operaciones` sea un enlace):
 
 1. Al crearse un ticket en HubSpot se instancia el caso (middleware, webhook `ticket.creation`), con idempotencia
    esperada por `ticketId` (`[no verificado]` en ejecución).

@@ -65,7 +65,7 @@ export const CASO_EJEMPLO: DatosDelCaso = {
   fechaAsignacion: '2026-11-18T14:06:00Z',
   estado: 'En diseño',
   resultadoValidacion: 'viable',
-  conceptoViabilidad: 'Encaja con la oferta de automatización y hay presupuesto aprobado.',
+  conceptoViabilidad: 'Aprobado (Viable)',
   notaValidacion: 'Se validó alcance con la directora financiera.',
   supuestos: 'Acceso a ambiente de pruebas de SAP.',
   fechaValidacion: '2026-11-19T10:30:00Z',

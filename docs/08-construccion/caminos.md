@@ -1,6 +1,6 @@
 # Caminos del journey — Gestión de Preventa
 
-Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.2). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
+Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.3). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
 
 ## Camino `entregada`
 
@@ -13,8 +13,8 @@ La consultora valida «viable», Bonita pasa el ticket a «Asignado/En diseño»
 |---|---|---|---|
 | 1 | (instanciación) | ofelia.bot | `{"ticketId": "T-001"}` |
 | 2 | (no ve `10_validarSolicitud`) | viviana.velasquez | — |
-| 3 | `10_validarSolicitud` | linda.lozano | `{"resultado": "viable", "conceptoViabilidad": "Viable con DocFly", "notaValidacion": "Requerimiento claro; se valida.", "supuestos": "Cliente entrega muestras"}` |
-| 4 | `20_disenarPropuesta` | linda.lozano | `{"valoracionOperaciones": "40 h de fábrica", "urlPptaPreventa": "https://example.com/ppta", "linkRepoPreventa": "https://example.com/repo", "notaPropuesta": "Propuesta lista", "adjuntos": [{"$archivo": "propuesta.pdf"}]}` |
+| 3 | `10_validarSolicitud` | linda.lozano | `{"resultado": "viable", "conceptoViabilidad": "Aprobado (Viable)", "notaValidacion": "Requerimiento claro; se valida.", "supuestos": "Cliente entrega muestras"}` |
+| 4 | `20_disenarPropuesta` | linda.lozano | `{"valoracionOperaciones": "https://example.com/valoracion", "urlPptaPreventa": "https://example.com/ppta", "linkRepoPreventa": "https://example.com/repo", "notaPropuesta": "Propuesta lista", "adjuntos": [{"$archivo": "propuesta.pdf"}]}` |
 
 | Atributo | Valor esperado |
 |---|---|
@@ -24,6 +24,8 @@ La consultora valida «viable», Bonita pasa el ticket a «Asignado/En diseño»
 | `preventa.asunto` | `Preventa cliente ACME` |
 | `preventa.resultadoValidacion` | `viable` |
 | `preventa.urlPptaPreventa` | `https://example.com/ppta` |
+| `preventa.conceptoViabilidad` | `Aprobado (Viable)` |
+| `preventa.valoracionOperaciones` | `https://example.com/valoracion` |
 | `preventa.cantidadAdjuntos` | `1` |
 
 ## Camino `bloqueada`
@@ -37,14 +39,15 @@ La consultora valida «bloqueado» (falta información del lead): Bonita pasa el
 |---|---|---|---|
 | 1 | (instanciación) | ofelia.bot | `{"ticketId": "T-003"}` |
 | 2 | `10_validarSolicitud` | linda.lozano | `{"resultado": "bloqueado", "conceptoViabilidad": "", "notaValidacion": "Falta el volumen de documentos.", "supuestos": ""}` |
-| 3 | `10_validarSolicitud` | linda.lozano | `{"resultado": "viable", "conceptoViabilidad": "Viable", "notaValidacion": "El lead completó la información.", "supuestos": ""}` |
-| 4 | `20_disenarPropuesta` | linda.lozano | `{"valoracionOperaciones": "20 h", "urlPptaPreventa": "https://example.com/ppta2", "linkRepoPreventa": "https://example.com/repo2", "notaPropuesta": "", "adjuntos": []}` |
+| 3 | `10_validarSolicitud` | linda.lozano | `{"resultado": "viable", "conceptoViabilidad": "Aprobado con Condiciones", "notaValidacion": "El lead completó la información.", "supuestos": ""}` |
+| 4 | `20_disenarPropuesta` | linda.lozano | `{"valoracionOperaciones": "https://example.com/valoracion2", "urlPptaPreventa": "https://example.com/ppta2", "linkRepoPreventa": "https://example.com/repo2", "notaPropuesta": "", "adjuntos": []}` |
 
 | Atributo | Valor esperado |
 |---|---|
 | `preventa.estado` | `entregadaAVentas` |
 | `preventa.resultadoValidacion` | `viable` |
 | `preventa.notaValidacion` | `El lead completó la información.` |
+| `preventa.conceptoViabilidad` | `Aprobado con Condiciones` |
 
 ## Camino `noViable`
 
@@ -56,7 +59,7 @@ La consultora valida «no viable»: queda la nota en HubSpot, Bonita escribe el 
 | Paso | Tarea | Usuario | Payload |
 |---|---|---|---|
 | 1 | (instanciación) | ofelia.bot | `{"ticketId": "T-002"}` |
-| 2 | `10_validarSolicitud` | linda.lozano | `{"resultado": "no_viable", "conceptoViabilidad": "Fuera del alcance de los productos", "notaValidacion": "No aplica a DocFly ni Oriuno.", "supuestos": ""}` |
+| 2 | `10_validarSolicitud` | linda.lozano | `{"resultado": "no_viable", "conceptoViabilidad": "No Viable (Rechazado)", "notaValidacion": "No aplica a DocFly ni Oriuno.", "supuestos": ""}` |
 
 | Atributo | Valor esperado |
 |---|---|
@@ -64,3 +67,4 @@ La consultora valida «no viable»: queda la nota en HubSpot, Bonita escribe el 
 | `preventa.consultorOwnerId` | `89450376` |
 | `preventa.consultor` | `Linda` |
 | `preventa.resultadoValidacion` | `no_viable` |
+| `preventa.conceptoViabilidad` | `No Viable (Rechazado)` |

@@ -8,5 +8,6 @@
   <input name="ownerIds" type="java.lang.String" mandatory="true"/>
   <input name="stages" type="java.lang.String" mandatory="true"/>
   <input name="ultimoOwnerId" type="java.lang.String" mandatory="false"/>
+  <input name="ticketId" type="java.lang.String" mandatory="false"/>
   <output name="ownerElegido" type="java.lang.String"/>
 </definition:ConnectorDefinition>

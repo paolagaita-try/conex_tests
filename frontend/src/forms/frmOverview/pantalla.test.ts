@@ -17,7 +17,7 @@ describe('vista del caso frm_overview', () => {
 
   it('un caso no viable no muestra el diseño', async () => {
     render(FrmOverview, {
-      props: { cargar: async () => ({ caso: { ...CASO_EJEMPLO, resultadoValidacion: 'no viable' }, hubspot: CONTEXTO_EJEMPLO }) },
+      props: { cargar: async () => ({ caso: { ...CASO_EJEMPLO, resultadoValidacion: 'no_viable' }, hubspot: CONTEXTO_EJEMPLO }) },
     });
     expect(await screen.findByText('No viable: cerrado por viabilidad')).toBeInTheDocument();
     expect(screen.queryByText('Diseño de la propuesta')).toBeNull();
