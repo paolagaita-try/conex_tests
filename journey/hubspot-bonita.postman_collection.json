@@ -399,7 +399,7 @@
           ]
         },
         {
-          "name": "[entregada] 1. proceso GestionPreventa 1.3",
+          "name": "[entregada] 1. proceso GestionPreventa 1.4",
           "request": {
             "method": "GET",
             "header": [
@@ -409,7 +409,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.3&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.4&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -425,7 +425,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.3"
+                  "value": "version=1.4"
                 },
                 {
                   "key": "f",
@@ -448,8 +448,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.3 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.3\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.4 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.4\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -1705,7 +1705,7 @@
           ]
         },
         {
-          "name": "[bloqueada] 1. proceso GestionPreventa 1.3",
+          "name": "[bloqueada] 1. proceso GestionPreventa 1.4",
           "request": {
             "method": "GET",
             "header": [
@@ -1715,7 +1715,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.3&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.4&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1731,7 +1731,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.3"
+                  "value": "version=1.4"
                 },
                 {
                   "key": "f",
@@ -1754,8 +1754,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.3 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.3\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.4 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.4\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -2374,7 +2374,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"resultado\": \"viable\", \"conceptoViabilidad\": \"Aprobado con Condiciones\", \"notaValidacion\": \"El lead completó la información.\", \"supuestos\": \"\"}"
+              "raw": "{\"resultado\": \"viable\", \"conceptoViabilidad\": \"Aprobado con Condiciones\", \"notaValidacion\": \"El lead completó la información.\", \"supuestos\": \"El cliente entrega el volumen real antes del diseño\"}"
             }
           },
           "event": [
@@ -2951,7 +2951,8 @@
                   "pm.test(\"preventa.estado = entregadaAVentas\", () => pm.expect(String(o[\"estado\"])).to.eql(String(\"entregadaAVentas\")));",
                   "pm.test(\"preventa.resultadoValidacion = viable\", () => pm.expect(String(o[\"resultadoValidacion\"])).to.eql(String(\"viable\")));",
                   "pm.test(\"preventa.notaValidacion = El lead completó la información.\", () => pm.expect(String(o[\"notaValidacion\"])).to.eql(String(\"El lead completó la información.\")));",
-                  "pm.test(\"preventa.conceptoViabilidad = Aprobado con Condiciones\", () => pm.expect(String(o[\"conceptoViabilidad\"])).to.eql(String(\"Aprobado con Condiciones\")));"
+                  "pm.test(\"preventa.conceptoViabilidad = Aprobado con Condiciones\", () => pm.expect(String(o[\"conceptoViabilidad\"])).to.eql(String(\"Aprobado con Condiciones\")));",
+                  "pm.test(\"preventa.supuestos = El cliente entrega el volumen real antes del diseño\", () => pm.expect(String(o[\"supuestos\"])).to.eql(String(\"El cliente entrega el volumen real antes del diseño\")));"
                 ]
               }
             }
@@ -3050,7 +3051,7 @@
           ]
         },
         {
-          "name": "[noViable] 1. proceso GestionPreventa 1.3",
+          "name": "[noViable] 1. proceso GestionPreventa 1.4",
           "request": {
             "method": "GET",
             "header": [
@@ -3060,7 +3061,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.3&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.4&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3076,7 +3077,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.3"
+                  "value": "version=1.4"
                 },
                 {
                   "key": "f",
@@ -3099,8 +3100,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.3 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.3\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.4 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.4\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -3429,7 +3430,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"resultado\": \"no_viable\", \"conceptoViabilidad\": \"No Viable (Rechazado)\", \"notaValidacion\": \"No aplica a DocFly ni Oriuno.\", \"supuestos\": \"\"}"
+              "raw": "{\"resultado\": \"no_viable\", \"conceptoViabilidad\": \"\", \"notaValidacion\": \"No aplica a DocFly ni Oriuno.\", \"supuestos\": \"\"}"
             }
           },
           "event": [
