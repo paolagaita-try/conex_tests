@@ -63,7 +63,7 @@ PYTHONUTF8=1 PYTHONPATH=../tools/arnes python -m custodios.check_formularios ..
 - **Cómo re-aplicar**: el manifiesto es generado y `tools/arnes.sh generar` lo reescribe. Después de cada `generar`:
   `PYTHONUTF8=1 python scripts/parche-manifest-preventa.py` (idempotente: si el permiso ya está, no cambia nada)
   y luego el build.
-- **Retirada**: cuando el arnés soporte la propuesta P-3 (`docs/08-construccion/propuestas-al-arnes.md`), se declara
+- **Retirada**: cuando el arnés soporte permisos de APIs propias en el manifiesto, se declara
   «Lee de» en la matriz de formularios, se borra el script y esta sección.
 
 ## Pendiente / no verificado

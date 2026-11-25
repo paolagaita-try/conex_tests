@@ -8,8 +8,8 @@ después de cada `generar` hay que correr:
 
     PYTHONUTF8=1 python scripts/parche-manifest-preventa.py
 
-Es idempotente: si el permiso ya está, no cambia nada. Se retira cuando el arnés soporte la
-propuesta P-3 (docs/08-construccion/propuestas-al-arnes.md). Detalle en
+Es idempotente: si el permiso ya está, no cambia nada. Excepción hasta que el arnés soporte
+permisos de APIs propias en el manifiesto. Detalle en
 docs/08-construccion/formularios-v2.md › «Excepción: permiso extension/preventa».
 """
 import json

@@ -45,7 +45,7 @@ Hub desconectado: trabajo en modo local, sin claims de `slice-ops.sh`. Sin escri
 
 ## Journey (2026-11-24, tercera tanda: verde, contra el mock local)
 
-Corrido con las copias parcheadas del arnés (P-1 arranque en Windows, P-2 mock con `--registro`), bundle nuevo
+Corrido con copias del arnés parcheadas localmente (arranque en Windows, mock con `--registro`), bundle nuevo
 construido por el runner (`mvn clean install -Pbundle` BUILD SUCCESS, 7 min) y token ficticio. RAM libre antes de
 arrancar: 3,9 GB. Nada contra HubSpot real.
 
@@ -74,8 +74,8 @@ Registro del mock (`método ruta cuerpo`, recortado):
 ## Pendiente o no verificado
 
 1. **`tools/arnes.sh verificar` = 1 solo por `check_generados`**: el manifiesto lleva el permiso
-   `GET|extension/preventa` que el generador no escribe (opción B, `scripts/parche-manifest-preventa.py`). Se resuelve
-   con P-3. Los demás custodios en verde.
+   `GET|extension/preventa` que el generador no escribe (opción B, `scripts/parche-manifest-preventa.py`). Excepción hasta
+   que el arnés soporte permisos de APIs propias en el manifiesto. Los demás custodios en verde.
 2. **Versión del pool**: resuelto (2026-11-25, aprobado por la usuaria). El pool sube a **1.2** en `docs/07-bonita/`
    (`bpmn.md`, `contratos.md`, `handoff.md`) para que un runtime con la 1.1 desplegada tome la definición nueva
    (regla 6); regenerado (`GestionPreventa-1.2.proc`, se retiran el `.proc`/`.conf` de la 1.1) y middleware con
