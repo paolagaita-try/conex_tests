@@ -29,7 +29,7 @@ impl Config {
             bonita_user: env_or("BONITA_USER", "ofelia.bot"),
             bonita_password: env_or("BONITA_PASSWORD", ""),
             process_name: env_or("PROCESS_NAME", "GestionPreventa"),
-            process_version: env_or("PROCESS_VERSION", "1.0"),
+            process_version: env_or("PROCESS_VERSION", "1.2"),
             hs_base: trim_slash(env_or("HUBSPOT_BASE", "https://api.hubapi.com")),
             hs_token: env_or("HUBSPOT_PRIVATE_APP_TOKEN", ""),
             app_secret: env_or("HUBSPOT_APP_SECRET", ""),

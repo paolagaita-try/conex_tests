@@ -1,6 +1,6 @@
 # Caminos del journey — Gestión de Preventa
 
-Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.1). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
+Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.2). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
 
 ## Camino `entregada`
 

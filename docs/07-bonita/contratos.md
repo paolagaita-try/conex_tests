@@ -21,7 +21,7 @@ total_contratos: 3
 
 ## Contrato de instanciación — `ctr_instanciacion`
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 Formulario asociado (capa 3): `frm_instanciacion` (`No form`). Fuente: el middleware instancia el caso por la API REST al recibir el webhook `ticket.creation` de HubSpot.
 

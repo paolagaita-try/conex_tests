@@ -399,7 +399,7 @@
           ]
         },
         {
-          "name": "[entregada] 1. proceso GestionPreventa 1.1",
+          "name": "[entregada] 1. proceso GestionPreventa 1.2",
           "request": {
             "method": "GET",
             "header": [
@@ -409,7 +409,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.1&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.2&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -425,7 +425,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.1"
+                  "value": "version=1.2"
                 },
                 {
                   "key": "f",
@@ -448,8 +448,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.1 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.1\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.2 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.2\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -1703,7 +1703,7 @@
           ]
         },
         {
-          "name": "[bloqueada] 1. proceso GestionPreventa 1.1",
+          "name": "[bloqueada] 1. proceso GestionPreventa 1.2",
           "request": {
             "method": "GET",
             "header": [
@@ -1713,7 +1713,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.1&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.2&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1729,7 +1729,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.1"
+                  "value": "version=1.2"
                 },
                 {
                   "key": "f",
@@ -1752,8 +1752,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.1 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.1\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.2 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.2\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -3047,7 +3047,7 @@
           ]
         },
         {
-          "name": "[noViable] 1. proceso GestionPreventa 1.1",
+          "name": "[noViable] 1. proceso GestionPreventa 1.2",
           "request": {
             "method": "GET",
             "header": [
@@ -3057,7 +3057,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.1&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.2&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3073,7 +3073,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.1"
+                  "value": "version=1.2"
                 },
                 {
                   "key": "f",
@@ -3096,8 +3096,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.1 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.1\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.2 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.2\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]

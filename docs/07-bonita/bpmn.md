@@ -4,7 +4,7 @@ capa: 1
 motor: Bonita
 deriva_de: docs/07-bonita/insumo-preventa/reunion-socializacion.md, docs/07-bonita/insumo-preventa/Proceso_Preventa_Bonita.bpmn, docs/07-bonita/bdm.md, docs/08-construccion/plan-v2-bonita-first.md
 pool: GestionPreventa
-version: 1.1
+version: 1.2
 ---
 
 # Capa 1 — Proceso BPMN para Bonita — Gestión de Preventa
@@ -22,7 +22,7 @@ version: 1.1
 
 ## Pool y lanes
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | Lane | Actor (actores-proceso.md) | Grupo/rol (bdm.md → Organización) | Actor Bonita | Actor filter |
 |---|---|---|---|---|
@@ -35,7 +35,7 @@ El carril Orquestador es el usuario técnico del middleware y las tareas automá
 
 ## Diagrama
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 ```mermaid
 flowchart LR
@@ -66,7 +66,7 @@ flowchart LR
 
 ## Inventario de tareas
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | ID | Nombre | Tipo Bonita | Lane / actor | Fuente en §12 | Contrato (capa 2) | Conector / comunicación | Operaciones previstas | Notas |
 |---|---|---|---|---|---|---|---|---|
@@ -84,7 +84,7 @@ flowchart LR
 
 ## Compuertas
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | ID | Tipo | Después de | Variable o atributo que decide | Salidas (condición → destino) | Salida por defecto |
 |---|---|---|---|---|---|
@@ -93,7 +93,7 @@ flowchart LR
 
 ## Eventos
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | ID | Tipo | Posición (inicio / intermedio / borde de `<tarea>` / fin) | Disparador o duración | Fuente en §12 | Destino |
 |---|---|---|---|---|---|
@@ -107,7 +107,7 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 
 ## Transiciones
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | Desde | Hacia | Condición (si aplica) | Variable que la evalúa | Δestado (catalogo-estados.md) |
 |---|---|---|---|---|
@@ -131,7 +131,7 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 
 ## Conectores por tarea
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | Tarea | Conector (catalogo-conectores.md) | Modo | Momento (entrada / salida de la tarea) | Entrada (process variable o atributo) | Salida (destino) | Manejo de fallo |
 |---|---|---|---|---|---|---|
@@ -191,7 +191,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Process variables (insumo de construcción)
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | Variable | Tipo | Valor por defecto | Transitoria | Justificación (compuerta, conector o transición que la necesita) |
 |---|---|---|---|---|
@@ -199,7 +199,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Documentos del proceso
 
-### `GestionPreventa` 1.1
+### `GestionPreventa` 1.2
 
 | Documento | Múltiple | Tarea que lo aporta | Tareas que lo leen | Fuente en §12 |
 |---|---|---|---|---|

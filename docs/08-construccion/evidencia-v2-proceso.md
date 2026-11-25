@@ -76,8 +76,10 @@ Registro del mock (`método ruta cuerpo`, recortado):
 1. **`tools/arnes.sh verificar` = 1 solo por `check_generados`**: el manifiesto lleva el permiso
    `GET|extension/preventa` que el generador no escribe (opción B, `scripts/parche-manifest-preventa.py`). Se resuelve
    con P-3. Los demás custodios en verde.
-2. **Versión del pool**: el `.proc` cambió (expresión del cuerpo de la nota) y el pool sigue en 1.1; en un runtime que
-   ya tenga la 1.1 desplegada hay que subir la versión (regla 6), lo que exige tocar `docs/07-bonita/`.
+2. **Versión del pool**: resuelto (2026-11-25, aprobado por la usuaria). El pool sube a **1.2** en `docs/07-bonita/`
+   (`bpmn.md`, `contratos.md`, `handoff.md`) para que un runtime con la 1.1 desplegada tome la definición nueva
+   (regla 6); regenerado (`GestionPreventa-1.2.proc`, se retiran el `.proc`/`.conf` de la 1.1) y middleware con
+   `PROCESS_VERSION=1.2` por defecto.
 3. Formularios en el navegador (precarga por `extension/preventa` con sesión real): no recorridos en esta corrida;
    el journey va por REST API.
 4. Resto fuera del repo: `C:/Users/Administrador/AppData/Local/Temp/hubspot-bonita-bundle.Ldm3` (bundle de una
