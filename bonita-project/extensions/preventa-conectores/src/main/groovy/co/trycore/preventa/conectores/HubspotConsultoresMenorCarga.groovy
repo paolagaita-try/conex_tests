@@ -53,8 +53,9 @@ class HubspotConsultoresMenorCarga extends AbstractConnector {
         }
         List<String> stages = getInputParameter('stages').toString().split(',').collect { it.trim() }.findAll { !it.isEmpty() }
 
+        def excluidoRaw = getInputParameter('ticketId')
+        String ticketExcluido = (excluidoRaw == null) ? '' : excluidoRaw.toString().trim()
         Map<String, Integer> carga = [:]
-        candidatos.each { carga[it] = 0 }
         try {
             def cuerpo = JsonOutput.toJson([
                 filterGroups: [[filters: [
@@ -66,16 +67,38 @@ class HubspotConsultoresMenorCarga extends AbstractConnector {
             ])
             def respuesta = Http.post(urlBase + rutaTickets + '/search', cuerpo)
             def json = new JsonSlurper().parseText(respuesta)
-            (json?.results ?: []).each { t ->
-                def owner = t?.properties?.hubspot_owner_id
-                if (owner != null && carga.containsKey(owner.toString())) {
-                    carga[owner.toString()] = carga[owner.toString()] + pesoDe(t?.properties?.hs_ticket_priority)
-                }
-            }
+            carga = cargaPonderada(json?.results ?: [], candidatos, ticketExcluido)
         } catch (Exception e) {
             throw new ConnectorException('No se pudo consultar la carga en HubSpot: ' + e.message, e)
         }
 
+        String elegido = elegir(carga, candidatos, ultimoOwnerId)
+        setOutputParameter('ownerElegido', elegido)
+    }
+
+    /**
+     * Suma ponderada por prioridad de los tickets activos de cada candidato. El ticket que se está asignando
+     * (ticketExcluido) no cuenta: si no, su dueño anterior (p. ej. de una corrida fallida o de un reintento) cargaría
+     * con él y el reparto dependería de cómo quedó ese ticket, no de la carga real.
+     */
+    static Map<String, Integer> cargaPonderada(List resultados, List<String> candidatos, String ticketExcluido) {
+        Map<String, Integer> carga = [:]
+        candidatos.each { carga[it] = 0 }
+        String excluido = (ticketExcluido == null) ? '' : ticketExcluido.trim()
+        resultados.each { t ->
+            if (!excluido.isEmpty() && t?.id != null && t.id.toString() == excluido) {
+                return
+            }
+            def owner = t?.properties?.hubspot_owner_id
+            if (owner != null && carga.containsKey(owner.toString())) {
+                carga[owner.toString()] = carga[owner.toString()] + pesoDe(t?.properties?.hs_ticket_priority)
+            }
+        }
+        return carga
+    }
+
+    /** Menor carga; empate: circular respecto de ultimoOwnerId, o el primero en el orden de candidatos. */
+    static String elegir(Map<String, Integer> carga, List<String> candidatos, String ultimoOwnerId) {
         int minima = candidatos.collect { carga[it] }.min()
         List<String> empatados = candidatos.findAll { carga[it] == minima }
         String elegido
@@ -93,6 +116,6 @@ class HubspotConsultoresMenorCarga extends AbstractConnector {
             }
             if (elegido == null) { elegido = empatados[0] }
         }
-        setOutputParameter('ownerElegido', elegido)
+        return elegido
     }
 }
