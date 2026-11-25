@@ -15,8 +15,8 @@ async function pintar(enviar = vi.fn(async (_c: unknown) => undefined)) {
   await screen.findByRole('heading', { level: 1, name: /Automatizar la radicación/ });
   return { ...r, enviar };
 }
-async function llenar(url = 'https://slides.example/p1') {
-  await fireEvent.input(screen.getByLabelText(/Valoración de operaciones/), { target: { value: '3 personas, 8 semanas' } });
+async function llenar(url = 'https://slides.example/p1', valoracion = 'https://docs.example/valoracion') {
+  await fireEvent.input(screen.getByLabelText(/Valoración de operaciones/), { target: { value: valoracion } });
   await fireEvent.input(screen.getByLabelText(/URL propuesta/), { target: { value: url } });
   await fireEvent.input(screen.getByLabelText(/Link repositorio/), { target: { value: 'https://drive.example/carpeta' } });
 }
@@ -36,6 +36,15 @@ describe('pantalla frm_20_disenarPropuesta', () => {
     expect(screen.getByText(/URL válida que empiece por http/)).toBeInTheDocument();
   });
 
+  it('la valoración de operaciones es un enlace: rechaza texto libre (espeja valoracionOperaciones_valida)', async () => {
+    const { enviar } = await pintar();
+    await llenar('https://slides.example/p1', '3 personas, 8 semanas');
+    await fireEvent.click(screen.getByRole('button', BOTON));
+    expect(enviar).not.toHaveBeenCalled();
+    expect(screen.getByText(/valoración de operaciones debe ser un enlace/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Valoración de operaciones/)).toHaveAttribute('type', 'url');
+  });
+
   it('añade archivos (selector y arrastrar-y-soltar), los lista, quita y sube al enviar', async () => {
     const { enviar, container } = await pintar();
     await llenar();
@@ -53,6 +62,7 @@ describe('pantalla frm_20_disenarPropuesta', () => {
       { filename: 'arquitectura.pdf', tempPath: 'tmp_arquitectura.pdf', contentType: 'application/pdf' },
     ]);
     expect(cuerpo.urlPptaPreventa).toBe('https://slides.example/p1');
+    expect(cuerpo.valoracionOperaciones).toBe('https://docs.example/valoracion');
     expect(await screen.findByText('Propuesta enviada')).toBeInTheDocument();
   });
 

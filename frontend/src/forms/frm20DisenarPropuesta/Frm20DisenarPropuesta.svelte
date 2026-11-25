@@ -142,16 +142,24 @@
         <form onsubmit={alEnviar} novalidate>
           <div class="tc-campo" data-testid="campo-valoracionOperaciones">
             <label for="campo-valoracionOperaciones">{etiqueta('valoracionOperaciones')}<span class="tc-requerido" aria-hidden="true">*</span></label>
-            <p class="tc-ayuda" id="ayuda-valoracion">Esfuerzo, equipo y riesgos operativos estimados para la solución.</p>
-            <textarea
-              id="campo-valoracionOperaciones"
-              class="tc-control"
-              rows="3"
-              bind:value={valoracionOperaciones}
-              aria-required="true"
-              aria-invalid={!!errores.valoracionOperaciones}
-              aria-describedby={errores.valoracionOperaciones ? 'ayuda-valoracion error-valoracion' : 'ayuda-valoracion'}
-            ></textarea>
+            <p class="tc-ayuda" id="ayuda-valoracion">
+              Enlace al documento con el esfuerzo, el equipo y los riesgos operativos estimados para la solución.
+            </p>
+            <div class="url" class:ok={esUrl(valoracionOperaciones)}>
+              <span class="prefijo" aria-hidden="true">🔗</span>
+              <input
+                id="campo-valoracionOperaciones"
+                class="tc-control"
+                type="url"
+                inputmode="url"
+                placeholder="https://"
+                bind:value={valoracionOperaciones}
+                aria-required="true"
+                aria-invalid={!!errores.valoracionOperaciones}
+                aria-describedby={errores.valoracionOperaciones ? 'ayuda-valoracion error-valoracion' : 'ayuda-valoracion'}
+              />
+              {#if esUrl(valoracionOperaciones)}<span class="valida">URL válida</span>{/if}
+            </div>
             {#if errores.valoracionOperaciones}<p class="tc-error" id="error-valoracion">{errores.valoracionOperaciones}</p>{/if}
           </div>
 

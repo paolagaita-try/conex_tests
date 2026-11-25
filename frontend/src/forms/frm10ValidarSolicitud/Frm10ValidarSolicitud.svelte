@@ -11,7 +11,7 @@
   import { precargar, type Precarga } from '$lib/preventa/contexto';
   import { CAMPOS, ENTRADAS, type CuerpoDelContrato } from './generado/contrato';
   import { TEXTOS } from './textos';
-  import { erroresDePantalla } from './validacion';
+  import { CONCEPTOS, CONCEPTO_NO_VIABLE, erroresDePantalla } from './validacion';
 
   interface Props {
     /** Envía el cuerpo del contrato al motor; las pruebas inyectan un doble. */
@@ -39,7 +39,7 @@
   const OPCIONES = [
     { valor: 'viable', titulo: 'Viable', icono: '✓', explica: 'La solicitud pasa a Diseño de la propuesta.' },
     { valor: 'bloqueado', titulo: 'Bloqueado', icono: '⏸', explica: 'El ticket queda «En espera información del lead» hasta que llegue lo que falta.' },
-    { valor: 'no viable', titulo: 'No viable', icono: '✕', explica: 'El ticket se cierra como «cerrado por viabilidad».' },
+    { valor: 'no_viable', titulo: 'No viable', icono: '✕', explica: 'El ticket se cierra como «cerrado por viabilidad».' },
   ] as const;
 
   let resultado = $state<string | null>(null);
@@ -50,7 +50,12 @@
   let estado = $state<'ocioso' | 'enviando' | 'enviado' | 'error'>('ocioso');
   let fallo = $state<string | null>(null);
 
-  const exigeConcepto = $derived(resultado === 'viable' || resultado === 'no viable');
+  const exigeConcepto = $derived(resultado === 'viable' || resultado === 'no_viable');
+
+  /** «No viable» solo admite «No Viable (Rechazado)» (constraint del contrato): se elige solo. */
+  function alCambiarResultado(): void {
+    if (resultado === 'no_viable') conceptoViabilidad = CONCEPTO_NO_VIABLE;
+  }
   const etiqueta = (ruta: string) => CAMPOS.find((c) => c.ruta === ruta)?.etiqueta ?? ruta;
 
   function cuerpo(): CuerpoDelContrato {
@@ -111,6 +116,7 @@
                     value={o.valor}
                     id={i === 0 ? 'campo-resultado' : undefined}
                     bind:group={resultado}
+                    onchange={alCambiarResultado}
                     required
                   />
                   <span class="icono" aria-hidden="true">{o.icono}</span>
@@ -125,16 +131,23 @@
             <label for="campo-conceptoViabilidad">
               {etiqueta('conceptoViabilidad')}{#if exigeConcepto}<span class="tc-requerido" aria-hidden="true">*</span>{/if}
             </label>
-            <p class="tc-ayuda" id="ayuda-concepto">Obligatorio si la solicitud es viable o no viable. Se escribe en el Negocio de HubSpot.</p>
-            <textarea
+            <p class="tc-ayuda" id="ayuda-concepto">
+              Obligatorio si la solicitud es viable o no viable («No viable» lleva «No Viable (Rechazado)»). Se escribe en
+              el Negocio de HubSpot.
+            </p>
+            <select
               id="campo-conceptoViabilidad"
               class="tc-control"
-              rows="3"
               bind:value={conceptoViabilidad}
               aria-required={exigeConcepto}
               aria-invalid={!!errores.conceptoViabilidad}
               aria-describedby={errores.conceptoViabilidad ? 'ayuda-concepto error-concepto' : 'ayuda-concepto'}
-            ></textarea>
+            >
+              <option value="">Elija un concepto…</option>
+              {#each CONCEPTOS as c (c)}
+                <option value={c}>{c}</option>
+              {/each}
+            </select>
             {#if errores.conceptoViabilidad}<p class="tc-error" id="error-concepto">{errores.conceptoViabilidad}</p>{/if}
           </div>
 
@@ -219,7 +232,7 @@
   .opcion[data-valor='bloqueado'] .icono {
     background: #8a5a00;
   }
-  .opcion[data-valor='no viable'] .icono {
+  .opcion[data-valor='no_viable'] .icono {
     background: #a3221b;
   }
   .texto {
