@@ -27,9 +27,9 @@ El `HANDOFF-SCAFFOLD.md` §1 asumía 5 estados (`en diseño`, `en validación`, 
 
 ---
 
-## 2. Owners (candidatos para round robin)
+## 2. Owners (candidatos del reparto)
 
-Se descubrieron **18 owners** (sin paginación pendiente). Los IDs sirven para `hubspot_owner_id`. **Qué owners entran en la rotación del round robin es una decisión de negocio** (no todos los owners tienen por qué ser elegibles); esta lista es el universo disponible, no la rotación final.
+Se descubrieron **18 owners** (sin paginación pendiente). Los IDs sirven para `hubspot_owner_id`. **Qué owners entran en el reparto es una decisión de negocio** (hoy: Linda `89450376` y Viviana `89450377`, en `param_consultores`) (no todos los owners tienen por qué ser elegibles); esta lista es el universo disponible, no la rotación final.
 
 | `hubspot_owner_id` | Nombre | Archivado |
 |---|---|---|
@@ -55,7 +55,7 @@ Se descubrieron **18 owners** (sin paginación pendiente). Los IDs sirven para `
 > Los correos de cada owner están disponibles en la API (`GET /crm/v3/owners`) si se necesitan; se omiten aquí para no fijar datos personales en el repo.
 
 > **Verificado en vivo 2026-11-11** contra `api.hubapi.com` (token de pruebas, luego rotado): pipeline y los 6 `stageId` coinciden exactamente con §1; `GET /crm/v3/owners` devuelve **18 owners**.
-> ⚠️ **Round robin:** el owner `88449388` ("Trynion") es un **bot de HubSpot** (correo `...@aichatbot.na1.hubspot.com`) — **excluirlo** de la lista de candidatos del round robin. Definir también si se incluyen/excluyen owners inactivos (`archived=true`).
+> ⚠️ **Reparto:** el owner `88449388` ("Trynion") es un **bot de HubSpot** (correo `...@aichatbot.na1.hubspot.com`) — **excluido** de los candidatos del reparto por carga. Definir también si se incluyen/excluyen owners inactivos (`archived=true`).
 
 ---
 
@@ -67,7 +67,7 @@ Se descubrieron **18 owners** (sin paginación pendiente). Los IDs sirven para `
 |---|---|---|
 | `hs_pipeline` | enumeration/select | pipeline del ticket (`pipelineId`) |
 | `hs_pipeline_stage` | enumeration/select | **stage del ticket** — lo escribe Bonita en cada transición |
-| `hubspot_owner_id` | enumeration/select | **responsable** — lo escribe el round robin de Bonita |
+| `hubspot_owner_id` | enumeration/select | **responsable** — lo escribe Bonita al asignar por carga ponderada por prioridad |
 | `subject` | string/text | asunto del ticket |
 | `content` | string/textarea | descripción del ticket |
 
@@ -116,7 +116,7 @@ Candidatas a entrar en el BDM / contrato de instanciación cuando llegue el fluj
 ## 5. Pendiente / no verificado
 
 - **Mapa de stages definitivo:** depende del flujo de preventa + confirmación del líder (ver §1).
-- **Rotación de round robin:** qué owners son elegibles — decisión de negocio.
+- **Candidatos del reparto:** qué owners son elegibles — decisión de negocio (hoy en `param_consultores`).
 - **Opciones de las propiedades `enumeration`:** no volcadas aún (se harán al modelar el BDM en U1).
 - **Process ID de Bonita:** no existe todavía (sale tras construir el proceso en U1).
 - **Escritura `PATCH` a HubSpot:** documentada, **no ejecutada** (Fase 0 es solo lectura).

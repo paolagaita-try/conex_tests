@@ -15,10 +15,12 @@ Middleware  ──► Bonita: instancia el caso GestionPreventa (idempotente por
 Bonita:  3_consultarTicket → 4_verificarDisponibilidad → 5_asignarConsultor → 6_actualizarTicket
          (ticket → «En validación», propietario = consultora elegida por carga)
         ▼
-Consultora: formulario «Validar solicitud» (10_validarSolicitud) — nota en ticket y Negocio
-        ├─ viable    → 11_pasarADiseno: ticket → «Asignado/En diseño» + concepto_viabilidad en el Negocio
-        ├─ bloqueado → 12_pasarAEnEspera: ticket → «En espera información del lead» → vuelve a validar
-        └─ no viable → 13_registrarNoViable: concepto_viabilidad + ticket → «Closed» (fin)
+Consultora: formulario «Validar solicitud» (10_validarSolicitud), con el CRM precargado — nota en ticket y Negocio
+        ├─ viable    → 11_pasarADiseno: ticket → «Asignado/En diseño» + concepto_viabilidad elegido
+        │              («Aprobado (Viable)» o «Aprobado con Condiciones», este con condiciones obligatorias)
+        ├─ bloqueado → 12_pasarAEnEspera: concepto «Requiere más información» + ticket → «En espera
+        │              información del lead» → vuelve a validar
+        └─ no viable → 13_registrarNoViable: concepto «No Viable (Rechazado)» + ticket → «Closed» (fin)
         ▼
 Consultora: formulario «Diseñar propuesta» (20_disenarPropuesta)
          — propiedades del Negocio y nota; 21_subirAdjuntos si hay adjuntos
@@ -26,7 +28,7 @@ Consultora: formulario «Diseñar propuesta» (20_disenarPropuesta)
 Bonita: 40_entregarAVentas → ticket a «Entregado a ventas»   (la etapa del Negocio NO se mueve)
 ```
 
-**Propiedades del Negocio que escribe Bonita:** `concepto_viabilidad` (al validar), `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa` (al diseñar la propuesta).
+**Propiedades del Negocio que escribe Bonita:** `concepto_viabilidad` (al validar: lo elige la consultora con «viable»; con «bloqueado» y «no viable» lo fija el proceso), `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa` (al diseñar la propuesta).
 
 **Estados del ticket** (pipeline «Mesa de preventa», id `0`): Solicitud recibida `1` → En validación `2` → Asignado/En diseño `3` (o En espera información del lead `1425810257`) → Entregado a ventas `1425810258`; Closed `4`. Todos los cambios de stage los hace Bonita, salvo el cierre del comercial.
 
@@ -51,7 +53,7 @@ Bonita: 40_entregarAVentas → ticket a «Entregado a ventas»   (la etapa del N
 | `hubspot-ticket-leer` | `3_consultarTicket` | `GET` del ticket y de su Negocio asociado | lee el asunto y el Negocio del ticket |
 | `hubspot-consultores-menor-carga` | `4_verificarDisponibilidad` | `POST /crm/v3/objects/tickets/search` | devuelve el owner con menor carga ponderada |
 | `hubspot-ticket-actualizar` | `6`, `11`, `12`, `13`, `40` | `PATCH /crm/v3/objects/tickets/{id}` | stage del ticket (y owner en `6`) |
-| `hubspot-negocio-actualizar` | `11`, `13`, `20` | `PATCH` del Negocio | propiedades del Negocio |
+| `hubspot-negocio-actualizar` | `11`, `12`, `13`, `20` | `PATCH` del Negocio | propiedades del Negocio |
 | `hubspot-nota-crear` | `10`, `20` | `POST` de una nota | nota asociada a ticket y Negocio |
 | `hubspot-archivo-subir` | `21_subirAdjuntos` | carga de archivos (Files API) | sube los adjuntos y los asocia al Negocio |
 
@@ -91,7 +93,7 @@ Variables de entorno del **middleware**: ver [`middleware/.env.example`](middlew
 
 ## Estado
 
-- Proceso v2 (validación y propuesta en formularios Bonita), conectores de escritura, `preventaContexto` y formularios construidos; journey verde contra el mock (caminos entregada, bloqueada y no viable): `docs/08-construccion/evidencia-v2-proceso.md`.
+- Proceso `GestionPreventa` 1.4 (validación y propuesta en formularios Bonita; reglas del concepto de viabilidad por resultado), conectores de escritura, `preventaContexto` y formularios construidos; journey verde contra el mock (caminos entregada, bloqueada y no viable): `docs/08-construccion/evidencia-v2-proceso.md`.
 - Middleware Rust: solo la entrada `ticket.creation`; `cargo test` en CI.
 - Pendiente: despliegue (middleware público, Bonita prod, registro del webhook); rotar el token de pruebas.
 

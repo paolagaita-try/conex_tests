@@ -128,6 +128,7 @@ Límites: una respuesta fija por ruta (todas las subidas devuelven `F-001`, toda
 | `GET /crm/v3/owners/89450376`, `89450377` | Linda y Viviana: `id`, `email` (ficticio), `firstName`, `lastName`, `userId`; el bot `88449388` no aparece |
 | `GET /crm/v3/properties/deals`, `/tickets` | unas pocas propiedades; `hs_pipeline_stage` con los 6 stageId reales de `fase-0-descubrimiento-hubspot.md` |
 
-[no verificado] `concepto_viabilidad` es una propiedad personalizada supuesta del Negocio (sale del plan v2); el nombre
-interno real se confirma al leer el esquema de deals con el token ampliado. `dealstage`/`pipeline` del Negocio son
+`concepto_viabilidad` existe en el Negocio (verificado por GET al esquema el 2026-11-25): enumeración de cuatro
+opciones, valor interno = etiqueta (`docs/07-bonita/bdm.md`); qué opción vale con cada resultado lo fija el contrato
+(versión 1.4). `dealstage`/`pipeline` del Negocio son
 valores por defecto de HubSpot, de ejemplo.

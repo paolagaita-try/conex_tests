@@ -7,7 +7,7 @@ Bonita. Los formularios muestran toda la información de HubSpot (solo lectura) 
 
 | Pantalla | Contrato | Editable | Solo lectura |
 |---|---|---|---|
-| `frm10ValidarSolicitud` | `ctr_10_validarSolicitud` | resultado (viable / bloqueado / no viable, con lo que pasa en cada caso), concepto de viabilidad (obligatorio si viable o no viable), nota (con barra de formato), supuestos | encabezado del ticket + paneles Ticket, Negocio, Empresa, Contactos, Comercial |
+| `frm10ValidarSolicitud` | `ctr_10_validarSolicitud` | resultado (viable / bloqueado / no viable, con lo que pasa en cada caso), concepto de viabilidad (solo con viable: «Aprobado (Viable)» o «Aprobado con Condiciones»; con bloqueado / no viable lo fija el proceso y se muestra de solo lectura), nota (con barra de formato), supuestos (se titulan «Condiciones» y son obligatorios con «Aprobado con Condiciones») | encabezado del ticket + paneles Ticket, Negocio, Empresa, Contactos, Comercial |
 | `frm20DisenarPropuesta` | `ctr_20_disenarPropuesta` | valoración de operaciones, URL de la presentación y enlace al repositorio (URL http/https validada), nota, adjuntos múltiples (arrastrar-y-soltar o selector, lista con quitar) | resultado de la validación previa + los mismos paneles |
 | `frmOverview` | — | — | línea de tiempo del caso (creación, asignación, validación, diseño) + paneles |
 
