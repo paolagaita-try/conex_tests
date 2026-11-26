@@ -666,6 +666,7 @@
         "perfiles": [
           "User"
         ],
+        "tema": "custompage_temaTrycore",
         "token": "hubspotBonita"
       }
     ],

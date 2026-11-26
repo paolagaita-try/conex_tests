@@ -109,7 +109,7 @@ umbral_campos_unidad_propia: 10
 | Application descriptor | la del proyecto (las páginas Svelte de los formularios; la bandeja es la de la Bonita User Application) |
 | Perfiles con acceso | `User` (las consultoras) |
 | Página de inicio | la de defecto |
-| Layout / tema | los de la plantilla (marca Trycore en la unidad de formularios) |
+| Layout / tema | layout `custompage_layoutBonita` de la plantilla; tema propio `custompage_temaTrycore` (marca Trycore en la barra superior: fondo navy #000C4C, acento teal #00CCC0, logo y nombre «Trycore») |
 
 ## Acceso al BDM y permisos (decisión tomada en la capa 0, detallada aquí)
 
