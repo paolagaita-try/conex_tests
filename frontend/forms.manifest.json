@@ -82,7 +82,7 @@
         "GET|bpm/case",
         "GET|system/session",
         "GET|extension/consultas",
-        "GET|extension/preventa"
+        "GET|extension/preventa/contexto"
       ]
     },
     {
@@ -101,7 +101,7 @@
         "GET|bpm/case",
         "GET|system/session",
         "GET|extension/consultas",
-        "GET|extension/preventa"
+        "GET|extension/preventa/contexto"
       ]
     },
     {
@@ -118,7 +118,7 @@
         "GET|bpm/process",
         "GET|system/session",
         "GET|extension/consultas",
-        "GET|extension/preventa"
+        "GET|extension/preventa/contexto"
       ]
     }
   ]
