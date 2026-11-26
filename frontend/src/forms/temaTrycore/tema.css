@@ -1,0 +1,97 @@
+/*
+ * Tema `custompage_temaTrycore` de la aplicación hubspotBonita: marca Trycore en la barra superior del layout de
+ * Bonita (`custompage_layoutBonita`). El arnés escribió el esqueleto una vez desde la matriz de formularios
+ * (docs/07-bonita/matriz-formularios.md › Aplicación › «Layout / tema»); el contenido es del proyecto.
+ *
+ * `scripts/build-form.js` empaqueta `resources/theme.css` = Bootstrap 3.4.1 (lo que espera el layout de Bonita)
+ * + este fichero, las fuentes de Bootstrap y la carpeta `images/` de aquí. El layout pinta el logo desde
+ * `../theme/images/logo.png` (variable `logoURL` del layout 11.1.0): `images/logo.png` es el logo Trycore en su
+ * versión para fondo oscuro (el azul marino de docs/08-construccion/marca/trycore-logo.png pasado a blanco, el
+ * turquesa intacto).
+ *
+ * ALCANCE: solo la cabecera y la barra de menú del layout. Las páginas Svelte enlazan también este tema
+ * (`../theme/theme.css`, después de sus estilos), así que aquí NO se tocan `body`, `:root` ni las variables
+ * `--color-*` de `$lib/estilos/tokens.css`: la marca de los formularios sigue viniendo de sus propios estilos y de
+ * los parámetros `marca_*`.
+ *
+ * Marca: azul marino #000C4C (fondo de la barra), turquesa #00CCC0 (acento).
+ */
+
+/* Cabecera del layout: logo, nombre de la aplicación y usuario. */
+.layout-header {
+  background-color: #000c4c;
+  border-bottom: 3px solid #00ccc0;
+}
+
+.layout-header,
+.layout-header .application-title,
+.layout-header .app-title,
+.layout-header .user-menu button,
+.layout-header .user-menu-name,
+.layout-header .text-primary,
+.layout-header a,
+.layout-header .btn-link {
+  color: #ffffff;
+}
+
+.layout-header .application-version {
+  color: #00ccc0;
+}
+
+.layout-header .btn-link:hover,
+.layout-header .btn-link:focus,
+.layout-header a:hover,
+.layout-header a:focus {
+  color: #00ccc0;
+}
+
+/* Barra de menú (`navbar-inverse` del widget de menú del layout). */
+.navbar-inverse {
+  background-color: #000c4c;
+  border-color: #000c4c;
+}
+
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-nav > li > a {
+  color: #ffffff;
+}
+
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus,
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+  color: #00ccc0;
+  background-color: transparent;
+}
+
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus,
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:hover,
+.navbar-inverse .navbar-nav > .open > a:focus {
+  color: #ffffff;
+  background-color: transparent;
+  box-shadow: inset 0 -3px 0 #00ccc0;
+}
+
+.navbar-inverse .navbar-toggle {
+  border-color: #00ccc0;
+}
+
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+  background-color: #0b1a6b;
+}
+
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+  border-color: #0b1a6b;
+}
+
+.navbar-inverse .dropdown-menu > li > a:hover,
+.navbar-inverse .dropdown-menu > li > a:focus,
+.navbar-inverse .dropdown-menu > .active > a {
+  color: #ffffff;
+  background-color: #000c4c;
+}

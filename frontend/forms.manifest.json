@@ -120,6 +120,16 @@
         "GET|extension/consultas",
         "GET|extension/preventa/contexto"
       ]
+    },
+    {
+      "id": "temaTrycore",
+      "tipo": "tema",
+      "custompage": "custompage_temaTrycore",
+      "displayName": "Tema temaTrycore",
+      "descripcion": "Tema de la aplicación hubspotBonita (matriz de formularios): Bootstrap 3 y la hoja propia del proyecto.",
+      "userTask": null,
+      "contrato": null,
+      "permisos": []
     }
   ]
 }

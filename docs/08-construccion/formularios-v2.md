@@ -20,6 +20,11 @@ Estados en todas: carga (esqueleto animado), error de lectura (no deja enviar), 
 - Fondo `#F4F6FB`, tarjetas blancas con sombra suave y radio 14 px, Inter (con caída a la fuente del sistema).
 - Logo `frontend/src/lib/preventa/trycore-logo.png` (copia de `docs/08-construccion/marca/`).
 - Dos columnas desde 64 rem; una columna en móvil. Focus visible con anillo marino + halo turquesa.
+- Barra superior de la aplicación (layout de Bonita `custompage_layoutBonita`): tema propio `custompage_temaTrycore`,
+  declarado en `docs/07-bonita/matriz-formularios.md` › Aplicación › «Layout / tema» y generado por el arnés
+  (`theme` del descriptor y entrada `tipo: tema` del manifiesto). Fuente: `frontend/src/forms/temaTrycore/tema.css`
+  (solo cabecera y menú del layout; no toca `body` ni las variables de los formularios) y `images/logo.png` (el logo
+  con el marino pasado a blanco para el fondo `#000C4C`; el layout lo lee de `../theme/images/logo.png`).
 
 ## Componentes (`frontend/src/lib/preventa/`)
 
