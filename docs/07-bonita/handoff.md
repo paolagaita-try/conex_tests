@@ -2,7 +2,7 @@
 estado: listo-para-construccion
 proyecto: hubspot-bonita
 generado_por: agent01
-fecha: 2026-11-24
+fecha: 2026-11-25
 ---
 
 # Handoff de construcción — Integración HubSpot ↔ Bonita
@@ -18,25 +18,33 @@ fecha: 2026-11-24
 > La usuaria aprobó el plan `docs/08-construccion/plan-v2-bonita-first.md` («construye»). El equipo de Preventa **no
 > vuelve a entrar a HubSpot**: trabaja en Bonita y Bonita alimenta el CRM.
 
-Proceso `GestionPreventa` **1.3** (`bpmn.md`; la 1.3 cierra las opciones de `concepto_viabilidad` y exige que `valoracion_operaciones` sea un enlace):
+Proceso `GestionPreventa` **1.4** (`bpmn.md`). El equipo de Preventa opera **100 % desde Bonita**: abre su tarea en
+el portal de Bonita, ve el CRM precargado en el formulario y, al enviar, Bonita escribe en HubSpot el stage del
+ticket, las notas, las propiedades del Negocio y los adjuntos. El middleware solo instancia el caso.
 
 1. Al crearse un ticket en HubSpot se instancia el caso (middleware, webhook `ticket.creation`), con idempotencia
    esperada por `ticketId` (`[no verificado]` en ejecución).
-2. Bonita **asigna por carga ponderada por prioridad** (sin cambios) y escribe owner + «En validación».
-3. **`10_validarSolicitud`** (tarea humana, solo la consultora elegida: actor filter `filtroConsultoraDelCaso`, owner
-   HubSpot → usuario Bonita por `param_consultores`): viable / bloqueado / no viable, con nota en ticket y Negocio.
-   - viable → `11_pasarADiseno`: stage «Asignado/En diseño» y `concepto_viabilidad` en el Negocio;
-   - bloqueado → `12_pasarAEnEspera`: stage «En espera información del lead» y vuelve a validación;
-   - no viable → `13_registrarNoViable`: `concepto_viabilidad` y ticket a **«Closed»** (cerrado por viabilidad;
-     nota «Cerrado por viabilidad: …»; decisión de la usuaria, 2026-11-24).
-4. **`20_disenarPropuesta`** (misma consultora): las cuatro propiedades del Negocio, nota y adjuntos
+2. Bonita **asigna por carga ponderada por prioridad** (URGENT 4, HIGH 3, MEDIUM 2, LOW 1, sin prioridad 2; tickets
+   del pipeline «Mesa de preventa» en «En validación» y «Asignado/En diseño»; el ticket que se asigna no cuenta; el bot
+   `88449388` no entra) y escribe owner + «En validación».
+3. **`10_validarSolicitud`** (formulario «Validar la solicitud», solo la consultora elegida: actor filter
+   `filtroConsultoraDelCaso`, owner HubSpot → usuario Bonita por `param_consultores`): viable / bloqueado / no viable,
+   con nota en ticket y Negocio. El concepto de viabilidad (`concepto_viabilidad` del Negocio) depende del resultado:
+   - viable → la consultora elige «Aprobado (Viable)» o «Aprobado con Condiciones» (este exige las condiciones, que
+     quedan en la nota de HubSpot); `11_pasarADiseno`: stage «Asignado/En diseño» y concepto en el Negocio;
+   - bloqueado → el proceso fija «Requiere más información»; `12_pasarAEnEspera`: concepto en el Negocio, stage «En
+     espera información del lead» y vuelve a validación (la nota dice lo que falta);
+   - no viable → el proceso fija «No Viable (Rechazado)»; `13_registrarNoViable`: concepto en el Negocio y ticket a
+     **«Closed»** (cerrado por viabilidad; nota «Cerrado por viabilidad: …»; decisión de la usuaria, 2026-11-24).
+4. **`20_disenarPropuesta`** (formulario «Diseñar la propuesta», misma consultora): los cuatro artefactos del Negocio
+   (`concepto_viabilidad`, `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa`), nota y adjuntos
    (`21_subirAdjuntos` si los hay); `40_entregarAVentas` pasa el ticket a «Entregado a ventas».
 5. El cierre lo hace el comercial en HubSpot, como hoy.
 
-Se retira la espera `18_esperarArtefactos` y la segunda entrada del middleware (artefactos→caso). Los formularios
-precargan todo el CRM de solo lectura por la REST API extension `preventaContexto` (`GET preventa/contexto?ticketId=`).
-Organización: grupo `/trycore/preventa`, rol `consultora`, usuarias `linda.lozano` (owner `89450376`) y
-`viviana.velasquez` (owner `89450377`). Evidencia: `docs/08-construccion/evidencia-v2-proceso.md`.
+Los formularios precargan todo el CRM de solo lectura por la REST API extension `preventaContexto`
+(`GET preventa/contexto?ticketId=`). Organización: grupo `/trycore/preventa`, rol `consultora`, usuarias
+`linda.lozano` (owner `89450376`) y `viviana.velasquez` (owner `89450377`). Evidencia del proceso v2:
+`docs/08-construccion/evidencia-v2-proceso.md`.
 
 ## Arquitectura acordada
 
@@ -94,8 +102,11 @@ El borrador del proceso completo queda archivado, sin uso, en `insumo-preventa/b
   ticket («Closed», `4`) con nota «Cerrado por viabilidad:» (decisión de la usuaria, 2026-11-24).
 
 - **Plan de HubSpot = Sales Hub Pro (confirmado 2026-11-13):** no se compra Operations Hub Pro. El middleware es un
-  servicio externo propio, disparado por Workflows nativos de HubSpot (incluidos en Sales Hub Pro) que llaman por
-  webhook al crearse el ticket y al cambiar las propiedades del negocio. Lo construye la encargada del proyecto.
+  servicio externo propio (`middleware/`, Rust) con una sola entrada: el webhook `ticket.creation`. No escucha cambios
+  del Negocio ni del ticket: todo lo que pasa después lo escribe Bonita.
+- **Concepto de viabilidad por resultado (versión 1.4, reglas aprobadas por la usuaria el 2026-11-25):** viable admite
+  «Aprobado (Viable)» o «Aprobado con Condiciones» (con condiciones obligatorias); bloqueado escribe «Requiere más
+  información» y no viable «No Viable (Rechazado)», sin que la consultora los elija.
 - **No hay Fase 2:** la asignación no usa bloqueo transaccional ni contador; el último asignado se lee del caso
   más reciente.
 - **Responsable de desarrollo:** el agente.
@@ -108,7 +119,8 @@ El borrador del proceso completo queda archivado, sin uso, en `insumo-preventa/b
 - **Fase 0 — IDs reales de HubSpot (verificada en vivo):** `docs/08-construccion/fase-0-descubrimiento-hubspot.md`.
   Pipeline «Mesa de preventa» id=0, 6 stages, 18 owners (las dos consultoras: `89450376` y `89450377`, en `param_consultores`; el owner
   `88449388` «Trynion» es un bot y no entra en el reparto).
-- **Arquitectura:** `docs/arquitectura-hubspot-bonita.html` (anterior a la reunión; no refleja el alcance actual).
+- **Arquitectura:** vigente en `README.md` y `docs/arquitectura-eventos.md`; `docs/arquitectura-hubspot-bonita.html` es
+  el diagrama del 2026-11-11 (anterior a la reunión), marcado como histórico.
 - **Opciones y costos:** `docs/hubspot-bonita-opciones-costes-referencia.md`.
 - **Conector oficial (referencia de por qué NO se usa):** `docs/conector-hubspot-bonita-referencia.md`.
 
@@ -142,28 +154,31 @@ Verificado en vivo el 2026-11-12, solo lectura: la ruta de tickets, la búsqueda
 carga (dio 0 y 1 ticket para las dos consultoras, como en la reunión), que los tickets tienen negocio asociado y los
 nombres de las cuatro propiedades del negocio donde se cargan los artefactos. Sigue sin verificar:
 
-- **Escritura `PATCH` del ticket en HubSpot:** nunca ejecutada. Por política de la empresa no se tocan tickets reales
-  de producción: las pruebas de escritura van contra mocks/Postman o un entorno aislado (confirmado 2026-11-13).
-- **Comportamiento en ejecución de Bonita:** rechazo de un segundo caso del mismo ticket; completar por API la tarea
-  de espera con el usuario técnico.
-
+- **Escritura en HubSpot real:** solo con un ticket y un Negocio de prueba (prueba real v2, 2026-11-25); por política
+  de la empresa no se tocan tickets reales de producción. Las pruebas de cada versión van contra el mock.
+- **Comportamiento en ejecución de Bonita:** rechazo de un segundo caso del mismo ticket.
 ## Puntos que la reunión no resuelve
 
 Son elecciones de diseño de esta documentación; están aplicadas y pueden cambiarse.
 
-1. **Empate de carga**: si las dos consultoras tienen la misma cantidad de tickets, se alterna respecto de la última
-   asignada.
-2. **Cómo se entera Bonita de que se cargaron los artefactos**: una tarea de espera que completa el middleware cuando un
-   Workflow nativo de HubSpot le avisa del cambio en el negocio. Criterio confirmado por negocio: los cuatro campos
-   (`concepto_viabilidad`, `estimacion_costos`, `url_ppta_preventa`, `link_repo_preventa`), que completa comercial, con
-   algún valor (no vacíos). El generador no soporta eventos de mensaje; la tarea de espera es la forma soportada.
-3. **Tickets que se cierran sin entregar** (demo descartada, requerimiento no viable): el middleware completa la
-   espera con `cerrado` y el caso termina sin escribir en HubSpot.
-4. **Prioridad y ANS del ticket**: no intervienen en la asignación.
-5. **Middleware**: no está en este repositorio; lo construye la encargada del proyecto (servicio externo). Sin él la
-   automatización no arranca en producción.
+1. **Empate de carga**: si las consultoras tienen la misma carga ponderada, gana la primera empatada después de la
+   última asignada, recorriendo `param_consultores` en círculo (`bpmn.md` › Regla de `conn_hubspotCarga`, punto 4).
+2. **Cómo llegan los artefactos a HubSpot**: los carga la consultora en el formulario «Diseñar la propuesta» de
+   Bonita (`20_disenarPropuesta`) y Bonita los escribe en el Negocio al enviar (`concepto_viabilidad`,
+   `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa`), con la nota de la propuesta y los adjuntos
+   (`21_subirAdjuntos`). Nadie los edita en HubSpot y no hay que esperar ni detectar cambios en el Negocio.
+3. **Solicitudes que no siguen**: las decide la consultora en «Validar la solicitud». «No viable» cierra el ticket
+   («Closed», cerrado por viabilidad) y escribe «No Viable (Rechazado)»; «bloqueado» lo deja «En espera información del
+   lead» con «Requiere más información» y la validación vuelve a la misma consultora. Un ticket que el comercial cierra
+   en HubSpot con el caso abierto no se detecta (lo detectaría la reconciliación).
+4. **Prioridad y ANS del ticket**: la prioridad pondera la carga del reparto (URGENT 4, HIGH 3, MEDIUM 2, LOW 1, sin
+   prioridad 2). Los ANS no intervienen: HubSpot los vigila y las tareas de Bonita no llevan temporizador.
+5. **Middleware**: está en este repositorio (`middleware/`, Rust, imagen Docker) y solo instancia el caso al recibir
+   `ticket.creation`; no escribe en HubSpot. Falta desplegarlo con HTTPS público y registrar el webhook de la app;
+   sin él la automatización no arranca en producción.
 6. **Lista de consultoras** como parámetro de proceso (`param_consultores`): en Community cambiarla exige
    volver a desplegar.
 7. **Job de reconciliación diaria**: dónde vive.
-8. **La espera no tiene temporizador**: un caso solo termina cuando el middleware informa; sin reconciliación, un
-   aviso perdido deja el caso abierto.
+8. **Sin temporizadores en el caso**: el caso avanza cuando la consultora envía cada formulario; si una tarea queda sin
+   atender, el caso sigue abierto y el aviso lo da el ANS del ticket en HubSpot. Un fallo de un conector deja la tarea
+   en fallo, a reintentar desde la administración de Bonita (reintentar puede duplicar notas o adjuntos).
