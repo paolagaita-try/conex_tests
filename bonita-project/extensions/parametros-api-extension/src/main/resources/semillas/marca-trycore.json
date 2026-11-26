@@ -1,0 +1,23 @@
+{
+  "proceso": "GestionPreventa",
+  "version": "marca-trycore-1",
+  "definiciones": [
+    {"codigo": "marca_nombre", "nombre": "Marca: nombre", "descripcion": "Nombre de la organización que pintan los formularios (tema Trycore).", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"},
+    {"codigo": "marca_logo", "nombre": "Marca: logo", "descripcion": "Logo de la marca como data: URI; «none» porque los formularios de Preventa pintan el logo Trycore en su propio encabezado.", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"},
+    {"codigo": "marca_color_primario", "nombre": "Marca: color primario", "descripcion": "Azul marino Trycore (encabezado, títulos, botón primario).", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"},
+    {"codigo": "marca_color_primario_fuerte", "nombre": "Marca: color primario fuerte", "descripcion": "Variante oscura del azul marino Trycore.", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"},
+    {"codigo": "marca_color_primario_suave", "nombre": "Marca: color primario suave", "descripcion": "Velo claro del azul marino Trycore (fondos).", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"},
+    {"codigo": "marca_color_acento", "nombre": "Marca: color de acento", "descripcion": "Turquesa Trycore (acentos, selección, línea de tiempo).", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"},
+    {"codigo": "marca_color_superficie", "nombre": "Marca: color de superficie", "descripcion": "Fondo de las tarjetas.", "clase": "PARAMETRO", "tipoDato": "TEXTO", "impacto": "NORMAL", "visibilidad": "CLIENTE"}
+  ],
+  "valores": [
+    {"definicion": "marca_nombre", "valor": "Trycore"},
+    {"definicion": "marca_logo", "valor": "none"},
+    {"definicion": "marca_color_primario", "valor": "#000c4c"},
+    {"definicion": "marca_color_primario_fuerte", "valor": "#00062e"},
+    {"definicion": "marca_color_primario_suave", "valor": "#e8ebf7"},
+    {"definicion": "marca_color_acento", "valor": "#00ccc0"},
+    {"definicion": "marca_color_superficie", "valor": "#ffffff"}
+  ],
+  "invariantes": []
+}
