@@ -24,7 +24,7 @@ cargo run
 cargo test                 # tests de integración (wiremock) + unit (firma)
 ```
 
-Variables de entorno: ver [`.env.example`](.env.example). El caso se instancia en `GestionPreventa` versión `PROCESS_VERSION` (por defecto **1.4**, la del pool vigente; súbela con cada versión nueva del pool). Secretos (`HUBSPOT_PRIVATE_APP_TOKEN`, `HUBSPOT_APP_SECRET`) solo por entorno, nunca en el repo.
+Variables de entorno: ver [`.env.example`](.env.example). El caso se instancia en `GestionPreventa` versión `PROCESS_VERSION` (por defecto **1.5**, la del pool vigente; súbela con cada versión nueva del pool). Secretos (`HUBSPOT_PRIVATE_APP_TOKEN`, `HUBSPOT_APP_SECRET`) solo por entorno, nunca en el repo.
 
 ## Configurar en HubSpot (Free/Starter — sin costo)
 
