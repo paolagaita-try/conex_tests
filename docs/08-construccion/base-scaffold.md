@@ -2,14 +2,15 @@
 
 > **Qué es esto:** notas de construcción (capa `08-construccion`) para armar la **base** del proyecto Bonita
 > `hubspot-bonita`. Fuente del encargo: `HANDOFF-SCAFFOLD.md` (raíz del repo).
-> **No** sustituye a `docs/07-bonita/` (diseño aprobado del proceso), que aún no existe y llega con el flujo de preventa.
+> **No** sustituye a `docs/07-bonita/` (diseño aprobado del proceso, hoy `GestionPreventa` 1.4), que manda sobre lo
+> que aquí se dice. El modelo vigente es la v2 «Bonita-first» (`plan-v2-bonita-first.md`).
 
 ## 1. Qué construye la base y qué espera
 
 | Pieza | Unidad | ¿Se puede ya? | Depende de |
 |---|---|---|---|
 | Plantilla configurada (versión/edición, módulo de parámetros, frontend, proceso `hola`, runtime, build) | **U0** | Sí, no depende del flujo de preventa | **token de registro del hub** (ver §4) |
-| BDM, organización, procesos, round robin, conectores REST de salida | **U1** | **No** — espera `docs/07-bonita/` en `listo-para-construccion` | flujo de preventa (llega pronto) |
+| BDM, organización, procesos, reparto por carga, conectores REST de salida | **U1** | **No** — espera `docs/07-bonita/` en `listo-para-construccion` | flujo de preventa (llega pronto) |
 
 El BDM y los procesos **no se inventan** (`HANDOFF-SCAFFOLD.md` §8): se modelan cuando llegue el flujo de preventa.
 
@@ -17,9 +18,11 @@ El BDM y los procesos **no se inventan** (`HANDOFF-SCAFFOLD.md` §8): se modelan
 
 - **Entrada (ticket→caso):** middleware que escucha `ticket.creation` y llama a Bonita
   `POST /bonita/API/bpm/process/{processId}/instantiation`. **Idempotencia por `ticketId`**.
-- **Round robin:** service task en Bonita que lee e incrementa un contador persistente (BDM). Sin bloqueo transaccional.
-- **Salida (sincronización de estados):** conectores REST nativos de Bonita en cada transición →
-  `PATCH /crm/v3/objects/tickets/{id}` con `hs_pipeline_stage` y `hubspot_owner_id`.
+- **Reparto:** service task con el conector `hubspot-consultores-menor-carga`: carga ponderada por prioridad de cada
+  consultora en «En validación» y «Asignado/En diseño»; empate, en círculo tras la última asignada (se lee del caso más
+  reciente, sin contador). Sin bloqueo transaccional. Regla completa en `docs/07-bonita/bpmn.md`.
+- **Salida:** conectores REST propios de Bonita en las tareas que cambian el stage del ticket
+  (`PATCH /crm/v3/objects/tickets/{id}`) o escriben en el Negocio (propiedades, notas, adjuntos).
 - **Dirección:** solo Bonita→HubSpot (salvo el disparo inicial), para evitar bucles en rutas de retorno.
 - **Reconciliación:** job diario Bonita vs HubSpot para huérfanos/desincronizados.
 - ❌ No se usa el conector oficial Bonita–HubSpot (Beta, sin tickets). Solo REST nativos.

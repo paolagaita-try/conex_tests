@@ -15,7 +15,7 @@ const ENTERO = 'Escriba un número entero.';
  */
 export const esquema = z.object({
   resultado: z.enum(["viable", "bloqueado", "no_viable"], { errorMap: () => ({ message: OPCION }) }),
-  conceptoViabilidad: z.string({ required_error: OBLIGATORIO, invalid_type_error: OBLIGATORIO }).nullable(),
+  conceptoViabilidad: z.custom<CuerpoDelContrato["conceptoViabilidad"]>(),
   notaValidacion: z.string({ required_error: OBLIGATORIO, invalid_type_error: OBLIGATORIO }).min(1, OBLIGATORIO),
   supuestos: z.string({ required_error: OBLIGATORIO, invalid_type_error: OBLIGATORIO }).nullable(),
 }) satisfies z.ZodType<CuerpoDelContrato>;

@@ -21,7 +21,7 @@ total_contratos: 3
 
 ## Contrato de instanciación — `ctr_instanciacion`
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 Formulario asociado (capa 3): `frm_instanciacion` (`No form`). Fuente: el middleware instancia el caso por la API REST al recibir el webhook `ticket.creation` de HubSpot.
 
@@ -47,23 +47,24 @@ Operaciones al instanciar: según plantilla `asignacion-directa` con literales: 
 | Input | Tipo | Múltiple | Obligatorio | Hijos (si COMPLEX) | Destino | Fuente (T-… → Entradas / Salidas) |
 |---|---|---|---|---|---|---|
 | `resultado` | TEXT | no | sí | — | `Preventa.resultadoValidacion` | consultora → `viable`, `bloqueado` (falta información del lead) o `no_viable` |
-| `conceptoViabilidad` | TEXT | no | no | — | `Preventa.conceptoViabilidad` | consultora → una de las cuatro opciones de la propiedad `concepto_viabilidad` del Negocio (enumeración de HubSpot; valor interno = etiqueta): «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)» o «Requiere más información» |
+| `conceptoViabilidad` | TEXT | no | no | — | — (solo lectura: lo lee `op_10_validarSolicitud.conceptoViabilidad`, que escribe `Preventa.conceptoViabilidad`) | consultora → con «viable», «Aprobado (Viable)» o «Aprobado con Condiciones» (opciones de la propiedad `concepto_viabilidad` del Negocio, enumeración de HubSpot; valor interno = etiqueta); con «bloqueado» o «no viable» va vacío y lo fija el proceso |
 | `notaValidacion` | TEXT | no | sí | — | `Preventa.notaValidacion` | consultora → nota (texto largo) que queda en el ticket y el Negocio |
-| `supuestos` | TEXT | no | no | — | `Preventa.supuestos` | consultora → supuestos de la validación |
+| `supuestos` | TEXT | no | no | — | `Preventa.supuestos` | consultora → supuestos de la validación; con «Aprobado con Condiciones» son las condiciones y son obligatorios |
 
 | Constraint | Expresión | Mensaje de error | AC que la origina |
 |---|---|---|---|
 | `resultado_valido` | resultado es viable, bloqueado o no_viable | El resultado debe ser viable, bloqueado o no viable | plan v2 paso 3 (compuerta de validación) |
 | `notaValidacion_presente` | notaValidacion no está vacía | La nota de validación es obligatoria | plan v2 paso 3 (nota de validación en ticket y Negocio) |
-| `conceptoViabilidad_si_concluye` | si resultado es viable o no_viable, conceptoViabilidad no está vacío | El concepto de viabilidad es obligatorio si la solicitud es viable o no viable | plan v2 paso 3 (`concepto_viabilidad`) |
-| `conceptoViabilidad_valido` | conceptoViabilidad está vacío o es Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información | El concepto de viabilidad debe ser Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información | versión 1.3 (opciones de `concepto_viabilidad` en HubSpot, 2026-11-25) |
-| `conceptoViabilidad_noViable` | si resultado es no_viable, conceptoViabilidad es No Viable (Rechazado) | Si la solicitud no es viable, el concepto debe ser No Viable (Rechazado) | versión 1.3; camino «no viable» (cerrado por viabilidad) |
+| `conceptoViabilidad_viable` | si resultado es viable, conceptoViabilidad es Aprobado (Viable) o Aprobado con Condiciones | Si la solicitud es viable, el concepto debe ser Aprobado (Viable) o Aprobado con Condiciones | versión 1.4 (reglas del concepto de viabilidad, aprobadas por la usuaria el 2026-11-25) |
+| `conceptoViabilidad_bloqueado` | si resultado es bloqueado, conceptoViabilidad está vacío o es Requiere más información | Si la solicitud está bloqueada, el concepto lo fija el proceso (Requiere más información) | versión 1.4; camino «bloqueado» |
+| `conceptoViabilidad_noViable` | si resultado es no_viable, conceptoViabilidad está vacío o es No Viable (Rechazado) | Si la solicitud no es viable, el concepto lo fija el proceso (No Viable (Rechazado)) | versión 1.4; camino «no viable» (cerrado por viabilidad) |
+| `supuestos_siCondiciones` | si conceptoViabilidad es Aprobado con Condiciones, supuestos no está vacío | Si el concepto es Aprobado con Condiciones, escriba las condiciones en los supuestos | versión 1.4 (las condiciones quedan en la nota de HubSpot) |
 
 **Datos de solo lectura que el formulario consulta** (no son inputs): `Preventa` (ticket, asunto, consultor, validación anterior si hubo bloqueo) y, por `preventaContexto`, el ticket, el Negocio, la empresa, los contactos y el owner.
 
-**Operaciones**: plantilla `asignacion-directa`; literales: ninguno; escribe `Preventa.resultadoValidacion`, `Preventa.conceptoViabilidad`, `Preventa.notaValidacion`, `Preventa.supuestos`; por script, `Preventa.estado` ← `validada si resultado es viable, bloqueada si es bloqueado, si no noViable` (`op_10_validarSolicitud.estado`); por script, `Preventa.fechaValidacion` ← `la fecha y hora actuales` (`op_10_validarSolicitud.fechaValidacion`); no actualiza process variables (`gwXor_1` lee `Preventa.resultadoValidacion`). Desviación de la plantilla: ninguna.
+**Operaciones**: plantilla `asignacion-directa`; literales: ninguno; escribe `Preventa.resultadoValidacion`, `Preventa.notaValidacion`, `Preventa.supuestos`; por script, `Preventa.conceptoViabilidad` ← `Requiere más información si resultado es bloqueado, No Viable (Rechazado) si es no_viable, si no el input conceptoViabilidad` (`op_10_validarSolicitud.conceptoViabilidad`); por script, `Preventa.estado` ← `validada si resultado es viable, bloqueada si es bloqueado, si no noViable` (`op_10_validarSolicitud.estado`); por script, `Preventa.fechaValidacion` ← `la fecha y hora actuales` (`op_10_validarSolicitud.fechaValidacion`); no actualiza process variables (`gwXor_1` lee `Preventa.resultadoValidacion`). Desviación de la plantilla: ninguna.
 
-**Conectores a la salida** (`bpmn.md`): `conn_hubspotNota` (nota en ticket y Negocio). El `concepto_viabilidad` y el cambio de stage los hacen `11_pasarADiseno`, `12_pasarAEnEspera` o `13_registrarNoViable` según la compuerta.
+**Conectores a la salida** (`bpmn.md`): `conn_hubspotNota` (nota en ticket y Negocio, con el concepto y, si es «Aprobado con Condiciones», las condiciones). El `concepto_viabilidad` en el Negocio y el cambio de stage los hacen `11_pasarADiseno`, `12_pasarAEnEspera` o `13_registrarNoViable` según la compuerta.
 
 ### `ctr_20_disenarPropuesta` — Diseñar la propuesta
 
@@ -101,7 +102,7 @@ Operaciones al instanciar: según plantilla `asignacion-directa` con literales: 
 | `5_asignarConsultor` | — | `asignacion-directa` / `Preventa.estado` = `asignada`; script `Preventa.consultorOwnerId` ← `el valor de la process variable ownerElegido` (`op_5_asignarConsultor.consultorOwnerId`); script `Preventa.consultor` ← `el nombre que param_consultores da al owner de la process variable ownerElegido` (`op_5_asignarConsultor.consultor`); script `Preventa.fechaAsignacion` ← `la fecha y hora actuales` (`op_5_asignarConsultor.fechaAsignacion`) | `Preventa.estado`, `Preventa.consultorOwnerId`, `Preventa.consultor`, `Preventa.fechaAsignacion` | — |
 | `6_actualizarTicket` | `conn_hubspotActualizar` | — (sin escritura) | — | — |
 | `11_pasarADiseno` | `conn_hubspotActualizar`, `conn_hubspotNegocio` | — (sin escritura) | — | — |
-| `12_pasarAEnEspera` | `conn_hubspotActualizar` | — (sin escritura) | — | — |
+| `12_pasarAEnEspera` | `conn_hubspotActualizar`, `conn_hubspotNegocio` | — (sin escritura) | — | — |
 | `13_registrarNoViable` | `conn_hubspotNegocio`, `conn_hubspotActualizar` | — (sin escritura) | — | — |
 | `21_subirAdjuntos` | `conn_hubspotArchivos` | — (sin escritura) | — | — |
 | `40_entregarAVentas` | `conn_hubspotActualizar` | `asignacion-directa` / `Preventa.estado` = `entregadaAVentas`; script `Preventa.fechaEntrega` ← `la fecha y hora actuales` (`op_40_entregarAVentas.fechaEntrega`) | `Preventa.estado`, `Preventa.fechaEntrega` | — |
@@ -113,7 +114,7 @@ Los scripts de `5_asignarConsultor` leen solo la process variable `ownerElegido`
 | Tarea humana | Contrato | Formulario (capa 3) | Inputs | Constraints |
 |---|---|---|---|---|
 | (instanciación) | `ctr_instanciacion` | `frm_instanciacion` | 1 | 1 |
-| `10_validarSolicitud` | `ctr_10_validarSolicitud` | `frm_10_validarSolicitud` | 4 | 5 |
+| `10_validarSolicitud` | `ctr_10_validarSolicitud` | `frm_10_validarSolicitud` | 4 | 6 |
 | `20_disenarPropuesta` | `ctr_20_disenarPropuesta` | `frm_20_disenarPropuesta` | 5 | 3 |
 
 ## Cobertura de las reglas de validación de los AC
@@ -123,8 +124,9 @@ Los scripts de `5_asignarConsultor` leen solo la process variable `ownerElegido`
 | `A02` | Un ticket genera un solo caso | unique constraint `Preventa.ticketId` (rechazo del duplicado `[no verificado]` en ejecución) | BDM |
 | `A04`, `A05` | El ticket se asigna a quien tiene menor carga ponderada en «En validación» y «Asignado/En diseño» | `conn_hubspotCarga` (regla completa en `bpmn.md` → Conectores por tarea) | tarea de servicio |
 | `A06` | Al asignar, el ticket queda con propietario y en «En validación» | `conn_hubspotActualizar` en `6_actualizarTicket` | tarea de servicio |
-| plan v2 paso 3 | La validación solo concluye viable, bloqueado o no viable, siempre con nota | `resultado_valido`, `notaValidacion_presente`, `conceptoViabilidad_si_concluye` | constraint de contrato |
-| versión 1.3 | El concepto de viabilidad es una de las cuatro opciones de HubSpot; «no viable» lleva «No Viable (Rechazado)» | `conceptoViabilidad_valido`, `conceptoViabilidad_noViable` | constraint de contrato |
+| plan v2 paso 3 | La validación solo concluye viable, bloqueado o no viable, siempre con nota | `resultado_valido`, `notaValidacion_presente` | constraint de contrato |
+| versión 1.4 | Viable admite solo «Aprobado (Viable)» o «Aprobado con Condiciones»; «Aprobado con Condiciones» exige las condiciones (supuestos) | `conceptoViabilidad_viable`, `supuestos_siCondiciones` | constraint de contrato |
+| versión 1.4 | Bloqueado escribe «Requiere más información» y no viable «No Viable (Rechazado)» en el Negocio, sin que la consultora los elija | `conceptoViabilidad_bloqueado`, `conceptoViabilidad_noViable`, `op_10_validarSolicitud.conceptoViabilidad`, `12_pasarAEnEspera` y `13_registrarNoViable` (`conn_hubspotNegocio`) | constraint de contrato, operación y tarea de servicio |
 | plan v2 paso 3 | Solo la consultora asignada ve y hace la validación y el diseño | actor filter `filtroConsultoraDelCaso` | asignación |
 | plan v2 paso 3 | Viable → «Asignado/En diseño»; bloqueado → «En espera información del lead» y vuelve a validar | `gwXor_1`, `11_pasarADiseno`, `12_pasarAEnEspera` | flujo y tarea de servicio |
 | plan v2 paso 3 (decisión de la usuaria, 2026-11-24) | No viable → nota «Cerrado por viabilidad: …» y ticket a «Closed» | `conn_hubspotNota` en `10_validarSolicitud` y `13_registrarNoViable` | tarea de servicio |
@@ -133,5 +135,4 @@ Los scripts de `5_asignarConsultor` leen solo la process variable `ownerElegido`
 
 ## Pendientes de definición
 
-- **Concepto de viabilidad frente al resultado**: solo «no viable» está atado a un concepto («No Viable (Rechazado)»); qué conceptos admiten «viable» y «bloqueado» está pendiente de negocio (`bpmn.md` › Pendientes).
 - **Tamaño y tipo de los adjuntos**: sin límite en el contrato; el límite de subida de Bonita y el de la API de archivos de HubSpot aplican `[no verificado]`.

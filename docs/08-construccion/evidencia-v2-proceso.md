@@ -87,4 +87,6 @@ Registro del mock (`método ruta cuerpo`, recortado):
 5. Orden contrato → operaciones → conectores de salida y acceso a inputs en esos conectores: `[no verificado]` (sin MCP
    `bonita-doc-index` en la sesión).
 6. Reintentar una tarea en fallo puede duplicar notas/adjuntos en HubSpot.
-7. Tipo real de `concepto_viabilidad` y `valoracion_operaciones` en HubSpot (se guardan como `TEXT`).
+7. Tipo real de `concepto_viabilidad` y `valoracion_operaciones` en HubSpot (se guardan como `TEXT`). Resuelto después:
+   verificado el 2026-11-25 (enumeración de cuatro opciones y URL); la 1.3 cierra las opciones y la 1.4 fija qué concepto
+   vale con cada resultado (`docs/07-bonita/contratos.md`).

@@ -4,7 +4,7 @@ capa: 1
 motor: Bonita
 deriva_de: docs/07-bonita/insumo-preventa/reunion-socializacion.md, docs/07-bonita/insumo-preventa/Proceso_Preventa_Bonita.bpmn, docs/07-bonita/bdm.md, docs/08-construccion/plan-v2-bonita-first.md
 pool: GestionPreventa
-version: 1.3
+version: 1.4
 ---
 
 # Capa 1 — Proceso BPMN para Bonita — Gestión de Preventa
@@ -22,7 +22,7 @@ version: 1.3
 
 ## Pool y lanes
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | Lane | Actor (actores-proceso.md) | Grupo/rol (bdm.md → Organización) | Actor Bonita | Actor filter |
 |---|---|---|---|---|
@@ -35,7 +35,7 @@ El carril Orquestador es el usuario técnico del middleware y las tareas automá
 
 ## Diagrama
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 ```mermaid
 flowchart LR
@@ -66,7 +66,7 @@ flowchart LR
 
 ## Inventario de tareas
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | ID | Nombre | Tipo Bonita | Lane / actor | Fuente en §12 | Contrato (capa 2) | Conector / comunicación | Operaciones previstas | Notas |
 |---|---|---|---|---|---|---|---|---|
@@ -74,17 +74,17 @@ flowchart LR
 | `4_verificarDisponibilidad` | Verificar la carga de los consultores | service | Orquestador | insumo `A04`; reunión 04:49 | — | `conn_hubspotCarga` (síncrono) | según plantilla | Suma en HubSpot la carga **ponderada por prioridad** de cada consultor de `param_consultores` en los stages «En validación» y «Asignado/En diseño» y devuelve el de menor carga (regla y pesos completos bajo la tabla de conectores) |
 | `5_asignarConsultor` | Asignar consultor preventa | script | Orquestador | insumo `A05`; reunión 03:45 | — | — | según plantilla | Guarda en el caso al consultor que eligió `4_verificarDisponibilidad` |
 | `6_actualizarTicket` | Actualizar estado y propietario del ticket en HubSpot | service | Orquestador | insumo `A06`; reunión 11:01 | — | `conn_hubspotActualizar` (síncrono) | según plantilla | Fija el propietario y pasa el ticket a «En validación» |
-| `10_validarSolicitud` | Validar la solicitud | human | Consultoras | plan v2 paso 3; insumo `A07`, `A38` | `ctr_10_validarSolicitud` | `conn_hubspotNota` (síncrono, a la salida) | según plantilla | La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto (una de las cuatro opciones de `concepto_viabilidad`) lo escriben 11 o 13 |
+| `10_validarSolicitud` | Validar la solicitud | human | Consultoras | plan v2 paso 3; insumo `A07`, `A38` | `ctr_10_validarSolicitud` | `conn_hubspotNota` (síncrono, a la salida) | según plantilla | La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto de viabilidad depende del resultado (ver «Concepto de viabilidad» bajo Eventos) |
 | `11_pasarADiseno` | Pasar el ticket a «Asignado/En diseño» | service | Orquestador | plan v2 paso 3; reunión 10:15 | — | `conn_hubspotActualizar`, `conn_hubspotNegocio` (síncronos) | según plantilla | Antes la movía a mano la consultora; ahora Bonita al validar viable. Escribe también `concepto_viabilidad` en el Negocio |
-| `12_pasarAEnEspera` | Pasar el ticket a «En espera información del lead» | service | Orquestador | plan v2 paso 3 | — | `conn_hubspotActualizar` (síncrono) | según plantilla | Validación bloqueada por falta de información del lead; el caso vuelve a `10_validarSolicitud` |
-| `13_registrarNoViable` | Cerrar por viabilidad | service | Orquestador | plan v2 paso 3; insumo `EE4`; decisión de la usuaria, 2026-11-24 | — | `conn_hubspotNegocio`, `conn_hubspotActualizar` (síncronos) | según plantilla | Escribe `concepto_viabilidad` en el Negocio y pasa el ticket a «Closed» (`4`), «cerrado por viabilidad» |
+| `12_pasarAEnEspera` | Pasar el ticket a «En espera información del lead» | service | Orquestador | plan v2 paso 3; versión 1.4 | — | `conn_hubspotActualizar`, `conn_hubspotNegocio` (síncronos) | según plantilla | Validación bloqueada por falta de información del lead; escribe `concepto_viabilidad` = «Requiere más información» en el Negocio; el caso vuelve a `10_validarSolicitud` |
+| `13_registrarNoViable` | Cerrar por viabilidad | service | Orquestador | plan v2 paso 3; insumo `EE4`; decisión de la usuaria, 2026-11-24 | — | `conn_hubspotNegocio`, `conn_hubspotActualizar` (síncronos) | según plantilla | Escribe `concepto_viabilidad` = «No Viable (Rechazado)» en el Negocio y pasa el ticket a «Closed» (`4`), «cerrado por viabilidad» |
 | `20_disenarPropuesta` | Diseñar la propuesta | human | Consultoras | plan v2 paso 4; insumo `A15`–`A18` | `ctr_20_disenarPropuesta` | `conn_hubspotNegocio`, `conn_hubspotNota` (síncronos, a la salida) | según plantilla | La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta |
 | `21_subirAdjuntos` | Subir los adjuntos de la propuesta al Negocio | service | Orquestador | plan v2 paso 4 | — | `conn_hubspotArchivos` (síncrono) | según plantilla | Solo si la consultora adjuntó documentos (`gwXor_2`): el conector exige una lista no vacía |
 | `40_entregarAVentas` | Cambiar estado del ticket a «Entregado a ventas» | service | Orquestador | insumo `A40`; reunión 28:22 | — | `conn_hubspotActualizar` (síncrono) | según plantilla | No cambia el propietario |
 
 ## Compuertas
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | ID | Tipo | Después de | Variable o atributo que decide | Salidas (condición → destino) | Salida por defecto |
 |---|---|---|---|---|---|
@@ -93,7 +93,7 @@ flowchart LR
 
 ## Eventos
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | ID | Tipo | Posición (inicio / intermedio / borde de `<tarea>` / fin) | Disparador o duración | Fuente en §12 | Destino |
 |---|---|---|---|---|---|
@@ -101,15 +101,23 @@ flowchart LR
 | `fin_entregada` | none | fin | — | insumo `A40` (ticket en «Entregado a ventas») | — |
 | `fin_noViable` | none | fin | — | insumo `EE4` (requerimiento no viable) | — |
 
-**Camino «no viable»** (decisión de la usuaria, 2026-11-24): **cerrado por viabilidad**. La nota de validación, que empieza por «Cerrado por viabilidad:», la deja `conn_hubspotNota` a la salida de `10_validarSolicitud` en el ticket y el Negocio; `13_registrarNoViable` escribe `concepto_viabilidad` (siempre «No Viable (Rechazado)», lo exige el contrato) en el Negocio y pasa el ticket a «Closed» (`param_stageCerrado` = `4`); el caso termina en `fin_noViable`.
+**Camino «no viable»** (decisión de la usuaria, 2026-11-24): **cerrado por viabilidad**. La nota de validación, que empieza por «Cerrado por viabilidad:», la deja `conn_hubspotNota` a la salida de `10_validarSolicitud` en el ticket y el Negocio; `13_registrarNoViable` escribe `concepto_viabilidad` (siempre «No Viable (Rechazado)», lo fija el proceso) en el Negocio y pasa el ticket a «Closed» (`param_stageCerrado` = `4`); el caso termina en `fin_noViable`.
 
-**Concepto de viabilidad** (versión 1.3, aprobada por la usuaria el 2026-11-25): `concepto_viabilidad` es en HubSpot una enumeración (select) cuyo valor interno es igual a la etiqueta; la consultora elige «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)» o «Requiere más información» (`ctr_10_validarSolicitud`, constraint `conceptoViabilidad_valido`). Quien decide el camino es `resultado` (viable / bloqueado / no viable), no el concepto; la única correspondencia fijada es «no viable» → «No Viable (Rechazado)» (constraint `conceptoViabilidad_noViable`). Qué concepto admiten «viable» o «bloqueado» no está definido (ver Pendientes).
+**Concepto de viabilidad** (versión 1.4, reglas aprobadas por la usuaria el 2026-11-25): `concepto_viabilidad` es en HubSpot una enumeración (select) cuyo valor interno es igual a la etiqueta, con cuatro opciones: «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)» y «Requiere más información». Quien decide el camino es `resultado` (viable / bloqueado / no viable), y cada resultado fija qué concepto vale (`ctr_10_validarSolicitud`):
+
+| Resultado | Concepto que llega al Negocio | Quién lo elige | Stage del ticket |
+|---|---|---|---|
+| viable | «Aprobado (Viable)» o «Aprobado con Condiciones» (el contrato rechaza las otras dos: constraint `conceptoViabilidad_viable`) | la consultora, en el formulario | «Asignado/En diseño» (`11_pasarADiseno`) |
+| bloqueado | «Requiere más información» | el proceso (`op_10_validarSolicitud.conceptoViabilidad`); el formulario no muestra el selector | «En espera información del lead» (`12_pasarAEnEspera`) |
+| no viable | «No Viable (Rechazado)» | el proceso (`op_10_validarSolicitud.conceptoViabilidad`); el formulario no muestra el selector | «Closed», cerrado por viabilidad (`13_registrarNoViable`) |
+
+«Aprobado con Condiciones» exige los supuestos, que son las condiciones (constraint `supuestos_siCondiciones`); quedan en la nota de validación que `conn_hubspotNota` escribe en el ticket y el Negocio, bajo «Condiciones:». Con «bloqueado», la nota de validación dice lo que falta del lead y llega a HubSpot junto con el concepto «Requiere más información».
 
 Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS del ticket.
 
 ## Transiciones
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | Desde | Hacia | Condición (si aplica) | Variable que la evalúa | Δestado (catalogo-estados.md) |
 |---|---|---|---|---|
@@ -133,17 +141,18 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 
 ## Conectores por tarea
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | Tarea | Conector (catalogo-conectores.md) | Modo | Momento (entrada / salida de la tarea) | Entrada (process variable o atributo) | Salida (destino) | Manejo de fallo |
 |---|---|---|---|---|---|---|
 | `3_consultarTicket` | `conn_hubspotLeer` (propio `hubspot-ticket-leer`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotLeer.3_consultarTicket.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotLeer.3_consultarTicket.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotLeer.3_consultarTicket.ticketId`) | `Preventa.asunto` ← `asunto`; `Preventa.dealId` ← `dealId` | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `4_verificarDisponibilidad` | `conn_hubspotCarga` (propio `hubspot-consultores-menor-carga`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotCarga.4_verificarDisponibilidad.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotCarga.4_verificarDisponibilidad.rutaTickets`); `pipelineId` ← `el pipeline de tickets del entorno` (`conn_hubspotCarga.4_verificarDisponibilidad.pipelineId`); `ownerIds` ← `los owners de param_consultores, en su orden, separados por coma` (`conn_hubspotCarga.4_verificarDisponibilidad.ownerIds`); `stages` ← `los stages En validación y Asignado/En diseño del entorno, separados por coma` (`conn_hubspotCarga.4_verificarDisponibilidad.stages`); `ultimoOwnerId` ← `el owner del consultor del caso asignado más recientemente según la consulta findAsignadasRecientes, o vacío si no hay ninguno` (`conn_hubspotCarga.4_verificarDisponibilidad.ultimoOwnerId`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotCarga.4_verificarDisponibilidad.ticketId`) | `pv ownerElegido` ← `ownerElegido` | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `6_actualizarTicket` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.6_actualizarTicket.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.6_actualizarTicket.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.6_actualizarTicket.ticketId`); `stageId` ← `el stage En validación del entorno` (`conn_hubspotActualizar.6_actualizarTicket.stageId`); `ownerId` ← `el owner de HubSpot del consultor asignado` (`conn_hubspotActualizar.6_actualizarTicket.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
-| `10_validarSolicitud` | `conn_hubspotNota` (propio `hubspot-nota-crear`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNota.10_validarSolicitud.urlBase`); `cuerpo` ← `el resultado, el concepto, la nota y los supuestos de la validación; si es no viable empieza por Cerrado por viabilidad:` (`conn_hubspotNota.10_validarSolicitud.cuerpo`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotNota.10_validarSolicitud.ticketId`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNota.10_validarSolicitud.dealId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
+| `10_validarSolicitud` | `conn_hubspotNota` (propio `hubspot-nota-crear`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNota.10_validarSolicitud.urlBase`); `cuerpo` ← `el resultado, el concepto, la nota y los supuestos de la validación (con el título Condiciones si el concepto es Aprobado con Condiciones); si es no viable empieza por Cerrado por viabilidad:` (`conn_hubspotNota.10_validarSolicitud.cuerpo`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotNota.10_validarSolicitud.ticketId`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNota.10_validarSolicitud.dealId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `11_pasarADiseno` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.11_pasarADiseno.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.11_pasarADiseno.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.11_pasarADiseno.ticketId`); `stageId` ← `el stage Asignado/En diseño del entorno` (`conn_hubspotActualizar.11_pasarADiseno.stageId`); `ownerId` ← `vacío, no cambia el propietario` (`conn_hubspotActualizar.11_pasarADiseno.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `11_pasarADiseno` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.11_pasarADiseno.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.11_pasarADiseno.dealId`); `propiedadesJson` ← `el concepto de viabilidad como propiedad concepto_viabilidad, en JSON` (`conn_hubspotNegocio.11_pasarADiseno.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `12_pasarAEnEspera` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.12_pasarAEnEspera.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.12_pasarAEnEspera.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.12_pasarAEnEspera.ticketId`); `stageId` ← `el stage En espera información del lead del entorno` (`conn_hubspotActualizar.12_pasarAEnEspera.stageId`); `ownerId` ← `vacío, no cambia el propietario` (`conn_hubspotActualizar.12_pasarAEnEspera.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
+| `12_pasarAEnEspera` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.12_pasarAEnEspera.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.12_pasarAEnEspera.dealId`); `propiedadesJson` ← `el concepto de viabilidad como propiedad concepto_viabilidad, en JSON` (`conn_hubspotNegocio.12_pasarAEnEspera.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `13_registrarNoViable` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.13_registrarNoViable.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.13_registrarNoViable.dealId`); `propiedadesJson` ← `el concepto de viabilidad como propiedad concepto_viabilidad, en JSON` (`conn_hubspotNegocio.13_registrarNoViable.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `13_registrarNoViable` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.13_registrarNoViable.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.13_registrarNoViable.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.13_registrarNoViable.ticketId`); `stageId` ← `el stage Closed del entorno` (`conn_hubspotActualizar.13_registrarNoViable.stageId`); `ownerId` ← `vacío, no cambia el propietario` (`conn_hubspotActualizar.13_registrarNoViable.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `20_disenarPropuesta` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.20_disenarPropuesta.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.20_disenarPropuesta.dealId`); `propiedadesJson` ← `las cuatro propiedades de artefactos del Negocio, en JSON` (`conn_hubspotNegocio.20_disenarPropuesta.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
@@ -153,7 +162,7 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 
 Los seis conectores son **propios** del proyecto (`bonita-project/extensions/preventa-conectores`): REST nativo de Bonita hacia HubSpot; no se usa el conector oficial Bonita–HubSpot (Beta, sin tickets). `hubspot-negocio-actualizar`, `hubspot-nota-crear` y `hubspot-archivo-subir` (y la salida `dealId` de `hubspot-ticket-leer`) los implementa otra unidad de trabajo (ver `docs/08-construccion/conectores-escritura-hubspot.md`). El token de la Private App **no es una entrada**: la implementación lo lee de la variable de entorno `HUBSPOT_PRIVATE_APP_TOKEN`. En «Salida (destino)», la parte derecha de cada `←` es la salida del conector.
 
-**Conectores condicionales**: `hubspot-negocio-actualizar` exige propiedades no vacías y `hubspot-archivo-subir` una lista de documentos no vacía, y un conector de Bonita no se salta por condición; por eso el concepto de viabilidad se escribe en las ramas `11_pasarADiseno` / `13_registrarNoViable` (no con «bloqueado») y los adjuntos en `21_subirAdjuntos` solo si los hay (`gwXor_2`).
+**Conectores condicionales**: `hubspot-negocio-actualizar` exige propiedades no vacías y `hubspot-archivo-subir` una lista de documentos no vacía, y un conector de Bonita no se salta por condición; por eso el concepto de viabilidad se escribe en las ramas `11_pasarADiseno` / `12_pasarAEnEspera` / `13_registrarNoViable` (siempre lleva valor: lo elige la consultora con «viable» y lo fija el proceso con «bloqueado» y «no viable») y los adjuntos en `21_subirAdjuntos` solo si los hay (`gwXor_2`).
 
 **Conectores a la salida de una tarea humana**: corren al terminar la tarea, con los inputs del contrato y las operaciones ya aplicadas `[no verificado]` (orden contrato → operaciones → conectores de salida); por eso sus entradas leen los atributos de `preventa` que la tarea acaba de escribir. Si un conector falla, la tarea queda en fallo y lo ya enviado a HubSpot por los anteriores **no se deshace** (p. ej. adjuntos subidos sin nota): reintentar desde la administración puede duplicar notas o adjuntos.
 
@@ -187,7 +196,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 | Solicitud recibida | `1` | HubSpot, al crear el comercial el ticket | — (dispara el caso) |
 | En validación | `2` | **Bonita**, `6_actualizarTicket`, junto con el propietario | automático (`param_stageEnValidacion`) |
 | Asignado/En diseño | `3` | **Bonita**, `11_pasarADiseno` | al validar «viable» (`param_stageEnDiseno`) |
-| En espera información del lead | `1425810257` | **Bonita**, `12_pasarAEnEspera` | al validar «bloqueado» (`param_stageEnEspera`) |
+| En espera información del lead | `1425810257` | **Bonita**, `12_pasarAEnEspera` | al validar «bloqueado» (`param_stageEnEspera`); el Negocio queda con `concepto_viabilidad` = «Requiere más información» |
 | Entregado a ventas | `1425810258` | **Bonita**, `40_entregarAVentas` | al terminar `20_disenarPropuesta` (`param_stageEntregado`) |
 | Closed | `4` | el comercial; **Bonita**, `13_registrarNoViable` | manual (reunión 39:22); automático al validar «no viable» (`param_stageCerrado`, decisión de la usuaria, 2026-11-24) |
 
@@ -195,7 +204,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Process variables (insumo de construcción)
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | Variable | Tipo | Valor por defecto | Transitoria | Justificación (compuerta, conector o transición que la necesita) |
 |---|---|---|---|---|
@@ -203,7 +212,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Documentos del proceso
 
-### `GestionPreventa` 1.3
+### `GestionPreventa` 1.4
 
 | Documento | Múltiple | Tarea que lo aporta | Tareas que lo leen | Fuente en §12 |
 |---|---|---|---|---|
@@ -220,7 +229,6 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Pendientes de definición
 
-- **Concepto de viabilidad frente al resultado**: el contrato solo ata «no viable» a «No Viable (Rechazado)». Falta decidir si «viable» admite solo «Aprobado (Viable)» y «Aprobado con Condiciones», si «Requiere más información» equivale a «bloqueado» (que hoy no escribe el concepto en el Negocio) y si «Aprobado con Condiciones» exige algo más (p. ej. los supuestos). Requiere confirmación de negocio.
 - **Empate de carga**: la reunión no dice a quién asignar si las dos consultoras tienen la misma carga. Se documenta la regla del punto 4 de `conn_hubspotCarga` (alternar). Requiere confirmación de negocio.
 - **Ticket ya asignado a mano**: si alguien asigna el ticket en HubSpot antes de que corra el caso, Bonita lo reasigna igual. La reunión no lo trata.
 - **Ticket con varios Negocios**: `hubspot-ticket-leer` toma el primero asociado; si no hay ninguno, `dealId` queda vacío y los conectores del Negocio dejan la tarea en fallo `[no verificado]`.

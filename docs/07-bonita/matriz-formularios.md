@@ -25,7 +25,7 @@ umbral_campos_unidad_propia: 10
 | Formulario | Tipo | Tarea BPMN | Actor | Contrato | Entradas del contrato | Objetos de negocio (lee / escribe) | Form mapping | Familia | Validaciones (resumen) | Componentes de galería |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `frm_instanciacion` | Instantiation form | (inicio) | — (lo instancia el middleware) | `ctr_instanciacion` | `ticketId` | — / `Preventa` | No form | — | — | — |
-| `frm_10_validarSolicitud` | Task form | `10_validarSolicitud` | Consultora (la asignada) | `ctr_10_validarSolicitud` | `resultado`, `conceptoViabilidad`, `notaValidacion`, `supuestos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `resultado_valido`, `notaValidacion_presente`, `conceptoViabilidad_si_concluye`, `conceptoViabilidad_valido`, `conceptoViabilidad_noViable` | — |
+| `frm_10_validarSolicitud` | Task form | `10_validarSolicitud` | Consultora (la asignada) | `ctr_10_validarSolicitud` | `resultado`, `conceptoViabilidad`, `notaValidacion`, `supuestos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `resultado_valido`, `notaValidacion_presente`, `conceptoViabilidad_viable`, `conceptoViabilidad_bloqueado`, `conceptoViabilidad_noViable`, `supuestos_siCondiciones` | — |
 | `frm_20_disenarPropuesta` | Task form | `20_disenarPropuesta` | Consultora (la asignada) | `ctr_20_disenarPropuesta` | `valoracionOperaciones`, `urlPptaPreventa`, `linkRepoPreventa`, `notaPropuesta`, `adjuntos` | `Preventa` + `preventaContexto` / `Preventa` | Svelte | FAM-consultoras | espeja `valoracionOperaciones_valida`, `urlPptaPreventa_valida`, `linkRepoPreventa_valido` | — |
 | `frm_overview` | Case overview | (pool) | Consultora | — | — | `Preventa` + `preventaContexto` / — | Svelte | FAM-consultoras | — | — |
 
@@ -49,9 +49,9 @@ umbral_campos_unidad_propia: 10
 | Consultora asignada | Text (solo lectura) | — | `Preventa.consultor`, `Preventa.fechaAsignacion` | — | — | — | — | — |
 | Validación anterior | Text (solo lectura, solo si hubo bloqueo) | — | `Preventa.resultadoValidacion`, `Preventa.notaValidacion`, `Preventa.fechaValidacion` | — | — | — | — | — |
 | Resultado | Radio buttons (viable / bloqueado / no_viable) | `resultado` | — | sí | espeja `resultado_valido` | — | — | — |
-| Concepto de viabilidad | Desplegable con las cuatro opciones de `concepto_viabilidad`: «Aprobado (Viable)», «Aprobado con Condiciones», «No Viable (Rechazado)», «Requiere más información» | `conceptoViabilidad` | `Preventa.conceptoViabilidad` (valor inicial) | no | espeja `conceptoViabilidad_si_concluye`; espeja `conceptoViabilidad_valido`; espeja `conceptoViabilidad_noViable` | Resultado | — | — |
+| Concepto de viabilidad | Desplegable, solo con «viable»: «Aprobado (Viable)», «Aprobado con Condiciones». Con «bloqueado» o «no viable» no se muestra el desplegable sino el concepto que fija el proceso («Requiere más información» / «No Viable (Rechazado)», solo lectura) y el input va vacío | `conceptoViabilidad` | `Preventa.conceptoViabilidad` (valor inicial) | no | espeja `conceptoViabilidad_viable`; espeja `conceptoViabilidad_bloqueado`; espeja `conceptoViabilidad_noViable` | Resultado | — | — |
 | Nota de validación | Text area (texto largo) | `notaValidacion` | — | sí | espeja `notaValidacion_presente` | — | — | — |
-| Supuestos | Text area | `supuestos` | `Preventa.supuestos` (valor inicial) | no | — | — | — | — |
+| Supuestos (condiciones) | Text area; con «Aprobado con Condiciones» se titula «Condiciones» y es obligatorio | `supuestos` | `Preventa.supuestos` (valor inicial) | no | espeja `supuestos_siCondiciones` | Concepto de viabilidad | — | — |
 
 **Acciones**: Enviar (fija `resultado`, `conceptoViabilidad`, `notaValidacion`, `supuestos`).
 **Conector síncrono invocado desde el formulario** (si aplica, `catalogo-conectores.md`): ninguno (los conectores a HubSpot corren a la salida de la tarea).

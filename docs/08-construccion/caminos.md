@@ -1,6 +1,6 @@
 # Caminos del journey — Gestión de Preventa
 
-Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.3). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
+Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.4). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
 
 ## Camino `entregada`
 
@@ -30,7 +30,7 @@ La consultora valida «viable», Bonita pasa el ticket a «Asignado/En diseño»
 
 ## Camino `bloqueada`
 
-La consultora valida «bloqueado» (falta información del lead): Bonita pasa el ticket a «En espera información del lead» y la validación vuelve a la misma consultora, que la concluye «viable» y sigue hasta la entrega sin adjuntos.
+La consultora valida «bloqueado» (falta información del lead): Bonita fija el concepto «Requiere más información», lo escribe en el Negocio con la nota de lo que falta, pasa el ticket a «En espera información del lead» y la validación vuelve a la misma consultora, que la concluye «viable» con «Aprobado con Condiciones» (las condiciones van en los supuestos) y sigue hasta la entrega sin adjuntos.
 
 - **Fin esperado**: `fin_entregada`
 - **Salidas cubiertas**: `gwXor_1→12_pasarAEnEspera`; `gwXor_1→11_pasarADiseno`; `gwXor_2→40_entregarAVentas`
@@ -39,7 +39,7 @@ La consultora valida «bloqueado» (falta información del lead): Bonita pasa el
 |---|---|---|---|
 | 1 | (instanciación) | ofelia.bot | `{"ticketId": "T-003"}` |
 | 2 | `10_validarSolicitud` | linda.lozano | `{"resultado": "bloqueado", "conceptoViabilidad": "", "notaValidacion": "Falta el volumen de documentos.", "supuestos": ""}` |
-| 3 | `10_validarSolicitud` | linda.lozano | `{"resultado": "viable", "conceptoViabilidad": "Aprobado con Condiciones", "notaValidacion": "El lead completó la información.", "supuestos": ""}` |
+| 3 | `10_validarSolicitud` | linda.lozano | `{"resultado": "viable", "conceptoViabilidad": "Aprobado con Condiciones", "notaValidacion": "El lead completó la información.", "supuestos": "El cliente entrega el volumen real antes del diseño"}` |
 | 4 | `20_disenarPropuesta` | linda.lozano | `{"valoracionOperaciones": "https://example.com/valoracion2", "urlPptaPreventa": "https://example.com/ppta2", "linkRepoPreventa": "https://example.com/repo2", "notaPropuesta": "", "adjuntos": []}` |
 
 | Atributo | Valor esperado |
@@ -48,10 +48,11 @@ La consultora valida «bloqueado» (falta información del lead): Bonita pasa el
 | `preventa.resultadoValidacion` | `viable` |
 | `preventa.notaValidacion` | `El lead completó la información.` |
 | `preventa.conceptoViabilidad` | `Aprobado con Condiciones` |
+| `preventa.supuestos` | `El cliente entrega el volumen real antes del diseño` |
 
 ## Camino `noViable`
 
-La consultora valida «no viable»: queda la nota en HubSpot, Bonita escribe el concepto en el Negocio y pasa el ticket a «Closed» (`4`): cerrado por viabilidad (decisión de la usuaria, 2026-11-24); la nota empieza por «Cerrado por viabilidad:».
+La consultora valida «no viable» sin elegir concepto: queda la nota en HubSpot, Bonita fija y escribe «No Viable (Rechazado)» en el Negocio y pasa el ticket a «Closed» (`4`): cerrado por viabilidad (decisión de la usuaria, 2026-11-24); la nota empieza por «Cerrado por viabilidad:».
 
 - **Fin esperado**: `fin_noViable`
 - **Salidas cubiertas**: `gwXor_1→13_registrarNoViable`
@@ -59,7 +60,7 @@ La consultora valida «no viable»: queda la nota en HubSpot, Bonita escribe el 
 | Paso | Tarea | Usuario | Payload |
 |---|---|---|---|
 | 1 | (instanciación) | ofelia.bot | `{"ticketId": "T-002"}` |
-| 2 | `10_validarSolicitud` | linda.lozano | `{"resultado": "no_viable", "conceptoViabilidad": "No Viable (Rechazado)", "notaValidacion": "No aplica a DocFly ni Oriuno.", "supuestos": ""}` |
+| 2 | `10_validarSolicitud` | linda.lozano | `{"resultado": "no_viable", "conceptoViabilidad": "", "notaValidacion": "No aplica a DocFly ni Oriuno.", "supuestos": ""}` |
 
 | Atributo | Valor esperado |
 |---|---|

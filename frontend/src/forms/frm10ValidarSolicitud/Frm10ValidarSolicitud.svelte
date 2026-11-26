@@ -11,7 +11,7 @@
   import { precargar, type Precarga } from '$lib/preventa/contexto';
   import { CAMPOS, ENTRADAS, type CuerpoDelContrato } from './generado/contrato';
   import { TEXTOS } from './textos';
-  import { CONCEPTOS, CONCEPTO_NO_VIABLE, erroresDePantalla } from './validacion';
+  import { CONCEPTOS_VIABLE, CONCEPTO_CON_CONDICIONES, CONCEPTO_FIJADO, erroresDePantalla } from './validacion';
 
   interface Props {
     /** Envía el cuerpo del contrato al motor; las pruebas inyectan un doble. */
@@ -50,17 +50,29 @@
   let estado = $state<'ocioso' | 'enviando' | 'enviado' | 'error'>('ocioso');
   let fallo = $state<string | null>(null);
 
-  const exigeConcepto = $derived(resultado === 'viable' || resultado === 'no_viable');
+  /** Con «bloqueado» o «no viable» el concepto lo fija el proceso: no hay selector y el input va vacío. */
+  const conceptoFijado = $derived(resultado !== null ? (CONCEPTO_FIJADO[resultado] ?? null) : null);
+  const conCondiciones = $derived(resultado === 'viable' && conceptoViabilidad === CONCEPTO_CON_CONDICIONES);
 
-  /** «No viable» solo admite «No Viable (Rechazado)» (constraint del contrato): se elige solo. */
+  /** Al cambiar de resultado se limpia el concepto: solo «viable» lo elige la consultora. */
   function alCambiarResultado(): void {
-    if (resultado === 'no_viable') conceptoViabilidad = CONCEPTO_NO_VIABLE;
+    if (resultado !== 'viable') conceptoViabilidad = '';
   }
   const etiqueta = (ruta: string) => CAMPOS.find((c) => c.ruta === ruta)?.etiqueta ?? ruta;
+  /**
+   * Desde la 1.4 el input `conceptoViabilidad` no tiene destino directo (lo lee la operación
+   * `op_10_validarSolicitud.conceptoViabilidad`) y el generador no lo pone en `CAMPOS`: la etiqueta va aquí.
+   */
+  const ETIQUETA_CONCEPTO = 'Concepto de viabilidad';
 
   function cuerpo(): CuerpoDelContrato {
     const t = (v: string) => (v.trim() === '' ? null : v.trim());
-    return { resultado, conceptoViabilidad: t(conceptoViabilidad), notaValidacion: t(notaValidacion), supuestos: t(supuestos) };
+    return {
+      resultado,
+      conceptoViabilidad: resultado === 'viable' ? t(conceptoViabilidad) : null,
+      notaValidacion: t(notaValidacion),
+      supuestos: t(supuestos),
+    };
   }
 
   async function alEnviar(evento: SubmitEvent): Promise<void> {
@@ -127,29 +139,37 @@
             {#if errores.resultado}<p class="tc-error" id="error-resultado">{errores.resultado}</p>{/if}
           </fieldset>
 
-          <div class="tc-campo" data-testid="campo-conceptoViabilidad">
-            <label for="campo-conceptoViabilidad">
-              {etiqueta('conceptoViabilidad')}{#if exigeConcepto}<span class="tc-requerido" aria-hidden="true">*</span>{/if}
-            </label>
-            <p class="tc-ayuda" id="ayuda-concepto">
-              Obligatorio si la solicitud es viable o no viable («No viable» lleva «No Viable (Rechazado)»). Se escribe en
-              el Negocio de HubSpot.
-            </p>
-            <select
-              id="campo-conceptoViabilidad"
-              class="tc-control"
-              bind:value={conceptoViabilidad}
-              aria-required={exigeConcepto}
-              aria-invalid={!!errores.conceptoViabilidad}
-              aria-describedby={errores.conceptoViabilidad ? 'ayuda-concepto error-concepto' : 'ayuda-concepto'}
-            >
-              <option value="">Elija un concepto…</option>
-              {#each CONCEPTOS as c (c)}
-                <option value={c}>{c}</option>
-              {/each}
-            </select>
-            {#if errores.conceptoViabilidad}<p class="tc-error" id="error-concepto">{errores.conceptoViabilidad}</p>{/if}
-          </div>
+          {#if resultado === 'viable'}
+            <div class="tc-campo" data-testid="campo-conceptoViabilidad">
+              <label for="campo-conceptoViabilidad">
+                {ETIQUETA_CONCEPTO}<span class="tc-requerido" aria-hidden="true">*</span>
+              </label>
+              <p class="tc-ayuda" id="ayuda-concepto">
+                Se escribe en el Negocio de HubSpot. «Aprobado con Condiciones» pide las condiciones más abajo.
+              </p>
+              <select
+                id="campo-conceptoViabilidad"
+                class="tc-control"
+                bind:value={conceptoViabilidad}
+                aria-required="true"
+                aria-invalid={!!errores.conceptoViabilidad}
+                aria-describedby={errores.conceptoViabilidad ? 'ayuda-concepto error-concepto' : 'ayuda-concepto'}
+              >
+                <option value="">Elija un concepto…</option>
+                {#each CONCEPTOS_VIABLE as c (c)}
+                  <option value={c}>{c}</option>
+                {/each}
+              </select>
+              {#if errores.conceptoViabilidad}<p class="tc-error" id="error-concepto">{errores.conceptoViabilidad}</p>{/if}
+            </div>
+          {:else if conceptoFijado}
+            <div class="tc-campo" data-testid="campo-conceptoViabilidad">
+              <p class="tc-leyenda">{ETIQUETA_CONCEPTO}</p>
+              <p class="concepto-fijado" data-testid="concepto-fijado">
+                Bonita escribirá en el Negocio de HubSpot: <strong>{conceptoFijado}</strong>
+              </p>
+            </div>
+          {/if}
 
           <NotaRica
             id="campo-notaValidacion"
@@ -162,9 +182,26 @@
           />
 
           <div class="tc-campo" data-testid="campo-supuestos">
-            <label for="campo-supuestos">{etiqueta('supuestos')}</label>
-            <p class="tc-ayuda" id="ayuda-supuestos">Opcional. Supuestos sobre los que se apoya la validación.</p>
-            <textarea id="campo-supuestos" class="tc-control" rows="3" bind:value={supuestos} aria-describedby="ayuda-supuestos"></textarea>
+            <label for="campo-supuestos">
+              {#if conCondiciones}Condiciones<span class="tc-requerido" aria-hidden="true">*</span>{:else}Supuestos{/if}
+            </label>
+            <p class="tc-ayuda" id="ayuda-supuestos">
+              {#if conCondiciones}
+                Obligatorio con «Aprobado con Condiciones»: las condiciones quedan en la nota de HubSpot.
+              {:else}
+                Opcional. Supuestos sobre los que se apoya la validación.
+              {/if}
+            </p>
+            <textarea
+              id="campo-supuestos"
+              class="tc-control"
+              rows="3"
+              bind:value={supuestos}
+              aria-required={conCondiciones}
+              aria-invalid={!!errores.supuestos}
+              aria-describedby={errores.supuestos ? 'ayuda-supuestos error-supuestos' : 'ayuda-supuestos'}
+            ></textarea>
+            {#if errores.supuestos}<p class="tc-error" id="error-supuestos">{errores.supuestos}</p>{/if}
           </div>
 
           <div class="tc-acciones">
@@ -179,6 +216,12 @@
 </main>
 
 <style>
+  .concepto-fijado {
+    margin: 0.25rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    background: var(--tc-turquesa-suave);
+  }
   .resultado {
     border: 0;
     padding: 0;
