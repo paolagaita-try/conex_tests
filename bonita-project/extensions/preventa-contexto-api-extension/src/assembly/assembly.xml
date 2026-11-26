@@ -14,6 +14,17 @@
             <includes>
                 <include>**/*</include>
             </includes>
+            <excludes>
+                <exclude>configuration.properties</exclude>
+            </excludes>
+        </fileSet>
+        <!-- configuration.properties ya filtrado (raíz de HubSpot según el entorno: ver contexto.hubspotUrlBase). -->
+        <fileSet>
+            <directory>${project.build.outputDirectory}</directory>
+            <outputDirectory/>
+            <includes>
+                <include>configuration.properties</include>
+            </includes>
         </fileSet>
         <fileSet>
             <outputDirectory>META-INF/maven/${groupId}/${artifactId}</outputDirectory>

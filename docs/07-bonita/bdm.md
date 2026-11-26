@@ -157,7 +157,7 @@ No hay componentes propios: `frm_10_validarSolicitud`, `frm_20_disenarPropuesta`
 
 ## Acceso al BDM (decisión previa a los formularios)
 
-- **Mecanismo**: REST API extension. Lo del caso (`Preventa`) se lee por la extensión de consultas; lo del CRM (ticket, Negocio, empresa, contactos, owner) por la REST API extension **`preventaContexto`** (`GET …/API/extension/preventa/contexto?ticketId=`), que llama a HubSpot del lado servidor con `HUBSPOT_PRIVATE_APP_TOKEN` y devuelve un JSON de solo lectura. El token nunca llega al navegador. La implementa otra unidad de trabajo (agente B); aquí solo se referencia.
+- **Mecanismo**: REST API extension. Lo del caso (`Preventa`) se lee por la extensión de consultas; lo del CRM (ticket, Negocio, empresa, contactos, owner) por la REST API extension **`preventaContexto`** (`GET …/API/extension/preventa/contexto?ticketId=`), que llama a HubSpot del lado servidor con `HUBSPOT_PRIVATE_APP_TOKEN` y devuelve un JSON de solo lectura. El token nunca llega al navegador. La implementa otra unidad de trabajo (agente B); aquí solo se referencia. **Dirección de HubSpot por entorno** (2026-11-26, aprobado por la usuaria): en Local la extensión apunta al doble de pruebas `http://localhost:8099/hubspot`, igual que `param_hubspotUrlBase`, para que un bundle Local nunca llame a HubSpot real; en Qualification y Production, a `https://api.hubapi.com`. El valor va en su `configuration.properties` (`hubspot.urlBase`), que Maven rellena según el entorno de Bonita del build (`-Dbonita.environment`; sin él, Local); la variable de entorno `HUBSPOT_BASE_URL` del servidor gana sobre el fichero.
 - **Perfiles previstos**: `User` (rol `consultora`)
 
 ## Impacto de objetos añadidos tras el cierre (solo si la capa se reabrió)
