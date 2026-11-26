@@ -1,104 +1,129 @@
-# Integración HubSpot ↔ Bonita
+# Integración HubSpot ↔ Bonita — Preventa
 
-Gestiona el proceso de preventa **en Bonita** («Bonita-first»): cuando se crea un ticket en HubSpot, se instancia un caso en Bonita que asigna una consultora por **carga ponderada por prioridad**; la consultora **valida la solicitud** y **diseña la propuesta** en formularios Bonita (Svelte), y Bonita escribe por detrás en HubSpot el stage y el propietario del ticket, las notas, las propiedades del Negocio y los adjuntos. El equipo de Preventa no trabaja en HubSpot; el cierre lo sigue haciendo el comercial en HubSpot.
+El equipo de Preventa trabaja **100 % desde Bonita**. HubSpot sigue siendo el CRM del área comercial, pero Preventa no
+entra en él: cuando un comercial crea un ticket de preventa, Bonita abre un caso, se lo asigna a la consultora con menos
+carga, le avisa por correo y le presenta formularios con la información del CRM ya cargada. Todo lo que la consultora
+registra, Bonita lo escribe por detrás en HubSpot.
 
-> Alcance vigente: `docs/08-construccion/plan-v2-bonita-first.md` (decisión del 2026-11-24), que reemplaza el alcance anterior «solo carril del orquestador». Sin agente IA, sin Fase 2.
+Versión vigente del proceso: **`GestionPreventa` 1.5** (Bonita 2026.2 Community).
 
-## Flujo de punta a punta
+## Qué hace, de punta a punta
 
 ```
-HubSpot: ticket creado (pipeline «Mesa de preventa»)
-        │  webhook de app ticket.creation
-        ▼
-Middleware  ──► Bonita: instancia el caso GestionPreventa (idempotente por ticketId)
-        ▼
-Bonita:  3_consultarTicket → 4_verificarDisponibilidad → 5_asignarConsultor → 6_actualizarTicket
-         (ticket → «En validación», propietario = consultora elegida por carga)
-        ▼
-Consultora: formulario «Validar solicitud» (10_validarSolicitud), con el CRM precargado — nota en ticket y Negocio
-        ├─ viable    → 11_pasarADiseno: ticket → «Asignado/En diseño» + concepto_viabilidad elegido
-        │              («Aprobado (Viable)» o «Aprobado con Condiciones», este con condiciones obligatorias)
-        ├─ bloqueado → 12_pasarAEnEspera: concepto «Requiere más información» + ticket → «En espera
-        │              información del lead» → vuelve a validar
-        └─ no viable → 13_registrarNoViable: concepto «No Viable (Rechazado)» + ticket → «Closed» (fin)
-        ▼
-Consultora: formulario «Diseñar propuesta» (20_disenarPropuesta)
-         — propiedades del Negocio y nota; 21_subirAdjuntos si hay adjuntos
-        ▼
-Bonita: 40_entregarAVentas → ticket a «Entregado a ventas»   (la etapa del Negocio NO se mueve)
+HubSpot: el comercial crea un ticket en el pipeline de Preventa
+   │  webhook de app ticket.creation
+   ▼
+Middleware (Rust): valida la firma, comprueba que el ticket es de Preventa e instancia el caso
+   ▼
+Bonita, tareas automáticas:
+   3  lee el ticket y su Negocio asociado
+   4  reparte: elige la consultora con menor carga ponderada por prioridad
+   5  guarda la consultora en el caso
+   6  pasa el ticket a «En validación» y le pone la consultora como propietaria
+   ▼
+Consultora — correo «Nueva tarea de Preventa» + formulario «Validar la solicitud» (CRM precargado)
+   ├─ viable     → ticket a «Asignado/En diseño» y concepto de viabilidad en el Negocio
+   ├─ bloqueado  → ticket a «En espera información del lead»; vuelve a validar (con un correo nuevo)
+   └─ no viable  → ticket cerrado por viabilidad (fin)
+   ▼
+Consultora — correo + formulario «Diseñar la propuesta»: artefactos del Negocio, nota y adjuntos
+   ▼
+Bonita: sube los adjuntos al Negocio y pasa el ticket a «Entregado a ventas» (fin)
 ```
 
-**Propiedades del Negocio que escribe Bonita:** `concepto_viabilidad` (al validar: lo elige la consultora con «viable»; con «bloqueado» y «no viable» lo fija el proceso), `valoracion_operaciones`, `url_ppta_preventa`, `link_repo_preventa` (al diseñar la propuesta).
+- **Reparto**: suma los tickets abiertos de cada consultora pesados por prioridad (urgente 4, alta 3, media 2,
+  baja 1); en empate alterna. Toda la regla vive en un conector, con sus pruebas.
+- **Formularios con precarga**: los formularios leen el ticket, el Negocio, la empresa, los contactos y el comercial
+  en vivo desde HubSpot por una REST API extension del servidor; el token nunca llega al navegador.
+- **Escrituras en HubSpot**: stage y propietario del ticket, notas en ticket y Negocio, propiedades del Negocio y
+  adjuntos. La etapa del Negocio no se toca.
+- **Avisos por correo** (desde la 1.5): cada vez que se crea una tarea para una consultora (validar, diseñar y el
+  retorno a validar), le llega un correo con la plantilla de Trycore (logo incrustado, ficha de la tarea con ticket,
+  Negocio, prioridad y fecha, y un botón que abre la tarea). Si el correo falla, la tarea se asigna igual y el fallo
+  queda en el log del servidor.
+- **Tema Trycore** en el portal de Bonita (colores y marca en la aplicación de las consultoras).
 
-**Estados del ticket** (pipeline «Mesa de preventa», id `0`): Solicitud recibida `1` → En validación `2` → Asignado/En diseño `3` (o En espera información del lead `1425810257`) → Entregado a ventas `1425810258`; Closed `4`. Todos los cambios de stage los hace Bonita, salvo el cierre del comercial.
+## Componentes y lenguajes
 
-## Componentes
-
-| Componente | Qué es | Dónde |
+| Componente | Lenguaje | Dónde |
 |---|---|---|
-| **Proceso Bonita `GestionPreventa`** | BPMN con 2 lanes: Orquestador (tareas automáticas; su actor es el usuario técnico del middleware) y Consultoras (tareas humanas, actor filter `filtroConsultoraDelCaso`) | `bonita-project/` |
-| **Conectores REST propios** | `hubspot-ticket-leer`, `hubspot-consultores-menor-carga`, `hubspot-ticket-actualizar`, `hubspot-negocio-actualizar`, `hubspot-nota-crear`, `hubspot-archivo-subir` (REST nativo a HubSpot) | `bonita-project/extensions/preventa-conectores/` |
-| **REST API extension `preventaContexto`** | Lectura del CRM (ticket, Negocio, empresa, contactos, owner) para precargar los formularios; el token solo vive en el servidor | `bonita-project/extensions/preventa-contexto-api-extension/` |
-| **Formularios Svelte** | `frm10ValidarSolicitud`, `frm20DisenarPropuesta`, `frmOverview` | `frontend/` |
-| **Middleware (Rust)** | Única entrada HubSpot→Bonita: `ticket.creation` → instancia el caso | `middleware/` — ver [middleware/README.md](middleware/README.md) |
-| **Documentación de diseño** | Fuente del proceso (BPMN, BDM, contratos, formularios, parámetros) | `docs/07-bonita/`, `docs/08-construccion/`, `docs/00-parametros/` |
-| **Journey + mock** | Pruebas del proceso con colección Postman contra un doble de HubSpot | `journey/`, `mock.json` |
+| Proceso `GestionPreventa` (BPMN, BDM, contratos, organización, parámetros) | Generado por el arnés `trycore-bonita` desde la documentación de `docs/07-bonita/` | `bonita-project/app/` |
+| Conectores propios: leer ticket, reparto por carga, actualizar ticket, actualizar Negocio, crear nota, subir archivos y correo de tarea asignada | Groovy, en la JVM de Bonita | `bonita-project/extensions/preventa-conectores/` |
+| Actor filter: la tarea llega solo a la consultora elegida | Groovy | `bonita-project/extensions/preventa-filtros/` |
+| REST API extensions: contexto del CRM para los formularios, consultas y parámetros | Groovy | `bonita-project/extensions/*-api-extension/` |
+| Formularios «Validar la solicitud», «Diseñar la propuesta» y resumen del caso, y el tema Trycore | Svelte + TypeScript | `frontend/` |
+| Middleware: única entrada HubSpot → Bonita (`ticket.creation`) | Rust (axum, tokio, reqwest), en Docker | `middleware/` (ver `middleware/README.md`) |
+| Pruebas del proceso: journey Postman contra un doble de HubSpot | JSON (generado) | `journey/`, `mock.json` |
 
-> Regla dura: `docs/07-bonita/` es la **fuente**. Un fichero generado no se edita a mano: se cambia la fuente y se regenera con `tools/arnes.sh generar`.
-
-## Conectores (resumen)
-
-| Conector | Tareas | Llamada a HubSpot | Qué hace |
-|---|---|---|---|
-| `hubspot-ticket-leer` | `3_consultarTicket` | `GET` del ticket y de su Negocio asociado | lee el asunto y el Negocio del ticket |
-| `hubspot-consultores-menor-carga` | `4_verificarDisponibilidad` | `POST /crm/v3/objects/tickets/search` | devuelve el owner con menor carga ponderada |
-| `hubspot-ticket-actualizar` | `6`, `11`, `12`, `13`, `40` | `PATCH /crm/v3/objects/tickets/{id}` | stage del ticket (y owner en `6`) |
-| `hubspot-negocio-actualizar` | `11`, `12`, `13`, `20` | `PATCH` del Negocio | propiedades del Negocio |
-| `hubspot-nota-crear` | `10`, `20` | `POST` de una nota | nota asociada a ticket y Negocio |
-| `hubspot-archivo-subir` | `21_subirAdjuntos` | carga de archivos (Files API) | sube los adjuntos y los asocia al Negocio |
-
-Entradas y salidas exactas: `docs/07-bonita/bpmn.md` › Conectores por tarea y `docs/08-construccion/conectores-escritura-hubspot.md`. El **token de Private App** no es una entrada: el conector lo lee de la variable de entorno `HUBSPOT_PRIVATE_APP_TOKEN` (header `Authorization: Bearer`).
-
-## Requisitos
-
-- JDK 17, Maven, Node 18+ (formularios), `trycore-bonita` (arnés). Verifica con `trycore-bonita doctor`.
-- Bonita 2026.2 Community.
-- Middleware: Docker, o Rust estable si se compila con Cargo.
+**Regla del proyecto**: `docs/07-bonita/` es la fuente. Los ficheros generados (`.proc`, organización, journey,
+contratos de los formularios…) no se editan a mano: se cambia la documentación y se regenera con
+`tools/arnes.sh generar`.
 
 ## Construir y probar
 
-```bash
-# Generar los ficheros del proceso desde docs/07-bonita/ y construir el bundle
-tools/arnes.sh generar
-tools/arnes.sh verificar            # custodios/inventario
+Requisitos: JDK 17, Maven, Node 18+, Python 3, Docker y el arnés `trycore-bonita` (comprueba el entorno con
+`trycore-bonita doctor`).
 
-# Journey (proceso contra el bundle + mock de HubSpot)
+```bash
+# 1. Regenerar desde la documentación y comprobar los custodios
+tools/arnes.sh generar
+python scripts/parche-manifest-preventa.py   # permiso del contexto en el manifiesto de formularios
+tools/arnes.sh verificar
+
+# 2. Construir la aplicación y el bundle local de Bonita (incluye las pruebas Spock de las extensiones)
+mvn -f bonita-project/pom.xml clean install -Pbundle
+
+# 3. Journey: levanta el bundle, el doble de HubSpot y un SMTP de prueba, y recorre los caminos
+#    (entregada, bloqueada, no viable), incluidos los correos que debe recibir cada consultora
 tools/arnes.sh journey
 
-# Middleware
-cd middleware && cargo test         # o con Docker: docker build -t preventa-middleware middleware/
+# 4. Formularios
+cd frontend && npm ci && npm test            # Vitest
+
+# 5. Middleware, sin Rust instalado
+docker run --rm -v "$PWD/middleware:/src:ro" -e CARGO_TARGET_DIR=/tmp/target rust:1-bookworm \
+  bash -c 'cp -r /src /work && cd /work && cargo test'
 ```
 
-## Configuración (parámetros del proceso, por entorno)
+En Local, todo lo que llama a HubSpot apunta al doble de pruebas (`http://localhost:8099/hubspot`): los conectores por
+el parámetro `param_hubspotUrlBase` y la extensión del contexto por su `configuration.properties`, que Maven rellena
+según el entorno de Bonita del build (`-Dbonita.environment`; sin él, Local). Las pruebas nunca tocan HubSpot ni Gmail
+reales.
 
-`param_hubspotUrlBase` (Local → mock `localhost:8099`; Prod → `https://api.hubapi.com`), `param_hubspotRutaTickets` (`/crm/v3/objects/tickets`), `param_stageEnValidacion` (`2`), `param_stageEnDiseno` (`3`), `param_stageEnEspera` (`1425810257`), `param_stageEntregado` (`1425810258`), `param_stageCerrado` (`4`), `param_pipelineTickets` (`0`), `param_consultores` (owner de HubSpot ↔ usuario Bonita de cada consultora). Detalle en `docs/07-bonita/bdm.md`.
+## Configuración
 
-Variables de entorno del **middleware**: ver [`middleware/.env.example`](middleware/.env.example).
+**Parámetros del proceso** (valores por entorno en `docs/07-bonita/bdm.md`): dirección de la API de HubSpot, stages
+del pipeline, consultoras del reparto (owner de HubSpot ↔ usuario de Bonita), servidor SMTP (`param_smtp*`) y
+dirección base de Bonita para el enlace del correo (`param_bonitaUrlBase`). Para construir Qualification o Production:
+`-Dbonita.environment=Qualification` o `-Dbonita.environment=Production`.
 
-## Despliegue (producción)
+**Variables de entorno del servidor Bonita** (nunca en el repositorio ni en argumentos):
 
-1. **HubSpot:** token de Private App con los scopes de `docs/08-construccion/permisos-token-hubspot.md` (tickets y Negocios en lectura y escritura; empresas, contactos y owners en lectura; archivos; notas); app con **un solo** webhook → middleware: `ticket.creation`. Guardar `HUBSPOT_APP_SECRET`.
-2. **Middleware:** imagen Docker (`docker-compose.yml`) detrás de un reverse proxy con HTTPS público, variables de entorno rellenas.
-3. **Bonita:** desplegar el bundle con entorno **Production** (`param_hubspotUrlBase=https://api.hubapi.com`), `HUBSPOT_PRIVATE_APP_TOKEN` en la JVM, el usuario técnico del middleware con perfil/permisos REST, actores `orquestador` y `consultora` mapeados, cada consultora enlazada a su owner de HubSpot en `param_consultores`; subir la versión del pool al desplegar.
+| Variable | Para qué |
+|---|---|
+| `HUBSPOT_PRIVATE_APP_TOKEN` | Token de la Private App de HubSpot que usan los conectores y la extensión del contexto |
+| `PREVENTA_SMTP_CONTRASENA` | Contraseña de aplicación de la cuenta de Google Workspace que envía los avisos |
+| `HUBSPOT_BASE_URL` | Opcional: fuerza la dirección de HubSpot de la extensión del contexto |
 
-## Estado
+**Variables del middleware**: ver `middleware/.env.example` (Bonita, versión del proceso, token y secreto de la app
+de HubSpot, pipeline de Preventa).
 
-- Proceso `GestionPreventa` 1.4 (validación y propuesta en formularios Bonita; reglas del concepto de viabilidad por resultado), conectores de escritura, `preventaContexto` y formularios construidos; journey verde contra el mock (caminos entregada, bloqueada y no viable): `docs/08-construccion/evidencia-v2-proceso.md`.
-- Middleware Rust: solo la entrada `ticket.creation`; `cargo test` en CI.
-- Pendiente: despliegue (middleware público, Bonita prod, registro del webhook); rotar el token de pruebas.
+## Pendiente para producción
+
+- **Despliegue del servidor**: Bonita con el bundle de Production, sus variables de entorno, el usuario técnico del
+  middleware y las consultoras con su correo; el middleware detrás de un proxy HTTPS público y la app de HubSpot con
+  su único webhook `ticket.creation`.
+- **URL pública de Bonita**: hoy `param_bonitaUrlBase` apunta a `localhost`, así que el botón del correo solo abre la
+  tarea desde el propio servidor. Con la URL pública se cambia el parámetro y se vuelve a poner en la plantilla del
+  correo el enlace de respaldo («Si el botón no abre, copia este enlace»).
+- **Cuenta SMTP de Google Workspace**: confirmar la cuenta remitente (`param_smtpUsuario`), generar su contraseña de
+  aplicación (requiere verificación en dos pasos) y ponerla en `PREVENTA_SMTP_CONTRASENA`. El envío real por Gmail
+  todavía no se ha probado.
 
 ## Seguridad
 
-- Secretos solo por variable de entorno (nunca en el repo ni en argumentos). El `.env` del middleware está gitignored.
-- Pruebas de escritura solo contra tickets y Negocios de prueba desechables; nunca objetos de producción reales sin autorización.
-- El middleware solo actúa sobre el pipeline de Preventa (blindaje) e ignora los demás; no escribe en HubSpot. Toda escritura la hacen los conectores de Bonita. Del Negocio se escriben propiedades, notas y adjuntos, nunca su etapa.
+- Secretos solo en variables de entorno del servidor; nunca en el repositorio, en parámetros versionados ni en
+  argumentos de línea de comandos.
+- La contraseña SMTP solo viaja cifrada: el conector exige STARTTLS antes de autenticarse.
+- El middleware solo actúa sobre el pipeline de Preventa, valida la firma de HubSpot y no escribe en el CRM; todas las
+  escrituras las hacen los conectores de Bonita.
