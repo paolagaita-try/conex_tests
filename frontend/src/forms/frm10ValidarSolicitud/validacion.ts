@@ -6,18 +6,22 @@ import { esquema } from './generado/esquema';
 import type { CuerpoDelContrato } from './generado/contrato';
 
 /**
- * Las cuatro opciones de `concepto_viabilidad` en HubSpot (enumeración; valor interno = etiqueta). Espeja la
- * constraint `conceptoViabilidad_valido` de `ctr_10_validarSolicitud` (docs/07-bonita/contratos.md, versión 1.3).
+ * Las dos opciones de `concepto_viabilidad` que admite «viable» (constraint `conceptoViabilidad_viable` de
+ * `ctr_10_validarSolicitud`, docs/07-bonita/contratos.md, versión 1.4). Son las únicas que ofrece el selector.
  */
-export const CONCEPTOS = [
-  'Aprobado (Viable)',
-  'Aprobado con Condiciones',
-  'No Viable (Rechazado)',
-  'Requiere más información',
-] as const;
+export const CONCEPTOS_VIABLE = ['Aprobado (Viable)', 'Aprobado con Condiciones'] as const;
 
-/** El concepto que exige el camino «no viable» (constraint `conceptoViabilidad_noViable`). */
-export const CONCEPTO_NO_VIABLE = 'No Viable (Rechazado)';
+/** El concepto que exige las condiciones (constraint `supuestos_siCondiciones`). */
+export const CONCEPTO_CON_CONDICIONES = 'Aprobado con Condiciones';
+
+/**
+ * El concepto que fija el proceso para «bloqueado» y «no viable» (`op_10_validarSolicitud.conceptoViabilidad`): el
+ * formulario no muestra el selector y envía el input vacío.
+ */
+export const CONCEPTO_FIJADO: Readonly<Record<string, string>> = {
+  bloqueado: 'Requiere más información',
+  no_viable: 'No Viable (Rechazado)',
+};
 
 /** Los errores por ruta (`grupo.campo`); vacío = se puede enviar. */
 export function erroresDe(cuerpo: CuerpoDelContrato): Record<string, string> {
@@ -33,21 +37,27 @@ export function erroresDe(cuerpo: CuerpoDelContrato): Record<string, string> {
 }
 
 /**
- * Reglas propias de la pantalla, que espejan las constraints del contrato: el concepto es obligatorio si es viable o
- * no viable, es una de las cuatro opciones de HubSpot y, si no es viable, es «No Viable (Rechazado)».
+ * Reglas propias de la pantalla, que espejan las constraints del contrato: con «viable» el concepto es «Aprobado
+ * (Viable)» o «Aprobado con Condiciones»; con «bloqueado» o «no viable» va vacío o es el que fija el proceso; y
+ * «Aprobado con Condiciones» exige las condiciones (supuestos).
  */
 export function erroresDePantalla(cuerpo: CuerpoDelContrato): Record<string, string> {
   const errores = erroresDe(cuerpo);
   if (cuerpo.resultado === null) errores.resultado = 'Elija el resultado de la validación.';
   const concepto = cuerpo.conceptoViabilidad ?? '';
-  const exigeConcepto = cuerpo.resultado === 'viable' || cuerpo.resultado === 'no_viable';
-  if (exigeConcepto && !concepto.trim()) {
-    errores.conceptoViabilidad = 'El concepto de viabilidad es obligatorio si la solicitud es viable o no viable.';
-  } else if (concepto !== '' && !(CONCEPTOS as readonly string[]).includes(concepto)) {
-    errores.conceptoViabilidad =
-      'El concepto de viabilidad debe ser Aprobado (Viable), Aprobado con Condiciones, No Viable (Rechazado) o Requiere más información.';
-  } else if (cuerpo.resultado === 'no_viable' && concepto !== CONCEPTO_NO_VIABLE) {
-    errores.conceptoViabilidad = 'Si la solicitud no es viable, el concepto debe ser No Viable (Rechazado).';
+  if (cuerpo.resultado === 'viable') {
+    if (!(CONCEPTOS_VIABLE as readonly string[]).includes(concepto)) {
+      errores.conceptoViabilidad =
+        'Si la solicitud es viable, el concepto debe ser Aprobado (Viable) o Aprobado con Condiciones.';
+    }
+  } else if (cuerpo.resultado !== null && cuerpo.resultado in CONCEPTO_FIJADO) {
+    const fijado = CONCEPTO_FIJADO[cuerpo.resultado];
+    if (concepto !== '' && concepto !== fijado) {
+      errores.conceptoViabilidad = `Con este resultado el concepto lo fija el proceso (${fijado}).`;
+    }
+  }
+  if (concepto === CONCEPTO_CON_CONDICIONES && !cuerpo.supuestos?.trim()) {
+    errores.supuestos = 'Si el concepto es Aprobado con Condiciones, escriba las condiciones.';
   }
   if (!cuerpo.notaValidacion?.trim()) errores.notaValidacion = 'La nota de validación es obligatoria.';
   return errores;
