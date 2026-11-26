@@ -1,6 +1,6 @@
 # Caminos del journey — Gestión de Preventa
 
-Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.4). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real.
+Tres caminos por la compuerta `gwXor_1` (v2 «Bonita-first», pool 1.5). El middleware (usuario técnico `ofelia.bot`) instancia el caso; las tareas de servicio (3, 4, 6, 11, 12, 40) y los conectores de salida corren solos contra el **mock** (`mock.json`, puerto 8099). Las tareas humanas las hace la consultora que eligió el reparto (con la carga del mock, `linda.lozano`); el actor filter `filtroConsultoraDelCaso` no se las ofrece a `viviana.velasquez`. Nunca se toca HubSpot real. Desde la versión 1.5 cada tarea humana nueva avisa por correo a la consultora asignada (`conn_correoTarea`); el journey lo comprueba con el SMTP de prueba (`localhost:2525`, `param_smtpPuerto` de Local) en **Correos esperados**.
 
 ## Camino `entregada`
 
@@ -28,6 +28,13 @@ La consultora valida «viable», Bonita pasa el ticket a «Asignado/En diseño»
 | `preventa.valoracionOperaciones` | `https://example.com/valoracion` |
 | `preventa.cantidadAdjuntos` | `1` |
 
+**Correos esperados**:
+
+| Asunto contiene | Para | CC |
+|---|---|---|
+| `Nueva tarea de Preventa: Validar la solicitud` | `linda.lozano@trycore.com` | — |
+| `Nueva tarea de Preventa: Diseñar la propuesta` | `linda.lozano@trycore.com` | — |
+
 ## Camino `bloqueada`
 
 La consultora valida «bloqueado» (falta información del lead): Bonita fija el concepto «Requiere más información», lo escribe en el Negocio con la nota de lo que falta, pasa el ticket a «En espera información del lead» y la validación vuelve a la misma consultora, que la concluye «viable» con «Aprobado con Condiciones» (las condiciones van en los supuestos) y sigue hasta la entrega sin adjuntos.
@@ -50,6 +57,14 @@ La consultora valida «bloqueado» (falta información del lead): Bonita fija el
 | `preventa.conceptoViabilidad` | `Aprobado con Condiciones` |
 | `preventa.supuestos` | `El cliente entrega el volumen real antes del diseño` |
 
+**Correos esperados**:
+
+| Asunto contiene | Para | CC |
+|---|---|---|
+| `Nueva tarea de Preventa: Validar la solicitud` | `linda.lozano@trycore.com` | — |
+| `Nueva tarea de Preventa: Validar la solicitud` | `linda.lozano@trycore.com` | — |
+| `Nueva tarea de Preventa: Diseñar la propuesta` | `linda.lozano@trycore.com` | — |
+
 ## Camino `noViable`
 
 La consultora valida «no viable» sin elegir concepto: queda la nota en HubSpot, Bonita fija y escribe «No Viable (Rechazado)» en el Negocio y pasa el ticket a «Closed» (`4`): cerrado por viabilidad (decisión de la usuaria, 2026-11-24); la nota empieza por «Cerrado por viabilidad:».
@@ -69,3 +84,9 @@ La consultora valida «no viable» sin elegir concepto: queda la nota en HubSpot
 | `preventa.consultor` | `Linda` |
 | `preventa.resultadoValidacion` | `no_viable` |
 | `preventa.conceptoViabilidad` | `No Viable (Rechazado)` |
+
+**Correos esperados**:
+
+| Asunto contiene | Para | CC |
+|---|---|---|
+| `Nueva tarea de Preventa: Validar la solicitud` | `linda.lozano@trycore.com` | — |

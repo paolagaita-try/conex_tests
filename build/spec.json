@@ -192,6 +192,22 @@
   },
   "caminos": [
     {
+      "correos": [
+        {
+          "asunto": "Nueva tarea de Preventa: Validar la solicitud",
+          "cc": [],
+          "para": [
+            "linda.lozano@trycore.com"
+          ]
+        },
+        {
+          "asunto": "Nueva tarea de Preventa: Diseñar la propuesta",
+          "cc": [],
+          "para": [
+            "linda.lozano@trycore.com"
+          ]
+        }
+      ],
       "esperado": {
         "preventa.asunto": "Preventa cliente ACME",
         "preventa.cantidadAdjuntos": 1,
@@ -255,6 +271,29 @@
       ]
     },
     {
+      "correos": [
+        {
+          "asunto": "Nueva tarea de Preventa: Validar la solicitud",
+          "cc": [],
+          "para": [
+            "linda.lozano@trycore.com"
+          ]
+        },
+        {
+          "asunto": "Nueva tarea de Preventa: Validar la solicitud",
+          "cc": [],
+          "para": [
+            "linda.lozano@trycore.com"
+          ]
+        },
+        {
+          "asunto": "Nueva tarea de Preventa: Diseñar la propuesta",
+          "cc": [],
+          "para": [
+            "linda.lozano@trycore.com"
+          ]
+        }
+      ],
       "esperado": {
         "preventa.conceptoViabilidad": "Aprobado con Condiciones",
         "preventa.estado": "entregadaAVentas",
@@ -315,6 +354,15 @@
       ]
     },
     {
+      "correos": [
+        {
+          "asunto": "Nueva tarea de Preventa: Validar la solicitud",
+          "cc": [],
+          "para": [
+            "linda.lozano@trycore.com"
+          ]
+        }
+      ],
       "esperado": {
         "preventa.conceptoViabilidad": "No Viable (Rechazado)",
         "preventa.consultor": "Linda",
@@ -352,6 +400,93 @@
   ],
   "extensiones": {
     "definiciones": {
+      "correo-tarea-asignada": {
+        "entradas": [
+          {
+            "nombre": "host",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "puerto",
+            "obligatoria": true,
+            "tipo": "java.lang.Integer"
+          },
+          {
+            "nombre": "starttls",
+            "obligatoria": false,
+            "tipo": "java.lang.Boolean"
+          },
+          {
+            "nombre": "usuario",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "contrasena",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "remitenteNombre",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "para",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "nombre",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "tarea",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "enlace",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketId",
+            "obligatoria": true,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "ticketAsunto",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "dealId",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "urlBase",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          },
+          {
+            "nombre": "rutaTickets",
+            "obligatoria": false,
+            "tipo": "java.lang.String"
+          }
+        ],
+        "implementacion": {
+          "id": "correo-tarea-asignada-impl",
+          "version": "1.0.0"
+        },
+        "modulo": "preventa-conectores",
+        "salidas": [],
+        "tipo": "conector",
+        "version": "1.0.0"
+      },
       "hubspot-archivo-subir": {
         "entradas": [
           {
@@ -1051,11 +1186,13 @@
         "rol": "integracion"
       },
       {
+        "correo": "linda.lozano@trycore.com",
         "grupo": "trycore/preventa",
         "nombre": "linda.lozano",
         "rol": "consultora"
       },
       {
+        "correo": "viviana.velasquez@trycore.com",
         "grupo": "trycore/preventa",
         "nombre": "viviana.velasquez",
         "rol": "consultora"
@@ -1135,6 +1272,33 @@
           "orden": 1,
           "salidas": [],
           "tarea": "6_actualizarTicket",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "correo-tarea-asignada",
+          "entradas": {
+            "contrasena": "return param_smtpContrasena",
+            "dealId": "return preventa.dealId ?: \"\"",
+            "enlace": "return param_bonitaUrlBase.replaceAll('/+$', '') + \"/apps/hubspotBonita/frm10ValidarSolicitud/?id=\" + activityInstanceId",
+            "host": "return param_smtpHost",
+            "nombre": "return preventa.consultor ?: \"\"",
+            "para": "def identidad = apiAccessor.getIdentityAPI(); def asignada = apiAccessor.getProcessAPI().getHumanTaskInstance(activityInstanceId).getAssigneeId(); def usuario = null; if (asignada > 0) usuario = identidad.getUser(asignada); if (usuario == null) { def nombre = \"\"; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\"); if (kv.length >= 3 && kv[0] == preventa.consultorOwnerId) nombre = kv[2] }; usuario = identidad.getUserByUserName(nombre) }; def correo = identidad.getUserContactData(usuario.getId(), false)?.getEmail(); if (!correo?.trim()) throw new RuntimeException(\"la consultora \" + usuario.getUserName() + \" no tiene correo profesional en Bonita\"); return correo.trim()",
+            "puerto": "return param_smtpPuerto as Integer",
+            "remitenteNombre": "return param_smtpRemitenteNombre",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "starttls": "return param_smtpStarttls as Boolean",
+            "tarea": "return \"Validar la solicitud\"",
+            "ticketAsunto": "return preventa.asunto ?: \"\"",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase",
+            "usuario": "return param_smtpUsuario"
+          },
+          "id": "conn_correoTarea",
+          "ignorar_errores": true,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "10_validarSolicitud",
           "tipo": "propio"
         },
         {
@@ -1247,6 +1411,33 @@
           "orden": 1,
           "salidas": [],
           "tarea": "13_registrarNoViable",
+          "tipo": "propio"
+        },
+        {
+          "definicion": "correo-tarea-asignada",
+          "entradas": {
+            "contrasena": "return param_smtpContrasena",
+            "dealId": "return preventa.dealId ?: \"\"",
+            "enlace": "return param_bonitaUrlBase.replaceAll('/+$', '') + \"/apps/hubspotBonita/frm20DisenarPropuesta/?id=\" + activityInstanceId",
+            "host": "return param_smtpHost",
+            "nombre": "return preventa.consultor ?: \"\"",
+            "para": "def identidad = apiAccessor.getIdentityAPI(); def asignada = apiAccessor.getProcessAPI().getHumanTaskInstance(activityInstanceId).getAssigneeId(); def usuario = null; if (asignada > 0) usuario = identidad.getUser(asignada); if (usuario == null) { def nombre = \"\"; param_consultores.replaceAll(\"\\\\s\",\"\").split(\";\").findAll{it}.each{ p -> def kv = p.split(\":\"); if (kv.length >= 3 && kv[0] == preventa.consultorOwnerId) nombre = kv[2] }; usuario = identidad.getUserByUserName(nombre) }; def correo = identidad.getUserContactData(usuario.getId(), false)?.getEmail(); if (!correo?.trim()) throw new RuntimeException(\"la consultora \" + usuario.getUserName() + \" no tiene correo profesional en Bonita\"); return correo.trim()",
+            "puerto": "return param_smtpPuerto as Integer",
+            "remitenteNombre": "return param_smtpRemitenteNombre",
+            "rutaTickets": "return param_hubspotRutaTickets",
+            "starttls": "return param_smtpStarttls as Boolean",
+            "tarea": "return \"Diseñar la propuesta\"",
+            "ticketAsunto": "return preventa.asunto ?: \"\"",
+            "ticketId": "return preventa.ticketId",
+            "urlBase": "return param_hubspotUrlBase",
+            "usuario": "return param_smtpUsuario"
+          },
+          "id": "conn_correoTarea",
+          "ignorar_errores": true,
+          "momento": "entrada",
+          "orden": 1,
+          "salidas": [],
+          "tarea": "20_disenarPropuesta",
           "tipo": "propio"
         },
         {
@@ -1537,7 +1728,7 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto de viabilidad depende del resultado (ver «Concepto de viabilidad» bajo Eventos)",
+          "documentacion": "Avisa por correo al crearse (1.5). La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto de viabilidad depende del resultado (ver «Concepto de viabilidad» bajo Eventos)",
           "duracion": null,
           "id": "10_validarSolicitud",
           "interruptor": null,
@@ -1581,7 +1772,7 @@
         },
         {
           "anfitrion": null,
-          "documentacion": "La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta",
+          "documentacion": "Al crearse la tarea, la consultora recibe un correo con el enlace (versión 1.5). La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta",
           "duracion": null,
           "id": "20_disenarPropuesta",
           "interruptor": null,
@@ -1920,6 +2111,69 @@
             "Production": "0",
             "Qualification": "0"
           }
+        },
+        {
+          "nombre": "param_smtpHost",
+          "tipo": "String",
+          "valores": {
+            "Local": "localhost",
+            "Production": "smtp.gmail.com",
+            "Qualification": "smtp.gmail.com"
+          }
+        },
+        {
+          "nombre": "param_smtpPuerto",
+          "tipo": "Integer",
+          "valores": {
+            "Local": "2525",
+            "Production": "587",
+            "Qualification": "587"
+          }
+        },
+        {
+          "nombre": "param_smtpStarttls",
+          "tipo": "Boolean",
+          "valores": {
+            "Local": "false",
+            "Production": "true",
+            "Qualification": "true"
+          }
+        },
+        {
+          "nombre": "param_smtpUsuario",
+          "tipo": "String",
+          "valores": {
+            "Local": "preventa@trycore.com",
+            "Production": "preventa@trycore.com",
+            "Qualification": "preventa@trycore.com"
+          }
+        },
+        {
+          "nombre": "param_smtpContrasena",
+          "tipo": "String",
+          "valores": {
+            "Local": "sin-configurar",
+            "Production": "sin-configurar",
+            "Qualification": "sin-configurar"
+          }
+        },
+        {
+          "nombre": "param_smtpRemitenteNombre",
+          "tipo": "String",
+          "valores": {
+            "Local": "Preventa Trycore",
+            "Production": "Preventa Trycore",
+            "Qualification": "Preventa Trycore"
+          }
+        },
+        {
+          "nombre": "param_bonitaUrlBase",
+          "tipo": "String",
+          "valores": {
+            "Local": "http://localhost:8080/bonita",
+            "Production": "http://localhost:8080/bonita",
+            "Qualification": "http://localhost:8080/bonita"
+          }
         }
       ],
       "transiciones": [
@@ -2034,7 +2288,7 @@
           "transitoria": false
         }
       ],
-      "version": "1.4"
+      "version": "1.5"
     }
   ],
   "proyecto": {

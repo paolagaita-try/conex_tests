@@ -6,7 +6,7 @@ import type { Lectura } from '$lib/bonita/caso';
 import type { ValorDeCampo, ValoresDelFormulario } from '$lib/ui/valores';
 
 /** Identidad del formulario: su id en la matriz, su página, su tarea, su contrato y su proceso. */
-export const FORMULARIO = { id: "frm_10_validarSolicitud", pagina: "frm10ValidarSolicitud", tipo: "tarea", tarea: "10_validarSolicitud", contrato: "ctr_10_validarSolicitud", proceso: "GestionPreventa", version: "1.4" } as const;
+export const FORMULARIO = { id: "frm_10_validarSolicitud", pagina: "frm10ValidarSolicitud", tipo: "tarea", tarea: "10_validarSolicitud", contrato: "ctr_10_validarSolicitud", proceso: "GestionPreventa", version: "1.5" } as const;
 
 /** Todos los inputs del contrato, en su orden: el cuerpo los lleva siempre. */
 export const ENTRADAS = ["resultado", "conceptoViabilidad", "notaValidacion", "supuestos"] as const;

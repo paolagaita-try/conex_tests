@@ -12,6 +12,9 @@
       <firstName>Linda.lozano</firstName>
       <lastName>Consultora</lastName>
       <jobTitle>Consultora</jobTitle>
+      <professionalData>
+        <email>linda.lozano@trycore.com</email>
+      </professionalData>
       <enabled>true</enabled>
       <password encrypted="false">bpm</password>
     </user>
@@ -19,6 +22,9 @@
       <firstName>Viviana.velasquez</firstName>
       <lastName>Consultora</lastName>
       <jobTitle>Consultora</jobTitle>
+      <professionalData>
+        <email>viviana.velasquez@trycore.com</email>
+      </professionalData>
       <enabled>true</enabled>
       <password encrypted="false">bpm</password>
     </user>

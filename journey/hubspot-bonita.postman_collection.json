@@ -349,6 +349,33 @@
       "name": "entregada",
       "item": [
         {
+          "name": "[entregada] 0. vaciar el SMTP de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{smtpUrl}}/mensajes",
+              "host": [
+                "{{smtpUrl}}"
+              ],
+              "path": [
+                "mensajes"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"SMTP de prueba vaciado (¿está arrancado? tools/run-journey.sh lo levanta)\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "[entregada] 1. login ofelia.bot",
           "request": {
             "method": "POST",
@@ -399,7 +426,7 @@
           ]
         },
         {
-          "name": "[entregada] 1. proceso GestionPreventa 1.4",
+          "name": "[entregada] 1. proceso GestionPreventa 1.5",
           "request": {
             "method": "GET",
             "header": [
@@ -409,7 +436,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.4&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.5&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -425,7 +452,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.4"
+                  "value": "version=1.5"
                 },
                 {
                   "key": "f",
@@ -448,8 +475,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.4 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.4\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.5 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.5\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -1648,12 +1675,83 @@
               }
             }
           ]
+        },
+        {
+          "name": "[entregada] 5. correos recibidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{smtpUrl}}/mensajes",
+              "host": [
+                "{{smtpUrl}}"
+              ],
+              "path": [
+                "mensajes"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = r.length >= 2;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[entregada] 5. correos recibidos\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"SMTP de prueba 200\", () => pm.response.to.have.status(200));",
+                  "const ESPERADOS = [{\"asunto\": \"Nueva tarea de Preventa: Validar la solicitud\", \"para\": [\"linda.lozano@trycore.com\"], \"cc\": []}, {\"asunto\": \"Nueva tarea de Preventa: Diseñar la propuesta\", \"para\": [\"linda.lozano@trycore.com\"], \"cc\": []}];",
+                  "const norm = (xs) => (xs || []).map(x => String(x).toLowerCase()).sort();",
+                  "const igual = (a, b) => JSON.stringify(norm(a)) === JSON.stringify(norm(b));",
+                  "const casa = (e, m) => String(m.asunto).includes(e.asunto) && igual(e.para, m.para) && igual(e.cc, m.cc);",
+                  "const asignar = (k, libres) => k === ESPERADOS.length || libres.some((m, j) => casa(ESPERADOS[k], m) && asignar(k + 1, libres.filter((_, x) => x !== j)));",
+                  "const recibidos = r.map(m => \"«\" + m.asunto + \"» → \" + norm(m.para).join(\", \") + (m.cc && m.cc.length ? \" cc \" + norm(m.cc).join(\", \") : \"\")).join(\"; \") || \"ninguno\";",
+                  "pm.test(\"2 correos recibidos\", () => pm.expect(r.length, \"recibidos: \" + recibidos).to.eql(2));",
+                  "pm.test(\"correo «Nueva tarea de Preventa: Validar la solicitud» para linda.lozano@trycore.com\", () => pm.expect(r.some(m => casa(ESPERADOS[0], m)), \"recibidos: \" + recibidos).to.be.true);",
+                  "pm.test(\"correo «Nueva tarea de Preventa: Diseñar la propuesta» para linda.lozano@trycore.com\", () => pm.expect(r.some(m => casa(ESPERADOS[1], m)), \"recibidos: \" + recibidos).to.be.true);",
+                  "pm.test(\"cada correo esperado casa con uno distinto\", () => pm.expect(asignar(0, r), \"recibidos: \" + recibidos).to.be.true);"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
       "name": "bloqueada",
       "item": [
+        {
+          "name": "[bloqueada] 0. vaciar el SMTP de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{smtpUrl}}/mensajes",
+              "host": [
+                "{{smtpUrl}}"
+              ],
+              "path": [
+                "mensajes"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"SMTP de prueba vaciado (¿está arrancado? tools/run-journey.sh lo levanta)\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
         {
           "name": "[bloqueada] 1. login ofelia.bot",
           "request": {
@@ -1705,7 +1803,7 @@
           ]
         },
         {
-          "name": "[bloqueada] 1. proceso GestionPreventa 1.4",
+          "name": "[bloqueada] 1. proceso GestionPreventa 1.5",
           "request": {
             "method": "GET",
             "header": [
@@ -1715,7 +1813,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.4&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.5&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1731,7 +1829,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.4"
+                  "value": "version=1.5"
                 },
                 {
                   "key": "f",
@@ -1754,8 +1852,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.4 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.4\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.5 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.5\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -2994,12 +3092,84 @@
               }
             }
           ]
+        },
+        {
+          "name": "[bloqueada] 5. correos recibidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{smtpUrl}}/mensajes",
+              "host": [
+                "{{smtpUrl}}"
+              ],
+              "path": [
+                "mensajes"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = r.length >= 3;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[bloqueada] 5. correos recibidos\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"SMTP de prueba 200\", () => pm.response.to.have.status(200));",
+                  "const ESPERADOS = [{\"asunto\": \"Nueva tarea de Preventa: Validar la solicitud\", \"para\": [\"linda.lozano@trycore.com\"], \"cc\": []}, {\"asunto\": \"Nueva tarea de Preventa: Validar la solicitud\", \"para\": [\"linda.lozano@trycore.com\"], \"cc\": []}, {\"asunto\": \"Nueva tarea de Preventa: Diseñar la propuesta\", \"para\": [\"linda.lozano@trycore.com\"], \"cc\": []}];",
+                  "const norm = (xs) => (xs || []).map(x => String(x).toLowerCase()).sort();",
+                  "const igual = (a, b) => JSON.stringify(norm(a)) === JSON.stringify(norm(b));",
+                  "const casa = (e, m) => String(m.asunto).includes(e.asunto) && igual(e.para, m.para) && igual(e.cc, m.cc);",
+                  "const asignar = (k, libres) => k === ESPERADOS.length || libres.some((m, j) => casa(ESPERADOS[k], m) && asignar(k + 1, libres.filter((_, x) => x !== j)));",
+                  "const recibidos = r.map(m => \"«\" + m.asunto + \"» → \" + norm(m.para).join(\", \") + (m.cc && m.cc.length ? \" cc \" + norm(m.cc).join(\", \") : \"\")).join(\"; \") || \"ninguno\";",
+                  "pm.test(\"3 correos recibidos\", () => pm.expect(r.length, \"recibidos: \" + recibidos).to.eql(3));",
+                  "pm.test(\"correo «Nueva tarea de Preventa: Validar la solicitud» para linda.lozano@trycore.com\", () => pm.expect(r.some(m => casa(ESPERADOS[0], m)), \"recibidos: \" + recibidos).to.be.true);",
+                  "pm.test(\"correo «Nueva tarea de Preventa: Validar la solicitud» para linda.lozano@trycore.com\", () => pm.expect(r.some(m => casa(ESPERADOS[1], m)), \"recibidos: \" + recibidos).to.be.true);",
+                  "pm.test(\"correo «Nueva tarea de Preventa: Diseñar la propuesta» para linda.lozano@trycore.com\", () => pm.expect(r.some(m => casa(ESPERADOS[2], m)), \"recibidos: \" + recibidos).to.be.true);",
+                  "pm.test(\"cada correo esperado casa con uno distinto\", () => pm.expect(asignar(0, r), \"recibidos: \" + recibidos).to.be.true);"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
       "name": "noViable",
       "item": [
+        {
+          "name": "[noViable] 0. vaciar el SMTP de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{smtpUrl}}/mensajes",
+              "host": [
+                "{{smtpUrl}}"
+              ],
+              "path": [
+                "mensajes"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"SMTP de prueba vaciado (¿está arrancado? tools/run-journey.sh lo levanta)\", () => pm.expect([200, 204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
         {
           "name": "[noViable] 1. login ofelia.bot",
           "request": {
@@ -3051,7 +3221,7 @@
           ]
         },
         {
-          "name": "[noViable] 1. proceso GestionPreventa 1.4",
+          "name": "[noViable] 1. proceso GestionPreventa 1.5",
           "request": {
             "method": "GET",
             "header": [
@@ -3061,7 +3231,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.4&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
+              "raw": "{{baseUrl}}/API/bpm/process?f=name=GestionPreventa&f=version=1.5&f=user_id={{userId_ofelia.bot}}&p=0&c=10",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3077,7 +3247,7 @@
                 },
                 {
                   "key": "f",
-                  "value": "version=1.4"
+                  "value": "version=1.5"
                 },
                 {
                   "key": "f",
@@ -3100,8 +3270,8 @@
               "script": {
                 "exec": [
                   "const p = pm.response.json();",
-                  "pm.test(\"no hay un proceso GestionPreventa 1.4 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
-                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.4\"));",
+                  "pm.test(\"no hay un proceso GestionPreventa 1.5 que ofelia.bot pueda iniciar (el archive no se instaló o el usuario no es candidato del iniciador)\", () => pm.expect(p.length).to.eql(1));",
+                  "pm.test(\"versión esperada\", () => pm.expect(p[0].version).to.eql(\"1.5\"));",
                   "pm.test(\"habilitado\", () => pm.expect(p[0].activationState).to.eql(\"ENABLED\"));",
                   "pm.collectionVariables.set(\"processId\", p[0].id);"
                 ]
@@ -3760,6 +3930,49 @@
               }
             }
           ]
+        },
+        {
+          "name": "[noViable] 3. correos recibidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{smtpUrl}}/mensajes",
+              "host": [
+                "{{smtpUrl}}"
+              ],
+              "path": [
+                "mensajes"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const r = pm.response.code === 200 ? pm.response.json() : [];",
+                  "const inicio = Number(pm.variables.get(\"sondeoInicio\")) || Date.now();",
+                  "pm.collectionVariables.set(\"sondeoInicio\", String(inicio));",
+                  "const listo = r.length >= 1;",
+                  "if (!listo && Date.now() - inicio < 60000) { setTimeout(() => {}, 2000); postman.setNextRequest(\"[noViable] 3. correos recibidos\"); return; }",
+                  "pm.collectionVariables.set(\"sondeoInicio\", \"\");",
+                  "const esperaMs = Date.now() - inicio;",
+                  "pm.test(\"SMTP de prueba 200\", () => pm.response.to.have.status(200));",
+                  "const ESPERADOS = [{\"asunto\": \"Nueva tarea de Preventa: Validar la solicitud\", \"para\": [\"linda.lozano@trycore.com\"], \"cc\": []}];",
+                  "const norm = (xs) => (xs || []).map(x => String(x).toLowerCase()).sort();",
+                  "const igual = (a, b) => JSON.stringify(norm(a)) === JSON.stringify(norm(b));",
+                  "const casa = (e, m) => String(m.asunto).includes(e.asunto) && igual(e.para, m.para) && igual(e.cc, m.cc);",
+                  "const asignar = (k, libres) => k === ESPERADOS.length || libres.some((m, j) => casa(ESPERADOS[k], m) && asignar(k + 1, libres.filter((_, x) => x !== j)));",
+                  "const recibidos = r.map(m => \"«\" + m.asunto + \"» → \" + norm(m.para).join(\", \") + (m.cc && m.cc.length ? \" cc \" + norm(m.cc).join(\", \") : \"\")).join(\"; \") || \"ninguno\";",
+                  "pm.test(\"1 correos recibidos\", () => pm.expect(r.length, \"recibidos: \" + recibidos).to.eql(1));",
+                  "pm.test(\"correo «Nueva tarea de Preventa: Validar la solicitud» para linda.lozano@trycore.com\", () => pm.expect(r.some(m => casa(ESPERADOS[0], m)), \"recibidos: \" + recibidos).to.be.true);",
+                  "pm.test(\"cada correo esperado casa con uno distinto\", () => pm.expect(asignar(0, r), \"recibidos: \" + recibidos).to.be.true);"
+                ]
+              }
+            }
+          ]
         }
       ]
     }
@@ -3788,6 +4001,10 @@
     {
       "key": "anfitrionaVista",
       "value": ""
+    },
+    {
+      "key": "smtpUrl",
+      "value": "http://127.0.0.1:8025"
     }
   ]
 }

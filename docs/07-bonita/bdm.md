@@ -1,5 +1,5 @@
 ---
-actualizado: 2026-11-24
+actualizado: 2026-11-26
 capa: 0
 motor: Bonita
 deriva_de: docs/07-bonita/insumo-preventa/reunion-socializacion.md, docs/07-bonita/insumo-preventa/Proceso_Preventa_Bonita.bpmn, docs/08-construccion/fase-0-descubrimiento-hubspot.md, docs/00-parametros/catalogo-parametros.md
@@ -75,8 +75,17 @@ Traza a: ticket del pipeline «Mesa de preventa», actividades `A03`–`A06` y `
 | `param_stageCerrado` | String | parámetro de proceso | `GestionPreventa` › `param_stageCerrado` | Equipo de operación (configuración del entorno) |
 | `param_consultores` | String | parámetro de proceso | `GestionPreventa` › `param_consultores` | Equipo de operación (configuración del entorno) |
 | `param_pipelineTickets` | String | parámetro de proceso | `GestionPreventa` › `param_pipelineTickets` | Equipo de operación (configuración del entorno) |
+| `param_smtpHost` | String | parámetro de proceso | `GestionPreventa` › `param_smtpHost` | Equipo de operación (configuración del entorno) |
+| `param_smtpPuerto` | Integer | parámetro de proceso | `GestionPreventa` › `param_smtpPuerto` | Equipo de operación (configuración del entorno) |
+| `param_smtpStarttls` | Boolean | parámetro de proceso | `GestionPreventa` › `param_smtpStarttls` | Equipo de operación (configuración del entorno) |
+| `param_smtpUsuario` | String | parámetro de proceso | `GestionPreventa` › `param_smtpUsuario` | Equipo de operación (configuración del entorno) |
+| `param_smtpContrasena` | String | parámetro de proceso | `GestionPreventa` › `param_smtpContrasena` | Equipo de operación (configuración del entorno) |
+| `param_smtpRemitenteNombre` | String | parámetro de proceso | `GestionPreventa` › `param_smtpRemitenteNombre` | Equipo de operación (configuración del entorno) |
+| `param_bonitaUrlBase` | String | parámetro de proceso | `GestionPreventa` › `param_bonitaUrlBase` | Equipo de operación (configuración del entorno) |
 
 **Representación**: todos son **técnicos por entorno** (parámetros de proceso). El token de la Private App de HubSpot **no es un parámetro**: vive solo en la variable de entorno `HUBSPOT_PRIVATE_APP_TOKEN` del servidor.
+
+**Correo** (versión 1.5): los siete `param_smtp*` y `param_bonitaUrlBase` los usa el aviso de tarea nueva (`conn_correoTarea`). En Local apuntan al SMTP de prueba del journey (`localhost:2525`, sin cifrado ni contraseña); en Qualification y Production a Gmail / Google Workspace (`smtp.gmail.com:587` con STARTTLS). **La contraseña de aplicación nunca va en el repositorio**: `param_smtpContrasena` lleva el marcador `sin-configurar` y entonces el conector la lee de la variable de entorno `PREVENTA_SMTP_CONTRASENA` del servidor (como el token de HubSpot); con un valor real en el parámetro (Subscription, editado en el portal), gana el parámetro. Con contraseña y sin STARTTLS, el conector no envía nada. La cuenta remitente `preventa@trycore.com` y `param_bonitaUrlBase` están **por confirmar** con infraestructura (ver Pendientes).
 
 Valores por entorno (Local apunta al doble de pruebas `mock.json`; los `stageId` son los reales de la Fase 0, pipeline «Mesa de preventa» id `0`):
 
@@ -91,6 +100,13 @@ Valores por entorno (Local apunta al doble de pruebas `mock.json`; los `stageId`
 | `param_stageCerrado` | `4` | `4` | `4` |
 | `param_consultores` | `89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez` | `89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez` | `89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez` |
 | `param_pipelineTickets` | `0` | `0` | `0` |
+| `param_smtpHost` | `localhost` | `smtp.gmail.com` | `smtp.gmail.com` |
+| `param_smtpPuerto` | `2525` | `587` | `587` |
+| `param_smtpStarttls` | `false` | `true` | `true` |
+| `param_smtpUsuario` | `preventa@trycore.com` | `preventa@trycore.com` | `preventa@trycore.com` |
+| `param_smtpContrasena` | `sin-configurar` | `sin-configurar` | `sin-configurar` |
+| `param_smtpRemitenteNombre` | `Preventa Trycore` | `Preventa Trycore` | `Preventa Trycore` |
+| `param_bonitaUrlBase` | `http://localhost:8080/bonita` | `http://localhost:8080/bonita` | `http://localhost:8080/bonita` |
 
 `param_consultores` es la lista de quienes entran en el reparto, en orden: tríos «owner de HubSpot:nombre:usuario de Bonita» separados por «;» (v2, 2026-11-24: se añade el usuario de Bonita, que el actor filter `filtroConsultoraDelCaso` usa para que la tarea llegue solo a la consultora elegida). Un par antiguo sin usuario sigue sirviendo para el reparto, pero la tarea humana quedaría en fallo al asignarse. Quitar a alguien del reparto (vacaciones, incapacidad) es quitar su par. El bot `88449388` («Trynion») nunca va en la lista.
 
@@ -108,14 +124,16 @@ Valores por entorno (Local apunta al doble de pruebas `mock.json`; los `stageId`
 | Usuario | Grupo / rol | Manager | Correo |
 |---|---|---|---|
 | `ofelia.bot` | `/trycore/integracion` / `integracion` | — | — |
-| `linda.lozano` | `/trycore/preventa` / `consultora` | — | — |
-| `viviana.velasquez` | `/trycore/preventa` / `consultora` | — | — |
+| `linda.lozano` | `/trycore/preventa` / `consultora` | — | `linda.lozano@trycore.com` |
+| `viviana.velasquez` | `/trycore/preventa` / `consultora` | — | `viviana.velasquez@trycore.com` |
 
 | Actor filter | Tarea que asigna | Definición | Entradas |
 |---|---|---|---|
 | `filtroConsultoraDelCaso` | `10_validarSolicitud`, `20_disenarPropuesta` | `usuario-por-nombre` | `usuario` ← `el usuario de Bonita que param_consultores da al owner de HubSpot del consultor asignado` (`flt_filtroConsultoraDelCaso.usuario`) |
 
 `ofelia.bot` es el usuario técnico con el que el middleware instancia el caso. Las consultoras (`linda.lozano` = owner HubSpot `89450376`, `viviana.velasquez` = owner `89450377`) son usuarias de Bonita desde la v2: trabajan sus tareas en formularios de Bonita. El actor filter `usuario-por-nombre` (módulo propio `bonita-project/extensions/preventa-filtros`) entrega cada tarea humana **solo** a la consultora que eligió el reparto y se la asigna directamente; si el usuario no existe, la tarea queda en fallo en lugar de llegar a otra persona. El enlace owner → usuario vive en `param_consultores`.
+
+El **correo** de cada consultora es su correo profesional en Bonita: a él llega el aviso de cada tarea nueva (`conn_correoTarea`, versión 1.5). El usuario de Bonita (`linda.lozano`, `viviana.velasquez`) no cambia.
 
 **Contraseña de prueba**: `bpm` (solo entornos de prueba).
 
@@ -152,4 +170,5 @@ No hay componentes propios: `frm_10_validarSolicitud`, `frm_20_disenarPropuesta`
 
 - **Dónde vive la lista de consultoras**: se documenta como parámetro de proceso (`param_consultores`). En Bonita Community cambiarlo exige volver a desplegar el proceso; en Subscription se edita en caliente. La alternativa (un catálogo en el BDM) necesitaría además una pantalla o un proceso para mantenerlo, que nadie pidió. Requiere confirmación.
 - **Tipo de `concepto_viabilidad` y `valoracion_operaciones` en HubSpot**: verificado por GET al esquema el 2026-11-25. `concepto_viabilidad` es una enumeración (select, valor interno = etiqueta) de cuatro opciones y `valoracion_operaciones` una URL. En el BDM siguen como `TEXT`; las opciones y el formato los exige el contrato (`contratos.md`; desde la versión 1.4, qué concepto vale con cada resultado).
+- **Cuenta remitente y URL de Bonita del correo** (versión 1.5): `preventa@trycore.com` es una propuesta; infraestructura confirma la cuenta de Google Workspace que envía, genera su contraseña de aplicación (verificación en dos pasos activa) y la pone en `PREVENTA_SMTP_CONTRASENA` del servidor. `param_bonitaUrlBase` sigue en `http://localhost:8080/bonita` hasta que haya URL pública. `[no verificado]` contra Gmail real.
 - **Escritura real en HubSpot** (`PATCH` del ticket): nunca ejecutada. La lectura y la búsqueda sí se verificaron en vivo el 2026-11-12. `[no verificado]`

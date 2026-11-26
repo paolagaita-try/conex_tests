@@ -1,10 +1,10 @@
 ---
-actualizado: 2026-11-25
+actualizado: 2026-11-26
 capa: 1
 motor: Bonita
 deriva_de: docs/07-bonita/insumo-preventa/reunion-socializacion.md, docs/07-bonita/insumo-preventa/Proceso_Preventa_Bonita.bpmn, docs/07-bonita/bdm.md, docs/08-construccion/plan-v2-bonita-first.md
 pool: GestionPreventa
-version: 1.4
+version: 1.5
 ---
 
 # Capa 1 — Proceso BPMN para Bonita — Gestión de Preventa
@@ -22,7 +22,7 @@ version: 1.4
 
 ## Pool y lanes
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | Lane | Actor (actores-proceso.md) | Grupo/rol (bdm.md → Organización) | Actor Bonita | Actor filter |
 |---|---|---|---|---|
@@ -35,7 +35,7 @@ El carril Orquestador es el usuario técnico del middleware y las tareas automá
 
 ## Diagrama
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 ```mermaid
 flowchart LR
@@ -66,7 +66,7 @@ flowchart LR
 
 ## Inventario de tareas
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | ID | Nombre | Tipo Bonita | Lane / actor | Fuente en §12 | Contrato (capa 2) | Conector / comunicación | Operaciones previstas | Notas |
 |---|---|---|---|---|---|---|---|---|
@@ -74,17 +74,17 @@ flowchart LR
 | `4_verificarDisponibilidad` | Verificar la carga de los consultores | service | Orquestador | insumo `A04`; reunión 04:49 | — | `conn_hubspotCarga` (síncrono) | según plantilla | Suma en HubSpot la carga **ponderada por prioridad** de cada consultor de `param_consultores` en los stages «En validación» y «Asignado/En diseño» y devuelve el de menor carga (regla y pesos completos bajo la tabla de conectores) |
 | `5_asignarConsultor` | Asignar consultor preventa | script | Orquestador | insumo `A05`; reunión 03:45 | — | — | según plantilla | Guarda en el caso al consultor que eligió `4_verificarDisponibilidad` |
 | `6_actualizarTicket` | Actualizar estado y propietario del ticket en HubSpot | service | Orquestador | insumo `A06`; reunión 11:01 | — | `conn_hubspotActualizar` (síncrono) | según plantilla | Fija el propietario y pasa el ticket a «En validación» |
-| `10_validarSolicitud` | Validar la solicitud | human | Consultoras | plan v2 paso 3; insumo `A07`, `A38` | `ctr_10_validarSolicitud` | `conn_hubspotNota` (síncrono, a la salida) | según plantilla | La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto de viabilidad depende del resultado (ver «Concepto de viabilidad» bajo Eventos) |
+| `10_validarSolicitud` | Validar la solicitud | human | Consultoras | plan v2 paso 3; insumo `A07`, `A38` | `ctr_10_validarSolicitud` | `conn_correoTarea` (síncrono, a la entrada, `IGNORE`), `conn_hubspotNota` (síncrono, a la salida) | según plantilla | Avisa por correo al crearse (1.5). La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto de viabilidad depende del resultado (ver «Concepto de viabilidad» bajo Eventos) |
 | `11_pasarADiseno` | Pasar el ticket a «Asignado/En diseño» | service | Orquestador | plan v2 paso 3; reunión 10:15 | — | `conn_hubspotActualizar`, `conn_hubspotNegocio` (síncronos) | según plantilla | Antes la movía a mano la consultora; ahora Bonita al validar viable. Escribe también `concepto_viabilidad` en el Negocio |
 | `12_pasarAEnEspera` | Pasar el ticket a «En espera información del lead» | service | Orquestador | plan v2 paso 3; versión 1.4 | — | `conn_hubspotActualizar`, `conn_hubspotNegocio` (síncronos) | según plantilla | Validación bloqueada por falta de información del lead; escribe `concepto_viabilidad` = «Requiere más información» en el Negocio; el caso vuelve a `10_validarSolicitud` |
 | `13_registrarNoViable` | Cerrar por viabilidad | service | Orquestador | plan v2 paso 3; insumo `EE4`; decisión de la usuaria, 2026-11-24 | — | `conn_hubspotNegocio`, `conn_hubspotActualizar` (síncronos) | según plantilla | Escribe `concepto_viabilidad` = «No Viable (Rechazado)» en el Negocio y pasa el ticket a «Closed» (`4`), «cerrado por viabilidad» |
-| `20_disenarPropuesta` | Diseñar la propuesta | human | Consultoras | plan v2 paso 4; insumo `A15`–`A18` | `ctr_20_disenarPropuesta` | `conn_hubspotNegocio`, `conn_hubspotNota` (síncronos, a la salida) | según plantilla | La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta |
+| `20_disenarPropuesta` | Diseñar la propuesta | human | Consultoras | plan v2 paso 4; insumo `A15`–`A18` | `ctr_20_disenarPropuesta` | `conn_correoTarea` (síncrono, a la entrada, `IGNORE`), `conn_hubspotNegocio`, `conn_hubspotNota` (síncronos, a la salida) | según plantilla | Al crearse la tarea, la consultora recibe un correo con el enlace (versión 1.5). La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta |
 | `21_subirAdjuntos` | Subir los adjuntos de la propuesta al Negocio | service | Orquestador | plan v2 paso 4 | — | `conn_hubspotArchivos` (síncrono) | según plantilla | Solo si la consultora adjuntó documentos (`gwXor_2`): el conector exige una lista no vacía |
 | `40_entregarAVentas` | Cambiar estado del ticket a «Entregado a ventas» | service | Orquestador | insumo `A40`; reunión 28:22 | — | `conn_hubspotActualizar` (síncrono) | según plantilla | No cambia el propietario |
 
 ## Compuertas
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | ID | Tipo | Después de | Variable o atributo que decide | Salidas (condición → destino) | Salida por defecto |
 |---|---|---|---|---|---|
@@ -93,7 +93,7 @@ flowchart LR
 
 ## Eventos
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | ID | Tipo | Posición (inicio / intermedio / borde de `<tarea>` / fin) | Disparador o duración | Fuente en §12 | Destino |
 |---|---|---|---|---|---|
@@ -117,7 +117,7 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 
 ## Transiciones
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | Desde | Hacia | Condición (si aplica) | Variable que la evalúa | Δestado (catalogo-estados.md) |
 |---|---|---|---|---|
@@ -141,13 +141,14 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 
 ## Conectores por tarea
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | Tarea | Conector (catalogo-conectores.md) | Modo | Momento (entrada / salida de la tarea) | Entrada (process variable o atributo) | Salida (destino) | Manejo de fallo |
 |---|---|---|---|---|---|---|
 | `3_consultarTicket` | `conn_hubspotLeer` (propio `hubspot-ticket-leer`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotLeer.3_consultarTicket.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotLeer.3_consultarTicket.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotLeer.3_consultarTicket.ticketId`) | `Preventa.asunto` ← `asunto`; `Preventa.dealId` ← `dealId` | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `4_verificarDisponibilidad` | `conn_hubspotCarga` (propio `hubspot-consultores-menor-carga`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotCarga.4_verificarDisponibilidad.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotCarga.4_verificarDisponibilidad.rutaTickets`); `pipelineId` ← `el pipeline de tickets del entorno` (`conn_hubspotCarga.4_verificarDisponibilidad.pipelineId`); `ownerIds` ← `los owners de param_consultores, en su orden, separados por coma` (`conn_hubspotCarga.4_verificarDisponibilidad.ownerIds`); `stages` ← `los stages En validación y Asignado/En diseño del entorno, separados por coma` (`conn_hubspotCarga.4_verificarDisponibilidad.stages`); `ultimoOwnerId` ← `el owner del consultor del caso asignado más recientemente según la consulta findAsignadasRecientes, o vacío si no hay ninguno` (`conn_hubspotCarga.4_verificarDisponibilidad.ultimoOwnerId`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotCarga.4_verificarDisponibilidad.ticketId`) | `pv ownerElegido` ← `ownerElegido` | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `6_actualizarTicket` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.6_actualizarTicket.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.6_actualizarTicket.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.6_actualizarTicket.ticketId`); `stageId` ← `el stage En validación del entorno` (`conn_hubspotActualizar.6_actualizarTicket.stageId`); `ownerId` ← `el owner de HubSpot del consultor asignado` (`conn_hubspotActualizar.6_actualizarTicket.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
+| `10_validarSolicitud` | `conn_correoTarea` (propio `correo-tarea-asignada`) | síncrono | entrada | `host` ← `el servidor SMTP del entorno` (`conn_correoTarea.10_validarSolicitud.host`); `puerto` ← `el puerto SMTP del entorno` (`conn_correoTarea.10_validarSolicitud.puerto`); `starttls` ← `si el entorno cifra la conexión SMTP con STARTTLS` (`conn_correoTarea.10_validarSolicitud.starttls`); `usuario` ← `la cuenta remitente del entorno, que también autentica` (`conn_correoTarea.10_validarSolicitud.usuario`); `contrasena` ← `la contraseña de aplicación de la cuenta remitente (marcador sin-configurar en el repositorio: el conector usa entonces la variable de entorno PREVENTA_SMTP_CONTRASENA del servidor)` (`conn_correoTarea.10_validarSolicitud.contrasena`); `remitenteNombre` ← `el nombre visible del remitente` (`conn_correoTarea.10_validarSolicitud.remitenteNombre`); `para` ← `el correo profesional en Bonita de la consultora a la que se asignó la tarea (o, si todavía no está asignada, de la que param_consultores da al consultor del caso)` (`conn_correoTarea.10_validarSolicitud.para`); `nombre` ← `el nombre del consultor del caso` (`conn_correoTarea.10_validarSolicitud.nombre`); `tarea` ← `el nombre de la tarea` (`conn_correoTarea.10_validarSolicitud.tarea`); `enlace` ← `la dirección de la tarea en la aplicación de Bonita del entorno` (`conn_correoTarea.10_validarSolicitud.enlace`); `ticketId` ← `el identificador del ticket del caso` (`conn_correoTarea.10_validarSolicitud.ticketId`); `ticketAsunto` ← `el asunto del ticket del caso` (`conn_correoTarea.10_validarSolicitud.ticketAsunto`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_correoTarea.10_validarSolicitud.dealId`); `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_correoTarea.10_validarSolicitud.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_correoTarea.10_validarSolicitud.rutaTickets`) | — | `IGNORE`: si el correo no sale, la tarea se asigna igual, el caso sigue y el fallo queda en el log del servidor |
 | `10_validarSolicitud` | `conn_hubspotNota` (propio `hubspot-nota-crear`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNota.10_validarSolicitud.urlBase`); `cuerpo` ← `el resultado, el concepto, la nota y los supuestos de la validación (con el título Condiciones si el concepto es Aprobado con Condiciones); si es no viable empieza por Cerrado por viabilidad:` (`conn_hubspotNota.10_validarSolicitud.cuerpo`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotNota.10_validarSolicitud.ticketId`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNota.10_validarSolicitud.dealId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `11_pasarADiseno` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.11_pasarADiseno.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.11_pasarADiseno.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.11_pasarADiseno.ticketId`); `stageId` ← `el stage Asignado/En diseño del entorno` (`conn_hubspotActualizar.11_pasarADiseno.stageId`); `ownerId` ← `vacío, no cambia el propietario` (`conn_hubspotActualizar.11_pasarADiseno.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `11_pasarADiseno` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.11_pasarADiseno.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.11_pasarADiseno.dealId`); `propiedadesJson` ← `el concepto de viabilidad como propiedad concepto_viabilidad, en JSON` (`conn_hubspotNegocio.11_pasarADiseno.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
@@ -155,10 +156,13 @@ Las tareas humanas no llevan temporizador de borde: HubSpot ya vigila los ANS de
 | `12_pasarAEnEspera` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.12_pasarAEnEspera.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.12_pasarAEnEspera.dealId`); `propiedadesJson` ← `el concepto de viabilidad como propiedad concepto_viabilidad, en JSON` (`conn_hubspotNegocio.12_pasarAEnEspera.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `13_registrarNoViable` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.13_registrarNoViable.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.13_registrarNoViable.dealId`); `propiedadesJson` ← `el concepto de viabilidad como propiedad concepto_viabilidad, en JSON` (`conn_hubspotNegocio.13_registrarNoViable.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `13_registrarNoViable` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.13_registrarNoViable.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.13_registrarNoViable.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.13_registrarNoViable.ticketId`); `stageId` ← `el stage Closed del entorno` (`conn_hubspotActualizar.13_registrarNoViable.stageId`); `ownerId` ← `vacío, no cambia el propietario` (`conn_hubspotActualizar.13_registrarNoViable.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
+| `20_disenarPropuesta` | `conn_correoTarea` (propio `correo-tarea-asignada`) | síncrono | entrada | `host` ← `el servidor SMTP del entorno` (`conn_correoTarea.20_disenarPropuesta.host`); `puerto` ← `el puerto SMTP del entorno` (`conn_correoTarea.20_disenarPropuesta.puerto`); `starttls` ← `si el entorno cifra la conexión SMTP con STARTTLS` (`conn_correoTarea.20_disenarPropuesta.starttls`); `usuario` ← `la cuenta remitente del entorno, que también autentica` (`conn_correoTarea.20_disenarPropuesta.usuario`); `contrasena` ← `la contraseña de aplicación de la cuenta remitente (marcador sin-configurar en el repositorio: el conector usa entonces la variable de entorno PREVENTA_SMTP_CONTRASENA del servidor)` (`conn_correoTarea.20_disenarPropuesta.contrasena`); `remitenteNombre` ← `el nombre visible del remitente` (`conn_correoTarea.20_disenarPropuesta.remitenteNombre`); `para` ← `el correo profesional en Bonita de la consultora a la que se asignó la tarea (o, si todavía no está asignada, de la que param_consultores da al consultor del caso)` (`conn_correoTarea.20_disenarPropuesta.para`); `nombre` ← `el nombre del consultor del caso` (`conn_correoTarea.20_disenarPropuesta.nombre`); `tarea` ← `el nombre de la tarea` (`conn_correoTarea.20_disenarPropuesta.tarea`); `enlace` ← `la dirección de la tarea en la aplicación de Bonita del entorno` (`conn_correoTarea.20_disenarPropuesta.enlace`); `ticketId` ← `el identificador del ticket del caso` (`conn_correoTarea.20_disenarPropuesta.ticketId`); `ticketAsunto` ← `el asunto del ticket del caso` (`conn_correoTarea.20_disenarPropuesta.ticketAsunto`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_correoTarea.20_disenarPropuesta.dealId`); `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_correoTarea.20_disenarPropuesta.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_correoTarea.20_disenarPropuesta.rutaTickets`) | — | `IGNORE`: si el correo no sale, la tarea se asigna igual, el caso sigue y el fallo queda en el log del servidor |
 | `20_disenarPropuesta` | `conn_hubspotNegocio` (propio `hubspot-negocio-actualizar`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNegocio.20_disenarPropuesta.urlBase`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNegocio.20_disenarPropuesta.dealId`); `propiedadesJson` ← `las cuatro propiedades de artefactos del Negocio, en JSON` (`conn_hubspotNegocio.20_disenarPropuesta.propiedadesJson`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `20_disenarPropuesta` | `conn_hubspotNota` (propio `hubspot-nota-crear`) | síncrono | salida | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotNota.20_disenarPropuesta.urlBase`); `cuerpo` ← `la nota de la propuesta con los enlaces de los artefactos` (`conn_hubspotNota.20_disenarPropuesta.cuerpo`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotNota.20_disenarPropuesta.ticketId`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotNota.20_disenarPropuesta.dealId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `21_subirAdjuntos` | `conn_hubspotArchivos` (propio `hubspot-archivo-subir`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotArchivos.21_subirAdjuntos.urlBase`); `documentos` ← `los adjuntos de la propuesta del caso` (`conn_hubspotArchivos.21_subirAdjuntos.documentos`); `dealId` ← `el Negocio asociado al ticket del caso` (`conn_hubspotArchivos.21_subirAdjuntos.dealId`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotArchivos.21_subirAdjuntos.ticketId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
 | `40_entregarAVentas` | `conn_hubspotActualizar` (propio `hubspot-ticket-actualizar`) | síncrono | entrada | `urlBase` ← `la dirección base de la API de HubSpot del entorno` (`conn_hubspotActualizar.40_entregarAVentas.urlBase`); `rutaTickets` ← `la ruta de tickets de la API de HubSpot del entorno` (`conn_hubspotActualizar.40_entregarAVentas.rutaTickets`); `ticketId` ← `el identificador del ticket del caso` (`conn_hubspotActualizar.40_entregarAVentas.ticketId`); `stageId` ← `el stage Entregado a ventas del entorno` (`conn_hubspotActualizar.40_entregarAVentas.stageId`); `ownerId` ← `vacío, no cambia el propietario` (`conn_hubspotActualizar.40_entregarAVentas.ownerId`) | — | la tarea queda en fallo (comportamiento por defecto de Bonita) y se reintenta desde la administración |
+
+**Aviso por correo de cada tarea nueva** (versión 1.5, aprobado por la usuaria el 2026-11-26): `conn_correoTarea` corre **a la entrada** de `10_validarSolicitud` y `20_disenarPropuesta`, después del actor filter (que ya asignó la tarea), así que avisa también cuando la validación vuelve tras «bloqueado» (`12_pasarAEnEspera` → `10_validarSolicitud` crea una tarea nueva). Envía un correo HTML (plantilla aprobada, con el logo de Trycore incrustado por CID) más su versión de texto plano al correo profesional de la consultora asignada (columna «Correo» de los usuarios, `bdm.md`), por SMTP con STARTTLS (Gmail / Google Workspace: `smtp.gmail.com`, puerto 587, contraseña de aplicación). Asunto: «Nueva tarea de Preventa: <tarea> · <asunto del ticket>». La ficha del correo lleva la tarea, la prioridad del ticket (`hs_ticket_priority`) y el nombre del Negocio (`dealname`), que el conector lee de HubSpot en ese momento (si la lectura falla, el correo sale igual con «—» y «Prioridad sin definir»), el asunto y el id del ticket y la fecha de asignación (hora de Bogotá). El botón abre la tarea en la aplicación `hubspotBonita` (`param_bonitaUrlBase`). Con `IGNORE`, si el correo no sale (SMTP caído, credenciales mal), la tarea queda asignada igual, el caso sigue y el conector deja el motivo en el log del servidor (WARN «correo-tarea-asignada: NO se envió…»). El diseño vive en un solo fichero del módulo, `preventa-conectores/src/main/resources/correo/correo-tarea-asignada.html`.
 
 Los seis conectores son **propios** del proyecto (`bonita-project/extensions/preventa-conectores`): REST nativo de Bonita hacia HubSpot; no se usa el conector oficial Bonita–HubSpot (Beta, sin tickets). `hubspot-negocio-actualizar`, `hubspot-nota-crear` y `hubspot-archivo-subir` (y la salida `dealId` de `hubspot-ticket-leer`) los implementa otra unidad de trabajo (ver `docs/08-construccion/conectores-escritura-hubspot.md`). El token de la Private App **no es una entrada**: la implementación lo lee de la variable de entorno `HUBSPOT_PRIVATE_APP_TOKEN`. En «Salida (destino)», la parte derecha de cada `←` es la salida del conector.
 
@@ -204,7 +208,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Process variables (insumo de construcción)
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | Variable | Tipo | Valor por defecto | Transitoria | Justificación (compuerta, conector o transición que la necesita) |
 |---|---|---|---|---|
@@ -212,7 +216,7 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 
 ## Documentos del proceso
 
-### `GestionPreventa` 1.4
+### `GestionPreventa` 1.5
 
 | Documento | Múltiple | Tarea que lo aporta | Tareas que lo leen | Fuente en §12 |
 |---|---|---|---|---|
@@ -236,4 +240,5 @@ Los seis conectores son **propios** del proyecto (`bonita-project/extensions/pre
 - **Reintentos de conectores de salida**: reintentar una tarea humana en fallo puede duplicar notas o adjuntos en HubSpot (ver la nota bajo la tabla de conectores).
 - **Ticket cerrado en HubSpot con el caso abierto**: si el comercial cierra el ticket mientras la tarea está en Bonita, nada lo detecta (antes lo avisaba el middleware a la tarea de espera, retirada en la v2). Lo detectaría la reconciliación, que todavía no existe.
 - **Versión de la API de HubSpot**: `/crm/v3/objects/tickets` y `/crm/objects/2026-09/tickets` respondieron 200 el 2026-11-12. Se usa la primera; la ruta es parámetro.
+- **URL pública de Bonita para el enlace del correo** (versión 1.5): `param_bonitaUrlBase` vale `http://localhost:8080/bonita` en los tres entornos hasta que exista la dirección pública del servidor; el botón del correo solo abre la tarea desde la máquina del servidor. Cuando exista, se cambia el parámetro y se vuelve a poner en la plantilla el bloque «Si el botón no abre, copia este enlace: …», retirado por ahora (decisión de la usuaria, 2026-11-26).
 - **Job de reconciliación diaria** Bonita vs HubSpot (arquitectura acordada el 2026-11-11): sigue sin decidirse dónde vive.

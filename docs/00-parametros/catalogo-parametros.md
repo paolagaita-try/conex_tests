@@ -1,12 +1,12 @@
 ---
-actualizado: 2026-11-24
+actualizado: 2026-11-26
 track: proceso-bpms
-total_parametros: 9
+total_parametros: 16
 ---
 
 # Catálogo de Parámetros y Catálogos — Gestión de Preventa
 
-> Transversal. Todo `param_*` citado en `docs/07-bonita/` tiene una fila aquí. Los nueve son **técnicos por entorno** (parámetros de proceso de `GestionPreventa`); no hay listas de negocio en el módulo de parámetros. El token de la Private App de HubSpot **no es un parámetro**: vive solo en la variable de entorno `HUBSPOT_PRIVATE_APP_TOKEN`.
+> Transversal. Todo `param_*` citado en `docs/07-bonita/` tiene una fila aquí. Los dieciséis son **técnicos por entorno** (parámetros de proceso de `GestionPreventa`); no hay listas de negocio en el módulo de parámetros. El token de la Private App de HubSpot **no es un parámetro**: vive solo en la variable de entorno `HUBSPOT_PRIVATE_APP_TOKEN`.
 
 ## Convenciones
 
@@ -28,6 +28,13 @@ total_parametros: 9
 | `param_stageCerrado` | `stageId` del stage «Closed» | valor | `4` | Equipo de operación (configuración del entorno) | no | Stage que recibe el ticket cuando la validación concluye «no viable»: cerrado por viabilidad (decisión de la usuaria, 2026-11-24) | `13_registrarNoViable` |
 | `param_consultores` | Consultores que entran en el reparto de tickets | valor | `89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez` (tríos «owner de HubSpot:nombre:usuario de Bonita», en orden, separados por «;») | Equipo de operación (configuración del entorno) | no | Reunión de socialización: todos los tickets se asignan a una de las dos consultoras; la lista cambia por vacaciones o ingresos | `4_verificarDisponibilidad`, `5_asignarConsultor`, actor filter `filtroConsultoraDelCaso` (`10_validarSolicitud`, `20_disenarPropuesta`) |
 | `param_pipelineTickets` | Pipeline de tickets «Mesa de preventa» | valor | `0` | Equipo de operación (configuración del entorno) | no | La carga de cada consultora se mide solo sobre los tickets de este pipeline | `4_verificarDisponibilidad` |
+| `param_smtpHost` | Servidor SMTP del aviso de tarea | valor | `localhost` (Local); `smtp.gmail.com` (Qualification, Production) | Equipo de operación (configuración del entorno) | no | Infraestructura de correo: cambia por entorno (en Local, el SMTP de prueba del journey) | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
+| `param_smtpPuerto` | Puerto SMTP | valor | `2525` (Local); `587` (Qualification, Production) | Equipo de operación (configuración del entorno) | no | Infraestructura de correo: cambia por entorno | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
+| `param_smtpStarttls` | Cifrar la conexión SMTP con STARTTLS | valor | `false` (Local); `true` (Qualification, Production) | Equipo de operación (configuración del entorno) | no | Gmail exige STARTTLS en el 587; el SMTP de prueba no cifra | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
+| `param_smtpUsuario` | Cuenta remitente (y usuario SMTP) | valor | `preventa@trycore.com` (propuesta, por confirmar con infraestructura) | Equipo de operación (configuración del entorno) | no | Cuenta de Google Workspace que envía los avisos | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
+| `param_smtpContrasena` | Contraseña de aplicación de la cuenta remitente | valor | `sin-configurar` (marcador; el valor real nunca va en el repositorio: el conector usa entonces la variable de entorno `PREVENTA_SMTP_CONTRASENA` del servidor) | Equipo de operación (configuración del entorno) | no | Secreto de la cuenta remitente: se configura en el servidor | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
+| `param_smtpRemitenteNombre` | Nombre visible del remitente | valor | `Preventa Trycore` | Equipo de operación (configuración del entorno) | no | Decisión de la usuaria, 2026-11-26 | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
+| `param_bonitaUrlBase` | Dirección base de Bonita para el enlace de la tarea | valor | `http://localhost:8080/bonita` (pendiente la URL pública) | Equipo de operación (configuración del entorno) | no | El botón del correo abre la tarea en la aplicación `hubspotBonita` de este servidor | Conector `conn_correoTarea` (`10_validarSolicitud`, `20_disenarPropuesta`) |
 
 ## `[PARAM]` citados en otros artefactos sin fila aquí todavía
 
@@ -42,3 +49,4 @@ total_parametros: 9
 | 2026-11-12 | Añadido `param_consultores` (sustituye al catálogo `ConsultorPreventa` del BDM, inalcanzable desde los scripts del pool según la auditoría de las capas) | Equipo de construcción (pendiente de confirmación) |
 | 2026-11-24 | v2 «Bonita-first»: añadido `param_stageEnEspera`; `param_consultores` pasa a tríos con el usuario de Bonita de cada consultora (`linda.lozano`, `viviana.velasquez`) para el actor filter | Usuaria (aprobó el plan v2) |
 | 2026-11-24 | Añadido `param_stageCerrado` (`4`): «no viable» cierra el ticket | Usuaria |
+| 2026-11-26 | Versión 1.5: añadidos los seis `param_smtp*` y `param_bonitaUrlBase` del aviso por correo de cada tarea nueva (Gmail / Google Workspace); la contraseña de aplicación, fuera del repositorio | Usuaria |
