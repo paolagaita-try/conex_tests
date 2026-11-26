@@ -95,3 +95,21 @@
   color: #ffffff;
   background-color: #000c4c;
 }
+
+/*
+ * Nombre junto al logo: «Gestión de Preventa». El layout escribe el displayName de la aplicación (el nombre del
+ * proyecto, «hubspot-bonita», que da también el token /apps/hubspotBonita y no se cambia). Aquí solo se sustituye a
+ * la vista: el texto original queda con tamaño 0 y el nombre visible lo pone `::after`. `.app-title` es el enlace a
+ * la página de inicio en escritorio; `.navbar-brand` el mismo nombre en móvil. Limitación: un lector de pantalla
+ * puede anunciar los dos textos (CSS no puede cambiar el nombre accesible).
+ */
+.layout-header .app-title a,
+.navbar-inverse .navbar-brand {
+  font-size: 0;
+}
+
+.layout-header .app-title a::after,
+.navbar-inverse .navbar-brand::after {
+  content: 'Gestión de Preventa';
+  font-size: 20px;
+}
