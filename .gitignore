@@ -56,3 +56,7 @@ frontend/.env.local
 .claude/state/heartbeat-status.json
 .claude/state/happy-path/
 # ── /trycore-build-harness ──────────────────────
+
+# Capturas locales de los formularios (no se suben al repo)
+capturas-formularios/
+docs/08-construccion/formularios/
