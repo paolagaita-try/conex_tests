@@ -7,7 +7,7 @@ import type { Lectura } from '$lib/bonita/caso';
 import type { ValorDeCampo, ValoresDelFormulario } from '$lib/ui/valores';
 
 /** Identidad del formulario: su id en la matriz, su página, su tarea, su contrato y su proceso. */
-export const FORMULARIO = { id: "frm_20_disenarPropuesta", pagina: "frm20DisenarPropuesta", tipo: "tarea", tarea: "20_disenarPropuesta", contrato: "ctr_20_disenarPropuesta", proceso: "GestionPreventa", version: "1.4" } as const;
+export const FORMULARIO = { id: "frm_20_disenarPropuesta", pagina: "frm20DisenarPropuesta", tipo: "tarea", tarea: "20_disenarPropuesta", contrato: "ctr_20_disenarPropuesta", proceso: "GestionPreventa", version: "1.5" } as const;
 
 /** Todos los inputs del contrato, en su orden: el cuerpo los lleva siempre. */
 export const ENTRADAS = ["valoracionOperaciones", "urlPptaPreventa", "linkRepoPreventa", "notaPropuesta", "adjuntos"] as const;

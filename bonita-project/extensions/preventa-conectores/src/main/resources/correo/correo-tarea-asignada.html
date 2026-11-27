@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Nueva tarea asignada · Preventa</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background:#eef0f5;">
+<!-- Plantilla del correo «Nueva tarea asignada» (conector correo-tarea-asignada). Marcadores entre dobles llaves: los rellena PlantillaCorreoTarea con el texto ya escapado. Para cambiar el diseño, sustituye este fichero conservando los marcadores y el logo cid:logo-trycore. -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef0f5;">
+<tr><td align="center" style="padding:28px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e1e4ec;border-radius:10px;overflow:hidden;font-family:'IBM Plex Sans',Arial,Helvetica,sans-serif;color:#1f2537;">
+
+  <!-- Cabecera -->
+  <tr><td style="background:#0c1652;padding:20px 28px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+      <td style="vertical-align:middle;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="background:#ffffff;border-radius:8px;padding:9px 14px;">
+            <img src="cid:logo-trycore" alt="Trycore" height="26" style="display:block;height:26px;border:0;">
+          </td>
+        </tr></table>
+      </td>
+      <td align="right" style="vertical-align:middle;">
+        <span style="display:inline-block;border:1px solid #1f8f98;border-radius:999px;padding:5px 14px;color:#00ccc0;font-size:10px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;">Gestión de Preventa</span>
+      </td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="background:#00ccc0;height:4px;line-height:4px;font-size:0;">&nbsp;</td></tr>
+
+  <!-- Cuerpo -->
+  <tr><td style="padding:30px 28px 6px 28px;">
+    <span style="display:inline-block;background:#e2f7f5;color:#0b8f88;border-radius:999px;padding:5px 12px;font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;">Nueva tarea asignada</span>
+    <h1 style="margin:16px 0 10px 0;font-size:24px;line-height:30px;font-weight:600;color:#0c1652;">Hola, {{nombre}}</h1>
+    <p style="margin:0 0 22px 0;font-size:14px;line-height:22px;color:#2b3245;">
+      Se te asignó una tarea en Bonita. Puedes abrirla directamente desde aquí; el formulario ya trae cargada la información del ticket, el Negocio y el cliente.
+    </p>
+
+    <!-- Tarjeta de la tarea -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e1e4ec;border-radius:8px;border-collapse:separate;">
+      <tr><td style="background:#f5f6fa;border-bottom:1px solid #e1e4ec;border-radius:8px 8px 0 0;padding:16px 18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="vertical-align:middle;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#7a8196;">Tarea</div>
+            <div style="margin-top:4px;font-size:16px;font-weight:600;color:#0c1652;">{{tarea}}</div>
+          </td>
+          <td align="right" style="vertical-align:middle;">
+            <span style="display:inline-block;background:#fdf1e6;border:1px solid #f6cfa7;border-radius:999px;padding:4px 11px;color:#c2620f;font-size:11px;font-weight:500;white-space:nowrap;">&#9679;&nbsp;{{prioridad}}</span>
+          </td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:16px 18px 18px 18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td width="50%" style="vertical-align:top;padding:0 12px 14px 0;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#7a8196;">Ticket</div>
+              <div style="margin-top:6px;font-size:13px;line-height:19px;color:#1f2537;">{{ticketAsunto}}</div>
+              <div style="font-size:13px;line-height:19px;color:#7a8196;">#{{ticketId}}</div>
+            </td>
+            <td width="50%" style="vertical-align:top;padding:0 0 14px 0;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#7a8196;">Negocio</div>
+              <div style="margin-top:6px;font-size:13px;line-height:19px;color:#1f2537;">{{negocio}}</div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="vertical-align:top;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#7a8196;">Asignada</div>
+              <div style="margin-top:6px;font-size:13px;line-height:19px;color:#1f2537;">{{asignada}}</div>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <!-- Botón -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 26px 0;">
+      <tr><td style="background:#0c1652;border-radius:6px;">
+        <a href="{{enlace}}" style="display:inline-block;padding:13px 24px;font-family:'IBM Plex Sans',Arial,Helvetica,sans-serif;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Abrir la tarea en Bonita&nbsp;&nbsp;<span style="color:#00ccc0;">&rarr;</span></a>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- Pie -->
+  <tr><td style="background:#f5f6fa;border-top:1px solid #e1e4ec;padding:18px 28px;font-size:11px;line-height:18px;color:#5b6378;">
+    Este es un aviso automático del proceso de Preventa de <strong style="color:#0c1652;">Trycore</strong>. No respondas a este correo.<br>
+    Todo lo que registres en el formulario se actualiza solo en HubSpot.
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>

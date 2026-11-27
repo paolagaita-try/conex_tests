@@ -18,7 +18,7 @@ fecha: 2026-11-25
 > La usuaria aprobó el plan `docs/08-construccion/plan-v2-bonita-first.md` («construye»). El equipo de Preventa **no
 > vuelve a entrar a HubSpot**: trabaja en Bonita y Bonita alimenta el CRM.
 
-Proceso `GestionPreventa` **1.4** (`bpmn.md`). El equipo de Preventa opera **100 % desde Bonita**: abre su tarea en
+Proceso `GestionPreventa` **1.5** (`bpmn.md`). El equipo de Preventa opera **100 % desde Bonita**: abre su tarea en
 el portal de Bonita, ve el CRM precargado en el formulario y, al enviar, Bonita escribe en HubSpot el stage del
 ticket, las notas, las propiedades del Negocio y los adjuntos. El middleware solo instancia el caso.
 
@@ -105,6 +105,7 @@ El borrador del proceso completo queda archivado, sin uso, en `insumo-preventa/b
   servicio externo propio (`middleware/`, Rust) con una sola entrada: el webhook `ticket.creation`. No escucha cambios
   del Negocio ni del ticket: todo lo que pasa después lo escribe Bonita.
 - **Concepto de viabilidad por resultado (versión 1.4, reglas aprobadas por la usuaria el 2026-11-25):** viable admite
+- **Aviso por correo de cada tarea nueva (versión 1.5, aprobado por la usuaria el 2026-11-26):** al crearse `10_validarSolicitud` (también al volver tras «bloqueado») y `20_disenarPropuesta`, la consultora asignada recibe un correo (Gmail / Google Workspace, plantilla aprobada con el logo de Trycore) con la tarea, el ticket, el Negocio, la prioridad y un botón que abre la tarea en Bonita (`conn_correoTarea`, `IGNORE`: si el correo falla, la tarea se asigna igual y queda en el log). Pendiente: la cuenta remitente, su contraseña de aplicación (variable `PREVENTA_SMTP_CONTRASENA` del servidor) y la URL pública de Bonita para el enlace.
   «Aprobado (Viable)» o «Aprobado con Condiciones» (con condiciones obligatorias); bloqueado escribe «Requiere más
   información» y no viable «No Viable (Rechazado)», sin que la consultora los elija.
 - **No hay Fase 2:** la asignación no usa bloqueo transaccional ni contador; el último asignado se lee del caso

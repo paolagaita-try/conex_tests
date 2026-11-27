@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:process="http://www.bonitasoft.org/ns/bpm/process" xmlns:xmi="http://www.omg.org/XMI" xmi:version="2.0" xmlns:expression="http://www.bonitasoft.org/ns/bpm/expression" xmlns:decision="http://www.bonitasoft.org/ns/bpm/process/decision" xmlns:parameter="http://www.bonitasoft.org/ns/bpm/parameter" xmlns:connectorconfiguration="http://www.bonitasoft.org/model/connector/configuration">
+  <process:MainProcess xmi:id="_h7109c6bb0001" name="GestionPreventa" bonitaModelVersion="9">
+    <elements xmi:type="process:Pool" xmi:id="_h7109c6bb0002" name="GestionPreventa" version="1.5">
+      <elements xmi:type="process:Lane" xmi:id="_h7109c6bb0005" name="Orquestador" actor="_h7109c6bb0003">
+        <elements xmi:type="process:StartEvent" xmi:id="_h7109c6bb0016" documentation="instanciación por el actor Orquestador al crearse el ticket en HubSpot (ctr_instanciacion)" name="inicio" outgoing="_h7109c6bb0587">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0017" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0018" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0019" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0020" documentation="Comprueba que el ticket existe y lee su asunto y el Negocio asociado" name="Consultar el ticket de preventa en HubSpot" incoming="_h7109c6bb0587" outgoing="_h7109c6bb0590">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0021" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0022" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0023" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0024" name="conn_hubspotLeer" definitionId="hubspot-ticket-leer" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0025" definitionId="hubspot-ticket-leer" version="1.0.0" name="conn_hubspotLeer">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0026" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0027" name="urlBase_conn_hubspotLeer()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0028" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0029" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0030" name="rutaTickets_conn_hubspotLeer()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0031" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0032" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0033" name="ticketId_conn_hubspotLeer()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0034" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+            <outputs xmi:type="expression:Operation" xmi:id="_h7109c6bb0035">
+              <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0036" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0037" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              </leftOperand>
+              <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0038" name="set_asunto()" content="preventa.asunto = {&#10;return asunto&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0039" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0040" name="asunto" content="asunto" type="CONNECTOR_OUTPUT_TYPE" returnType="java.lang.String" />
+              </rightOperand>
+              <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0041" type="ASSIGNMENT" />
+            </outputs>
+            <outputs xmi:type="expression:Operation" xmi:id="_h7109c6bb0042">
+              <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0043" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0044" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              </leftOperand>
+              <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0045" name="set_dealId()" content="preventa.dealId = {&#10;return dealId&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+                <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0046" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0047" name="dealId" content="dealId" type="CONNECTOR_OUTPUT_TYPE" returnType="java.lang.String" />
+              </rightOperand>
+              <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0048" type="ASSIGNMENT" />
+            </outputs>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0049" documentation="Suma en HubSpot la carga **ponderada por prioridad** de cada consultor de param_consultores en los stages «En validación» y «Asignado/En diseño» y devuelve el de menor carga (regla y pesos completos bajo la tabla de conectores)" name="Verificar la carga de los consultores" incoming="_h7109c6bb0590" outgoing="_h7109c6bb0593">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0050" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0051" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0052" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0053" name="conn_hubspotCarga" definitionId="hubspot-consultores-menor-carga" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0054" definitionId="hubspot-consultores-menor-carga" version="1.0.0" name="conn_hubspotCarga">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0055" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0056" name="urlBase_conn_hubspotCarga()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0057" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0058" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0059" name="rutaTickets_conn_hubspotCarga()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0060" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0061" key="pipelineId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0062" name="pipelineId_conn_hubspotCarga()" content="return param_pipelineTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0063" name="param_pipelineTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0064" key="ownerIds">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0065" name="ownerIds_conn_hubspotCarga()" content="def owners = []; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;,2); if (kv.length != 2) throw new RuntimeException(&quot;param_consultores mal formado&quot;); if (kv[0].isEmpty()) throw new RuntimeException(&quot;param_consultores mal formado&quot;); if (owners.contains(kv[0])) throw new RuntimeException(&quot;param_consultores mal formado&quot;); owners.add(kv[0]) }; return owners.join(&quot;,&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0066" name="param_consultores" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0067" key="stages">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0068" name="stages_conn_hubspotCarga()" content="return param_stageEnValidacion + &quot;,&quot; + param_stageEnDiseno" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0069" name="param_stageEnValidacion" typeClassname="java.lang.String" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0070" name="param_stageEnDiseno" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0071" key="ultimoOwnerId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0072" name="ultimoOwnerId_conn_hubspotCarga()" content="def r = preventaDAO.findAsignadasRecientes(0, 1); return (!r) ? &quot;&quot; : (r[0].consultorOwnerId ?: &quot;&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0073" name="preventaDAO" content="preventaDAO" type="TYPE_BUSINESS_OBJECT_DAO" returnType="co.trycore.preventa.model.PreventaDAO" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0074" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0075" name="ticketId_conn_hubspotCarga()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0076" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+            <outputs xmi:type="expression:Operation" xmi:id="_h7109c6bb0077">
+              <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0078" name="ownerElegido" content="ownerElegido" type="TYPE_VARIABLE" returnType="java.lang.String">
+                <referencedElements xmi:type="process:Data" xmi:id="_h7109c6bb0079" name="ownerElegido" dataType="_h7109c6bb0012" />
+              </leftOperand>
+              <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0080" name="set_ownerElegido()" content="return ownerElegido" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String">
+                <referencedElements xmi:type="process:Data" xmi:id="_h7109c6bb0081" name="ownerElegido" dataType="_h7109c6bb0012" />
+                <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0082" name="ownerElegido" content="ownerElegido" type="CONNECTOR_OUTPUT_TYPE" returnType="java.lang.String" />
+              </rightOperand>
+              <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0083" type="ASSIGNMENT" />
+            </outputs>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ScriptTask" xmi:id="_h7109c6bb0084" documentation="Guarda en el caso al consultor que eligió 4_verificarDisponibilidad" name="Asignar consultor preventa" incoming="_h7109c6bb0593" outgoing="_h7109c6bb0596">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0085" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0086" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0087" name="" content="" returnTypeFixed="true" />
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0088">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0089" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0090" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0091" name="set_estado()" content="preventa.estado = 'asignada'&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0092" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0093" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0094">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0095" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0096" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0097" name="set_consultorOwnerId()" content="preventa.consultorOwnerId = {&#10;return ownerElegido&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0098" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:Data" xmi:id="_h7109c6bb0099" name="ownerElegido" dataType="_h7109c6bb0012" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0100" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0101">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0102" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0103" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0104" name="set_consultor()" content="preventa.consultor = {&#10;def nombre = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 2 &amp;&amp; kv[0] == ownerElegido) nombre = kv[1] }; return nombre&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0105" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:Data" xmi:id="_h7109c6bb0106" name="ownerElegido" dataType="_h7109c6bb0012" />
+              <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0107" name="param_consultores" typeClassname="java.lang.String" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0108" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0109">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0110" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0111" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0112" name="set_fechaAsignacion()" content="preventa.fechaAsignacion = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0113" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0114" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0115" documentation="Fija el propietario y pasa el ticket a «En validación»" name="Actualizar estado y propietario del ticket en HubSpot" incoming="_h7109c6bb0596" outgoing="_h7109c6bb0599">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0116" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0117" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0118" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0119" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0120" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0121" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0122" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0123" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0124" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0125" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0126" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0127" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0128" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0129" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0130" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0131" name="stageId_conn_hubspotActualizar()" content="return param_stageEnValidacion" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0132" name="param_stageEnValidacion" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0133" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0134" name="ownerId_conn_hubspotActualizar()" content="if (!preventa.consultorOwnerId?.trim()) throw new RuntimeException(&quot;el caso no tiene consultor asignado&quot;); return preventa.consultorOwnerId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0135" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0267" documentation="Antes la movía a mano la consultora; ahora Bonita al validar viable. Escribe también concepto_viabilidad en el Negocio" name="Pasar el ticket a «Asignado/En diseño»" incoming="_h7109c6bb0605" outgoing="_h7109c6bb0618">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0268" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0269" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0270" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0271" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0272" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0273" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0274" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0275" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0276" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0277" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0278" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0279" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0280" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0281" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0282" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0283" name="stageId_conn_hubspotActualizar()" content="return param_stageEnDiseno" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0284" name="param_stageEnDiseno" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0285" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0286" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0287" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0288" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0289" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0290" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0291" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0292" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0293" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0294" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0295" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0296" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0297" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0298" documentation="Validación bloqueada por falta de información del lead; escribe concepto_viabilidad = «Requiere más información» en el Negocio; el caso vuelve a 10_validarSolicitud" name="Pasar el ticket a «En espera información del lead»" incoming="_h7109c6bb0609" outgoing="_h7109c6bb0621">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0299" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0300" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0301" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0302" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0303" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0304" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0305" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0306" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0307" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0308" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0309" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0310" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0311" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0312" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0313" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0314" name="stageId_conn_hubspotActualizar()" content="return param_stageEnEspera" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0315" name="param_stageEnEspera" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0316" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0317" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0318" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0319" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0320" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0321" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0322" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0323" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0324" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0325" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0326" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0327" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0328" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0329" documentation="Escribe concepto_viabilidad = «No Viable (Rechazado)» en el Negocio y pasa el ticket a «Closed» (4), «cerrado por viabilidad»" name="Cerrar por viabilidad" incoming="_h7109c6bb0613" outgoing="_h7109c6bb0615">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0330" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0331" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0332" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0333" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0334" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0335" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0336" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0337" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0338" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0339" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0340" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0341" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0342" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0343" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0344" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0345" name="stageId_conn_hubspotActualizar()" content="return param_stageCerrado" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0346" name="param_stageCerrado" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0347" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0348" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0349" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0350" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0351" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0352" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0353" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0354" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0355" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0356" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0357" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0358" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [:]; if (preventa.conceptoViabilidad?.trim()) m.concepto_viabilidad = preventa.conceptoViabilidad; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0359" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0514" documentation="Solo si la consultora adjuntó documentos (gwXor_2): el conector exige una lista no vacía" name="Subir los adjuntos de la propuesta al Negocio" incoming="_h7109c6bb0627" outgoing="_h7109c6bb0633">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0515" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0516" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0517" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0518" name="conn_hubspotArchivos" definitionId="hubspot-archivo-subir" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0519" definitionId="hubspot-archivo-subir" version="1.0.0" name="conn_hubspotArchivos">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0520" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0521" name="urlBase_conn_hubspotArchivos()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0522" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0523" key="documentos">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0524" name="documentos_conn_hubspotArchivos()" content="return apiAccessor.processAPI.getDocumentList(processInstanceId, &quot;adjuntosPropuesta&quot;, 0, 100)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.util.List" returnTypeFixed="true">
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0525" name="apiAccessor" content="apiAccessor" type="TYPE_ENGINE_CONSTANT" returnType="org.bonitasoft.engine.api.APIAccessor" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0526" name="processInstanceId" content="processInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0527" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0528" name="dealId_conn_hubspotArchivos()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0529" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0530" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0531" name="ticketId_conn_hubspotArchivos()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0532" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+        </elements>
+        <elements xmi:type="process:ServiceTask" xmi:id="_h7109c6bb0533" documentation="No cambia el propietario" name="Cambiar estado del ticket a «Entregado a ventas»" incoming="_h7109c6bb0631 _h7109c6bb0633" outgoing="_h7109c6bb0636">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0534" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0535" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0536" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0537" name="conn_hubspotActualizar" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0538" definitionId="hubspot-ticket-actualizar" version="1.0.0" name="conn_hubspotActualizar">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0539" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0540" name="urlBase_conn_hubspotActualizar()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0541" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0542" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0543" name="rutaTickets_conn_hubspotActualizar()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0544" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0545" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0546" name="ticketId_conn_hubspotActualizar()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0547" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0548" key="stageId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0549" name="stageId_conn_hubspotActualizar()" content="return param_stageEntregado" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0550" name="param_stageEntregado" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0551" key="ownerId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0552" name="ownerId_conn_hubspotActualizar()" content="return &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+            </configuration>
+          </connectors>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0553">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0554" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0555" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0556" name="set_estado()" content="preventa.estado = 'entregadaAVentas'&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0557" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0558" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0559">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0560" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0561" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0562" name="set_fechaEntrega()" content="preventa.fechaEntrega = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0563" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0564" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:EndEvent" xmi:id="_h7109c6bb0573" name="fin_entregada" incoming="_h7109c6bb0636">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0574" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0575" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0576" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:EndEvent" xmi:id="_h7109c6bb0577" name="fin_noViable" incoming="_h7109c6bb0615">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0578" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0579" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0580" name="" content="" returnTypeFixed="true" />
+        </elements>
+      </elements>
+      <elements xmi:type="process:Lane" xmi:id="_h7109c6bb0006" name="Consultoras" actor="_h7109c6bb0004">
+        <elements xmi:type="process:Task" xmi:id="_h7109c6bb0136" documentation="Avisa por correo al crearse (1.5). La consultora asignada revisa el CRM precargado y concluye viable, bloqueado o no viable; deja una nota en ticket y Negocio. El concepto de viabilidad depende del resultado (ver «Concepto de viabilidad» bajo Eventos)" name="Validar la solicitud" overrideActorsOfTheLane="false" priority="1" incoming="_h7109c6bb0599 _h7109c6bb0621" outgoing="_h7109c6bb0602">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0137" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0138" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0139" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0140" name="conn_correoTarea" definitionId="correo-tarea-asignada" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="true" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0141" definitionId="correo-tarea-asignada" version="1.0.0" name="conn_correoTarea">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0142" key="host">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0143" name="host_conn_correoTarea()" content="return param_smtpHost" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0144" name="param_smtpHost" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0145" key="puerto">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0146" name="puerto_conn_correoTarea()" content="return param_smtpPuerto as Integer" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Integer" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0147" name="param_smtpPuerto" typeClassname="java.lang.Integer" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0148" key="starttls">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0149" name="starttls_conn_correoTarea()" content="return param_smtpStarttls as Boolean" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0150" name="param_smtpStarttls" typeClassname="java.lang.Boolean" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0151" key="usuario">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0152" name="usuario_conn_correoTarea()" content="return param_smtpUsuario" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0153" name="param_smtpUsuario" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0154" key="contrasena">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0155" name="contrasena_conn_correoTarea()" content="return param_smtpContrasena" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0156" name="param_smtpContrasena" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0157" key="remitenteNombre">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0158" name="remitenteNombre_conn_correoTarea()" content="return param_smtpRemitenteNombre" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0159" name="param_smtpRemitenteNombre" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0160" key="para">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0161" name="para_conn_correoTarea()" content="def identidad = apiAccessor.getIdentityAPI(); def asignada = apiAccessor.getProcessAPI().getHumanTaskInstance(activityInstanceId).getAssigneeId(); def usuario = null; if (asignada &gt; 0) usuario = identidad.getUser(asignada); if (usuario == null) { def nombre = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 3 &amp;&amp; kv[0] == preventa.consultorOwnerId) nombre = kv[2] }; usuario = identidad.getUserByUserName(nombre) }; def correo = identidad.getUserContactData(usuario.getId(), false)?.getEmail(); if (!correo?.trim()) throw new RuntimeException(&quot;la consultora &quot; + usuario.getUserName() + &quot; no tiene correo profesional en Bonita&quot;); return correo.trim()" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0162" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0163" name="param_consultores" typeClassname="java.lang.String" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0164" name="apiAccessor" content="apiAccessor" type="TYPE_ENGINE_CONSTANT" returnType="org.bonitasoft.engine.api.APIAccessor" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0165" name="activityInstanceId" content="activityInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0166" key="nombre">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0167" name="nombre_conn_correoTarea()" content="return preventa.consultor ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0168" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0169" key="tarea">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0170" name="tarea_conn_correoTarea()" content="return &quot;Validar la solicitud&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0171" key="enlace">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0172" name="enlace_conn_correoTarea()" content="return param_bonitaUrlBase.replaceAll('/+$', '') + &quot;/apps/hubspotBonita/frm10ValidarSolicitud/?id=&quot; + activityInstanceId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0173" name="param_bonitaUrlBase" typeClassname="java.lang.String" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0174" name="activityInstanceId" content="activityInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0175" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0176" name="ticketId_conn_correoTarea()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0177" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0178" key="ticketAsunto">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0179" name="ticketAsunto_conn_correoTarea()" content="return preventa.asunto ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0180" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0181" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0182" name="dealId_conn_correoTarea()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0183" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0184" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0185" name="urlBase_conn_correoTarea()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0186" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0187" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0188" name="rutaTickets_conn_correoTarea()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0189" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0190" name="conn_hubspotNota" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0191" definitionId="hubspot-nota-crear" version="1.0.0" name="conn_hubspotNota">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0192" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0193" name="urlBase_conn_hubspotNota()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0194" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0195" key="cuerpo">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0196" name="cuerpo_conn_hubspotNota()" content="def esc = { String x -&gt; (x ?: &quot;&quot;).replace(&quot;&amp;&quot;,&quot;&amp;amp;&quot;).replace(&quot;&lt;&quot;,&quot;&amp;lt;&quot;).replace(&quot;&gt;&quot;,&quot;&amp;gt;&quot;).replace(String.valueOf((char) 10), &quot;&lt;&quot; + &quot;br&gt;&quot;) }; def r = [viable: &quot;Viable&quot;, bloqueado: &quot;Bloqueado (falta información del lead)&quot;, no_viable: &quot;No viable&quot;][preventa.resultadoValidacion] ?: preventa.resultadoValidacion; def partes = []; if (preventa.resultadoValidacion == &quot;no_viable&quot;) partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Cerrado por viabilidad:&lt;/strong&gt; &quot; + esc(preventa.conceptoViabilidad) + &quot;&lt;/p&gt;&quot;; partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Validación de preventa (Bonita):&lt;/strong&gt; &quot; + esc(r) + &quot;&lt;/p&gt;&quot;; if (preventa.conceptoViabilidad?.trim()) partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;Concepto de viabilidad:&lt;/strong&gt; &quot; + esc(preventa.conceptoViabilidad) + &quot;&lt;/p&gt;&quot;; partes &lt;&lt; &quot;&lt;p&gt;&quot; + esc(preventa.notaValidacion) + &quot;&lt;/p&gt;&quot;; if (preventa.supuestos?.trim()) partes &lt;&lt; &quot;&lt;p&gt;&lt;strong&gt;&quot; + (preventa.conceptoViabilidad == &quot;Aprobado con Condiciones&quot; ? &quot;Condiciones&quot; : &quot;Supuestos&quot;) + &quot;:&lt;/strong&gt; &quot; + esc(preventa.supuestos) + &quot;&lt;/p&gt;&quot;; return partes.join(&quot;&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0197" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0198" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0199" name="ticketId_conn_hubspotNota()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0200" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0201" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0202" name="dealId_conn_hubspotNota()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0203" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <filters xmi:type="process:ActorFilter" xmi:id="_h7109c6bb0204" name="filtroConsultoraDelCaso" definitionId="usuario-por-nombre" definitionVersion="1.0.0">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0205" definitionId="usuario-por-nombre" version="1.0.0" name="filtroConsultoraDelCaso">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0206" key="usuario">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0207" name="usuario_filtroConsultoraDelCaso()" content="def usuario = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 3 &amp;&amp; kv[0] == ownerElegido) usuario = kv[2] }; if (!usuario) throw new RuntimeException(&quot;param_consultores no da usuario de Bonita al owner &quot; + ownerElegido); return usuario" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:Data" xmi:id="_h7109c6bb0208" name="ownerElegido" dataType="_h7109c6bb0012" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0209" name="param_consultores" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+            </configuration>
+          </filters>
+          <formMapping xmi:type="process:FormMapping" xmi:id="_h7109c6bb0210" type="URL" url="/bonita/portal/resource/app/hubspotBonita/frm10ValidarSolicitud/content/">
+            <targetForm xmi:type="expression:Expression" xmi:id="_h7109c6bb0211" name="/bonita/portal/resource/app/hubspotBonita/frm10ValidarSolicitud/content/" content="/bonita/portal/resource/app/hubspotBonita/frm10ValidarSolicitud/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+          </formMapping>
+          <contract xmi:type="process:Contract" xmi:id="_h7109c6bb0212">
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0213" name="resultado" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0214" name="conceptoViabilidad" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0215" name="notaValidacion" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0216" name="supuestos" type="TEXT" />
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0217" name="resultado_valido" expression="return [&quot;viable&quot;,&quot;bloqueado&quot;,&quot;no_viable&quot;].contains(resultado)" errorMessage="El resultado debe ser viable, bloqueado o no viable">
+              <inputNames>resultado</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0218" name="notaValidacion_presente" expression="return notaValidacion != null &amp;&amp; !notaValidacion.trim().isEmpty()" errorMessage="La nota de validación es obligatoria">
+              <inputNames>notaValidacion</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0219" name="conceptoViabilidad_viable" expression="return resultado == &quot;viable&quot; ? [&quot;Aprobado (Viable)&quot;,&quot;Aprobado con Condiciones&quot;].contains(conceptoViabilidad) : true" errorMessage="Si la solicitud es viable, el concepto debe ser Aprobado (Viable) o Aprobado con Condiciones">
+              <inputNames>resultado</inputNames>
+              <inputNames>conceptoViabilidad</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0220" name="conceptoViabilidad_bloqueado" expression="def c = conceptoViabilidad ?: &quot;&quot;; return resultado == &quot;bloqueado&quot; ? (c.isEmpty() || c == &quot;Requiere más información&quot;) : true" errorMessage="Si la solicitud está bloqueada, el concepto lo fija el proceso (Requiere más información)">
+              <inputNames>resultado</inputNames>
+              <inputNames>conceptoViabilidad</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0221" name="conceptoViabilidad_noViable" expression="def c = conceptoViabilidad ?: &quot;&quot;; return resultado == &quot;no_viable&quot; ? (c.isEmpty() || c == &quot;No Viable (Rechazado)&quot;) : true" errorMessage="Si la solicitud no es viable, el concepto lo fija el proceso (No Viable (Rechazado))">
+              <inputNames>resultado</inputNames>
+              <inputNames>conceptoViabilidad</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0222" name="supuestos_siCondiciones" expression="return conceptoViabilidad == &quot;Aprobado con Condiciones&quot; ? (supuestos != null &amp;&amp; !supuestos.trim().isEmpty()) : true" errorMessage="Si el concepto es Aprobado con Condiciones, escriba las condiciones en los supuestos">
+              <inputNames>conceptoViabilidad</inputNames>
+              <inputNames>supuestos</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0223" name="mandatory_resultado" expression="resultado != null" errorMessage="resultado es obligatorio">
+              <inputNames>resultado</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0224" name="mandatory_notaValidacion" expression="notaValidacion != null" errorMessage="notaValidacion es obligatorio">
+              <inputNames>notaValidacion</inputNames>
+            </constraints>
+          </contract>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0225">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0226" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0227" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0228" name="set_resultadoValidacion()" content="preventa.resultadoValidacion = resultado&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0229" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0230" name="resultado" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0231" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0232">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0233" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0234" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0235" name="set_notaValidacion()" content="preventa.notaValidacion = notaValidacion&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0236" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0237" name="notaValidacion" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0238" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0239">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0240" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0241" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0242" name="set_supuestos()" content="preventa.supuestos = supuestos&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0243" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0244" name="supuestos" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0245" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0246">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0247" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0248" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0249" name="set_conceptoViabilidad()" content="preventa.conceptoViabilidad = {&#10;return resultado == &quot;bloqueado&quot; ? &quot;Requiere más información&quot; : (resultado == &quot;no_viable&quot; ? &quot;No Viable (Rechazado)&quot; : conceptoViabilidad)&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0250" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0251" name="resultado" type="TEXT" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0252" name="conceptoViabilidad" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0253" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0254">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0255" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0256" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0257" name="set_estado()" content="preventa.estado = {&#10;return resultado == &quot;viable&quot; ? &quot;validada&quot; : (resultado == &quot;bloqueado&quot; ? &quot;bloqueada&quot; : &quot;noViable&quot;)&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0258" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0259" name="resultado" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0260" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0261">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0262" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0263" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0264" name="set_fechaValidacion()" content="preventa.fechaValidacion = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0265" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0266" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:Task" xmi:id="_h7109c6bb0360" documentation="Al crearse la tarea, la consultora recibe un correo con el enlace (versión 1.5). La consultora carga los cuatro artefactos del Negocio, los adjuntos y la nota de propuesta" name="Diseñar la propuesta" overrideActorsOfTheLane="false" priority="1" incoming="_h7109c6bb0618" outgoing="_h7109c6bb0624">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0361" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0362" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0363" name="" content="" returnTypeFixed="true" />
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0364" name="conn_correoTarea" definitionId="correo-tarea-asignada" definitionVersion="1.0.0" event="ON_ENTER" ignoreErrors="true" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0365" definitionId="correo-tarea-asignada" version="1.0.0" name="conn_correoTarea">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0366" key="host">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0367" name="host_conn_correoTarea()" content="return param_smtpHost" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0368" name="param_smtpHost" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0369" key="puerto">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0370" name="puerto_conn_correoTarea()" content="return param_smtpPuerto as Integer" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Integer" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0371" name="param_smtpPuerto" typeClassname="java.lang.Integer" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0372" key="starttls">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0373" name="starttls_conn_correoTarea()" content="return param_smtpStarttls as Boolean" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0374" name="param_smtpStarttls" typeClassname="java.lang.Boolean" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0375" key="usuario">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0376" name="usuario_conn_correoTarea()" content="return param_smtpUsuario" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0377" name="param_smtpUsuario" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0378" key="contrasena">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0379" name="contrasena_conn_correoTarea()" content="return param_smtpContrasena" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0380" name="param_smtpContrasena" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0381" key="remitenteNombre">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0382" name="remitenteNombre_conn_correoTarea()" content="return param_smtpRemitenteNombre" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0383" name="param_smtpRemitenteNombre" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0384" key="para">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0385" name="para_conn_correoTarea()" content="def identidad = apiAccessor.getIdentityAPI(); def asignada = apiAccessor.getProcessAPI().getHumanTaskInstance(activityInstanceId).getAssigneeId(); def usuario = null; if (asignada &gt; 0) usuario = identidad.getUser(asignada); if (usuario == null) { def nombre = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 3 &amp;&amp; kv[0] == preventa.consultorOwnerId) nombre = kv[2] }; usuario = identidad.getUserByUserName(nombre) }; def correo = identidad.getUserContactData(usuario.getId(), false)?.getEmail(); if (!correo?.trim()) throw new RuntimeException(&quot;la consultora &quot; + usuario.getUserName() + &quot; no tiene correo profesional en Bonita&quot;); return correo.trim()" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0386" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0387" name="param_consultores" typeClassname="java.lang.String" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0388" name="apiAccessor" content="apiAccessor" type="TYPE_ENGINE_CONSTANT" returnType="org.bonitasoft.engine.api.APIAccessor" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0389" name="activityInstanceId" content="activityInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0390" key="nombre">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0391" name="nombre_conn_correoTarea()" content="return preventa.consultor ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0392" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0393" key="tarea">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0394" name="tarea_conn_correoTarea()" content="return &quot;Diseñar la propuesta&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true" />
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0395" key="enlace">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0396" name="enlace_conn_correoTarea()" content="return param_bonitaUrlBase.replaceAll('/+$', '') + &quot;/apps/hubspotBonita/frm20DisenarPropuesta/?id=&quot; + activityInstanceId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0397" name="param_bonitaUrlBase" typeClassname="java.lang.String" />
+                  <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0398" name="activityInstanceId" content="activityInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0399" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0400" name="ticketId_conn_correoTarea()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0401" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0402" key="ticketAsunto">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0403" name="ticketAsunto_conn_correoTarea()" content="return preventa.asunto ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0404" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0405" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0406" name="dealId_conn_correoTarea()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0407" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0408" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0409" name="urlBase_conn_correoTarea()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0410" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0411" key="rutaTickets">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0412" name="rutaTickets_conn_correoTarea()" content="return param_hubspotRutaTickets" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0413" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0414" name="conn_hubspotNegocio" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0415" definitionId="hubspot-negocio-actualizar" version="1.0.0" name="conn_hubspotNegocio">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0416" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0417" name="urlBase_conn_hubspotNegocio()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0418" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0419" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0420" name="dealId_conn_hubspotNegocio()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0421" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0422" key="propiedadesJson">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0423" name="propiedadesJson_conn_hubspotNegocio()" content="def m = [concepto_viabilidad: preventa.conceptoViabilidad, valoracion_operaciones: preventa.valoracionOperaciones, url_ppta_preventa: preventa.urlPptaPreventa, link_repo_preventa: preventa.linkRepoPreventa].findAll { k, v -&gt; v?.trim() }; return groovy.json.JsonOutput.toJson(m)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0424" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <connectors xmi:type="process:Connector" xmi:id="_h7109c6bb0425" name="conn_hubspotNota" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" event="ON_FINISH" ignoreErrors="false" throwErrorEvent="false" namedError="">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0426" definitionId="hubspot-nota-crear" version="1.0.0" name="conn_hubspotNota">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0427" key="urlBase">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0428" name="urlBase_conn_hubspotNota()" content="return param_hubspotUrlBase" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0429" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0430" key="cuerpo">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0431" name="cuerpo_conn_hubspotNota()" content="def esc = { String x -&gt; (x ?: &quot;&quot;).replace(&quot;&amp;&quot;,&quot;&amp;amp;&quot;).replace(&quot;&lt;&quot;,&quot;&amp;lt;&quot;).replace(&quot;&gt;&quot;,&quot;&amp;gt;&quot;).replace(String.valueOf((char) 10), &quot;&lt;&quot; + &quot;br&gt;&quot;) }; def partes = [&quot;&lt;p&gt;&lt;strong&gt;Propuesta de preventa (Bonita)&lt;/strong&gt;&lt;/p&gt;&quot;, &quot;&lt;p&gt;&lt;strong&gt;Valoración de operaciones:&lt;/strong&gt; &quot; + esc(preventa.valoracionOperaciones) + &quot;&lt;/p&gt;&quot;, &quot;&lt;p&gt;&lt;strong&gt;Propuesta:&lt;/strong&gt; &quot; + esc(preventa.urlPptaPreventa) + &quot;&lt;/p&gt;&quot;, &quot;&lt;p&gt;&lt;strong&gt;Repositorio:&lt;/strong&gt; &quot; + esc(preventa.linkRepoPreventa) + &quot;&lt;/p&gt;&quot;]; if (preventa.notaPropuesta?.trim()) partes &lt;&lt; &quot;&lt;p&gt;&quot; + esc(preventa.notaPropuesta) + &quot;&lt;/p&gt;&quot;; return partes.join(&quot;&quot;)" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0432" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0433" key="ticketId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0434" name="ticketId_conn_hubspotNota()" content="return preventa.ticketId" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0435" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0436" key="dealId">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0437" name="dealId_conn_hubspotNota()" content="return preventa.dealId ?: &quot;&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0438" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+                </expression>
+              </parameters>
+            </configuration>
+          </connectors>
+          <filters xmi:type="process:ActorFilter" xmi:id="_h7109c6bb0439" name="filtroConsultoraDelCaso" definitionId="usuario-por-nombre" definitionVersion="1.0.0">
+            <configuration xmi:type="connectorconfiguration:ConnectorConfiguration" xmi:id="_h7109c6bb0440" definitionId="usuario-por-nombre" version="1.0.0" name="filtroConsultoraDelCaso">
+              <parameters xmi:type="connectorconfiguration:ConnectorParameter" xmi:id="_h7109c6bb0441" key="usuario">
+                <expression xmi:type="expression:Expression" xmi:id="_h7109c6bb0442" name="usuario_filtroConsultoraDelCaso()" content="def usuario = &quot;&quot;; param_consultores.replaceAll(&quot;\\s&quot;,&quot;&quot;).split(&quot;;&quot;).findAll{it}.each{ p -&gt; def kv = p.split(&quot;:&quot;); if (kv.length &gt;= 3 &amp;&amp; kv[0] == ownerElegido) usuario = kv[2] }; if (!usuario) throw new RuntimeException(&quot;param_consultores no da usuario de Bonita al owner &quot; + ownerElegido); return usuario" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.String" returnTypeFixed="true">
+                  <referencedElements xmi:type="process:Data" xmi:id="_h7109c6bb0443" name="ownerElegido" dataType="_h7109c6bb0012" />
+                  <referencedElements xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0444" name="param_consultores" typeClassname="java.lang.String" />
+                </expression>
+              </parameters>
+            </configuration>
+          </filters>
+          <formMapping xmi:type="process:FormMapping" xmi:id="_h7109c6bb0445" type="URL" url="/bonita/portal/resource/app/hubspotBonita/frm20DisenarPropuesta/content/">
+            <targetForm xmi:type="expression:Expression" xmi:id="_h7109c6bb0446" name="/bonita/portal/resource/app/hubspotBonita/frm20DisenarPropuesta/content/" content="/bonita/portal/resource/app/hubspotBonita/frm20DisenarPropuesta/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+          </formMapping>
+          <contract xmi:type="process:Contract" xmi:id="_h7109c6bb0447">
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0448" name="valoracionOperaciones" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0449" name="urlPptaPreventa" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0450" name="linkRepoPreventa" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0451" name="notaPropuesta" type="TEXT" />
+            <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0452" name="adjuntos" type="FILE" multiple="true" />
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0453" name="valoracionOperaciones_valida" expression="return (valoracionOperaciones ?: &quot;&quot;).trim().matches(&quot;(?i)https?://.+&quot;)" errorMessage="La valoración de operaciones debe ser un enlace que empiece por http:// o https://">
+              <inputNames>valoracionOperaciones</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0454" name="urlPptaPreventa_valida" expression="return (urlPptaPreventa ?: &quot;&quot;).trim().matches(&quot;(?i)https?://.+&quot;)" errorMessage="La URL de la propuesta debe empezar por http:// o https://">
+              <inputNames>urlPptaPreventa</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0455" name="linkRepoPreventa_valido" expression="return (linkRepoPreventa ?: &quot;&quot;).trim().matches(&quot;(?i)https?://.+&quot;)" errorMessage="El enlace al repositorio debe empezar por http:// o https://">
+              <inputNames>linkRepoPreventa</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0456" name="mandatory_valoracionOperaciones" expression="valoracionOperaciones != null" errorMessage="valoracionOperaciones es obligatorio">
+              <inputNames>valoracionOperaciones</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0457" name="mandatory_urlPptaPreventa" expression="urlPptaPreventa != null" errorMessage="urlPptaPreventa es obligatorio">
+              <inputNames>urlPptaPreventa</inputNames>
+            </constraints>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0458" name="mandatory_linkRepoPreventa" expression="linkRepoPreventa != null" errorMessage="linkRepoPreventa es obligatorio">
+              <inputNames>linkRepoPreventa</inputNames>
+            </constraints>
+          </contract>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0459">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0460" name="adjuntosPropuesta" content="adjuntosPropuesta" type="DOCUMENT_REF_TYPE" returnType="java.util.List">
+              <referencedElements xmi:type="process:Document" xmi:id="_h7109c6bb0461" name="adjuntosPropuesta" multiple="true" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0462" name="doc_adjuntosPropuesta()" content="def __archivos = adjuntos&#10;if (__archivos != null) {&#10;def __valores = __archivos.collect { a -&gt; a.id == null ? new org.bonitasoft.engine.bpm.document.DocumentValue(a.content, a.contentType, a.fileName) : a.content != null ? new org.bonitasoft.engine.bpm.document.DocumentValue(Long.valueOf(a.id), a.content, a.contentType, a.fileName) : new org.bonitasoft.engine.bpm.document.DocumentValue(Long.valueOf(a.id)) }&#10;apiAccessor.processAPI.setDocumentList(processInstanceId, 'adjuntosPropuesta', __valores)&#10;}&#10;try {&#10;return apiAccessor.processAPI.getDocumentList(processInstanceId, 'adjuntosPropuesta', 0, Integer.MAX_VALUE).collect { d -&gt; new org.bonitasoft.engine.bpm.document.DocumentValue(d.id) }&#10;} catch (org.bonitasoft.engine.bpm.document.DocumentNotFoundException e) {&#10;return []&#10;}" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.util.List">
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0463" name="adjuntos" type="FILE" multiple="true" />
+              <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0464" name="apiAccessor" content="apiAccessor" type="TYPE_ENGINE_CONSTANT" returnType="org.bonitasoft.engine.api.APIAccessor" />
+              <referencedElements xmi:type="expression:Expression" xmi:id="_h7109c6bb0465" name="processInstanceId" content="processInstanceId" type="TYPE_ENGINE_CONSTANT" returnType="java.lang.Long" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0466" type="DOCUMENT_LIST_SET" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0467">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0468" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0469" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0470" name="set_valoracionOperaciones()" content="preventa.valoracionOperaciones = valoracionOperaciones&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0471" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0472" name="valoracionOperaciones" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0473" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0474">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0475" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0476" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0477" name="set_urlPptaPreventa()" content="preventa.urlPptaPreventa = urlPptaPreventa&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0478" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0479" name="urlPptaPreventa" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0480" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0481">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0482" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0483" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0484" name="set_linkRepoPreventa()" content="preventa.linkRepoPreventa = linkRepoPreventa&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0485" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0486" name="linkRepoPreventa" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0487" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0488">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0489" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0490" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0491" name="set_notaPropuesta()" content="preventa.notaPropuesta = notaPropuesta&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0492" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0493" name="notaPropuesta" type="TEXT" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0494" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0495">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0496" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0497" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0498" name="set_estado()" content="preventa.estado = 'propuestaDisenada'&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0499" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0500" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0501">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0502" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0503" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0504" name="set_fechaPropuesta()" content="preventa.fechaPropuesta = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0505" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0506" type="ASSIGNMENT" />
+          </operations>
+          <operations xmi:type="expression:Operation" xmi:id="_h7109c6bb0507">
+            <leftOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0508" name="preventa" content="preventa" type="TYPE_VARIABLE" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0509" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+            </leftOperand>
+            <rightOperand xmi:type="expression:Expression" xmi:id="_h7109c6bb0510" name="set_cantidadAdjuntos()" content="preventa.cantidadAdjuntos = {&#10;return adjuntos ? adjuntos.size() : 0&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa">
+              <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0511" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+              <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0512" name="adjuntos" type="FILE" multiple="true" />
+            </rightOperand>
+            <operator xmi:type="expression:Operator" xmi:id="_h7109c6bb0513" type="ASSIGNMENT" />
+          </operations>
+        </elements>
+        <elements xmi:type="process:XORGateway" xmi:id="_h7109c6bb0565" documentation="Decide: Preventa.resultadoValidacion (de ctr_10_validarSolicitud)" name="gwXor_1" incoming="_h7109c6bb0602" outgoing="_h7109c6bb0605 _h7109c6bb0609 _h7109c6bb0613">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0566" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0567" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0568" name="" content="" returnTypeFixed="true" />
+        </elements>
+        <elements xmi:type="process:XORGateway" xmi:id="_h7109c6bb0569" documentation="Decide: Preventa.cantidadAdjuntos (de ctr_20_disenarPropuesta)" name="gwXor_2" incoming="_h7109c6bb0624" outgoing="_h7109c6bb0627 _h7109c6bb0631">
+          <dynamicLabel xmi:type="expression:Expression" xmi:id="_h7109c6bb0570" name="" content="" returnTypeFixed="true" />
+          <dynamicDescription xmi:type="expression:Expression" xmi:id="_h7109c6bb0571" name="" content="" returnTypeFixed="true" />
+          <stepSummary xmi:type="expression:Expression" xmi:id="_h7109c6bb0572" name="" content="" returnTypeFixed="true" />
+        </elements>
+      </elements>
+      <data xmi:type="process:Data" xmi:id="_h7109c6bb0581" name="ownerElegido" dataType="_h7109c6bb0012">
+        <defaultValue xmi:type="expression:Expression" xmi:id="_h7109c6bb0582" name="" content="" returnType="" />
+      </data>
+      <data xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0583" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa">
+        <defaultValue xmi:type="expression:Expression" xmi:id="_h7109c6bb0584" name="init_preventa()" content="def preventa = new co.trycore.preventa.model.Preventa()&#10;preventa.ticketId = ticketId&#10;preventa.estado = 'recibida'&#10;preventa.fechaRecepcion = {&#10;return java.time.OffsetDateTime.now()&#10;}.call()&#10;return preventa" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="co.trycore.preventa.model.Preventa" returnTypeFixed="true">
+          <referencedElements xmi:type="process:ContractInput" xmi:id="_h7109c6bb0585" name="ticketId" type="TEXT" />
+        </defaultValue>
+      </data>
+      <documents xmi:type="process:Document" xmi:id="_h7109c6bb0586" name="adjuntosPropuesta" multiple="true" />
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0587" target="_h7109c6bb0020" source="_h7109c6bb0016">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0588" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0589" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0590" target="_h7109c6bb0049" source="_h7109c6bb0020">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0591" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0592" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0593" target="_h7109c6bb0084" source="_h7109c6bb0049">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0594" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0595" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0596" target="_h7109c6bb0115" source="_h7109c6bb0084">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0597" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0598" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0599" target="_h7109c6bb0136" source="_h7109c6bb0115">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0600" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0601" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0602" target="_h7109c6bb0565" source="_h7109c6bb0136">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0603" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0604" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0605" target="_h7109c6bb0267" source="_h7109c6bb0565">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0606" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0607" name="condicion_gwXor_1_11_pasarADiseno()" content="return preventa.resultadoValidacion == &quot;viable&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+          <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0608" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+        </condition>
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0609" target="_h7109c6bb0298" source="_h7109c6bb0565">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0610" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0611" name="condicion_gwXor_1_12_pasarAEnEspera()" content="return preventa.resultadoValidacion == &quot;bloqueado&quot;" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+          <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0612" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+        </condition>
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0613" target="_h7109c6bb0329" source="_h7109c6bb0565" isDefault="true">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0614" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0615" target="_h7109c6bb0577" source="_h7109c6bb0329">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0616" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0617" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0618" target="_h7109c6bb0360" source="_h7109c6bb0267">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0619" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0620" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0621" target="_h7109c6bb0136" source="_h7109c6bb0298">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0622" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0623" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0624" target="_h7109c6bb0569" source="_h7109c6bb0360">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0625" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0626" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0627" target="_h7109c6bb0514" source="_h7109c6bb0569">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0628" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0629" name="condicion_gwXor_2_21_subirAdjuntos()" content="return (preventa.cantidadAdjuntos ?: 0) &gt; 0" interpreter="GROOVY" type="TYPE_READ_ONLY_SCRIPT" returnType="java.lang.Boolean" returnTypeFixed="true">
+          <referencedElements xmi:type="process:BusinessObjectData" xmi:id="_h7109c6bb0630" name="preventa" dataType="_h7109c6bb0015" className="co.trycore.preventa.model.Preventa" />
+        </condition>
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0631" target="_h7109c6bb0533" source="_h7109c6bb0569" isDefault="true">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0632" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0633" target="_h7109c6bb0533" source="_h7109c6bb0514">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0634" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0635" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <connections xmi:type="process:SequenceFlow" xmi:id="_h7109c6bb0636" target="_h7109c6bb0573" source="_h7109c6bb0533">
+        <decisionTable xmi:type="decision:DecisionTable" xmi:id="_h7109c6bb0637" />
+        <condition xmi:type="expression:Expression" xmi:id="_h7109c6bb0638" name="" returnType="java.lang.Boolean" returnTypeFixed="true" />
+      </connections>
+      <formMapping xmi:type="process:FormMapping" xmi:id="_h7109c6bb0639" type="NONE" />
+      <overviewFormMapping xmi:type="process:FormMapping" xmi:id="_h7109c6bb0640" type="URL" url="/bonita/portal/resource/app/hubspotBonita/frmOverview/content/">
+        <targetForm xmi:type="expression:Expression" xmi:id="_h7109c6bb0641" name="/bonita/portal/resource/app/hubspotBonita/frmOverview/content/" content="/bonita/portal/resource/app/hubspotBonita/frmOverview/content/" type="CONSTANT" returnType="java.lang.String" returnTypeFixed="true" />
+      </overviewFormMapping>
+      <actors xmi:type="process:Actor" xmi:id="_h7109c6bb0003" name="orquestador" initiator="true" />
+      <actors xmi:type="process:Actor" xmi:id="_h7109c6bb0004" name="consultora" />
+      <configurations xmi:id="_h7109c6bb0642" name="Qualification" version="9">
+        <actorMappings>
+          <actorMapping name="orquestador">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/integracion</group>
+                <role>integracion</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+          <actorMapping name="consultora">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/preventa</group>
+                <role>consultora</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+        </actorMappings>
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-leer" definitionVersion="1.0.0" implementationId="hubspot-ticket-leer-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-consultores-menor-carga" definitionVersion="1.0.0" implementationId="hubspot-consultores-menor-carga-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" implementationId="hubspot-ticket-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="correo-tarea-asignada" definitionVersion="1.0.0" implementationId="correo-tarea-asignada-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" implementationId="hubspot-nota-crear-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" implementationId="hubspot-negocio-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-archivo-subir" definitionVersion="1.0.0" implementationId="hubspot-archivo-subir-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="ACTOR_FILTER" definitionId="usuario-por-nombre" definitionVersion="1.0.0" implementationId="usuario-por-nombre-impl" implementationVersion="1.0.0" />
+        <processDependencies id="CONNECTOR" />
+        <processDependencies id="ACTOR_FILTER" />
+        <processDependencies id="OTHER" />
+        <parameters name="param_hubspotUrlBase" value="https://api.hubapi.com" typeClassname="java.lang.String" />
+        <parameters name="param_hubspotRutaTickets" value="/crm/v3/objects/tickets" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnValidacion" value="2" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnDiseno" value="3" typeClassname="java.lang.String" />
+        <parameters name="param_stageEntregado" value="1425810258" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnEspera" value="1425810257" typeClassname="java.lang.String" />
+        <parameters name="param_stageCerrado" value="4" typeClassname="java.lang.String" />
+        <parameters name="param_consultores" value="89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez" typeClassname="java.lang.String" />
+        <parameters name="param_pipelineTickets" value="0" typeClassname="java.lang.String" />
+        <parameters name="param_smtpHost" value="smtp.gmail.com" typeClassname="java.lang.String" />
+        <parameters name="param_smtpPuerto" value="587" typeClassname="java.lang.Integer" />
+        <parameters name="param_smtpStarttls" value="true" typeClassname="java.lang.Boolean" />
+        <parameters name="param_smtpUsuario" value="preventa@trycore.com" typeClassname="java.lang.String" />
+        <parameters name="param_smtpContrasena" value="sin-configurar" typeClassname="java.lang.String" />
+        <parameters name="param_smtpRemitenteNombre" value="Preventa Trycore" typeClassname="java.lang.String" />
+        <parameters name="param_bonitaUrlBase" value="http://localhost:8080/bonita" typeClassname="java.lang.String" />
+      </configurations>
+      <configurations xmi:id="_h7109c6bb0643" name="Production" version="9">
+        <actorMappings>
+          <actorMapping name="orquestador">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/integracion</group>
+                <role>integracion</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+          <actorMapping name="consultora">
+            <groups />
+            <memberships>
+              <membership>
+                <group>/trycore/preventa</group>
+                <role>consultora</role>
+              </membership>
+            </memberships>
+            <roles />
+            <users />
+          </actorMapping>
+        </actorMappings>
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-leer" definitionVersion="1.0.0" implementationId="hubspot-ticket-leer-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-consultores-menor-carga" definitionVersion="1.0.0" implementationId="hubspot-consultores-menor-carga-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-ticket-actualizar" definitionVersion="1.0.0" implementationId="hubspot-ticket-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="correo-tarea-asignada" definitionVersion="1.0.0" implementationId="correo-tarea-asignada-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-nota-crear" definitionVersion="1.0.0" implementationId="hubspot-nota-crear-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-negocio-actualizar" definitionVersion="1.0.0" implementationId="hubspot-negocio-actualizar-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="CONNECTOR" definitionId="hubspot-archivo-subir" definitionVersion="1.0.0" implementationId="hubspot-archivo-subir-impl" implementationVersion="1.0.0" />
+        <definitionMappings type="ACTOR_FILTER" definitionId="usuario-por-nombre" definitionVersion="1.0.0" implementationId="usuario-por-nombre-impl" implementationVersion="1.0.0" />
+        <processDependencies id="CONNECTOR" />
+        <processDependencies id="ACTOR_FILTER" />
+        <processDependencies id="OTHER" />
+        <parameters name="param_hubspotUrlBase" value="https://api.hubapi.com" typeClassname="java.lang.String" />
+        <parameters name="param_hubspotRutaTickets" value="/crm/v3/objects/tickets" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnValidacion" value="2" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnDiseno" value="3" typeClassname="java.lang.String" />
+        <parameters name="param_stageEntregado" value="1425810258" typeClassname="java.lang.String" />
+        <parameters name="param_stageEnEspera" value="1425810257" typeClassname="java.lang.String" />
+        <parameters name="param_stageCerrado" value="4" typeClassname="java.lang.String" />
+        <parameters name="param_consultores" value="89450376:Linda:linda.lozano;89450377:Viviana:viviana.velasquez" typeClassname="java.lang.String" />
+        <parameters name="param_pipelineTickets" value="0" typeClassname="java.lang.String" />
+        <parameters name="param_smtpHost" value="smtp.gmail.com" typeClassname="java.lang.String" />
+        <parameters name="param_smtpPuerto" value="587" typeClassname="java.lang.Integer" />
+        <parameters name="param_smtpStarttls" value="true" typeClassname="java.lang.Boolean" />
+        <parameters name="param_smtpUsuario" value="preventa@trycore.com" typeClassname="java.lang.String" />
+        <parameters name="param_smtpContrasena" value="sin-configurar" typeClassname="java.lang.String" />
+        <parameters name="param_smtpRemitenteNombre" value="Preventa Trycore" typeClassname="java.lang.String" />
+        <parameters name="param_bonitaUrlBase" value="http://localhost:8080/bonita" typeClassname="java.lang.String" />
+      </configurations>
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0644" name="param_hubspotUrlBase" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0645" name="param_hubspotRutaTickets" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0646" name="param_stageEnValidacion" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0647" name="param_stageEnDiseno" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0648" name="param_stageEntregado" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0649" name="param_stageEnEspera" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0650" name="param_stageCerrado" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0651" name="param_consultores" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0652" name="param_pipelineTickets" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0653" name="param_smtpHost" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0654" name="param_smtpPuerto" typeClassname="java.lang.Integer" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0655" name="param_smtpStarttls" typeClassname="java.lang.Boolean" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0656" name="param_smtpUsuario" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0657" name="param_smtpContrasena" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0658" name="param_smtpRemitenteNombre" typeClassname="java.lang.String" />
+      <parameters xmi:type="parameter:Parameter" xmi:id="_h7109c6bb0659" name="param_bonitaUrlBase" typeClassname="java.lang.String" />
+      <contract xmi:type="process:Contract" xmi:id="_h7109c6bb0660">
+        <inputs xmi:type="process:ContractInput" xmi:id="_h7109c6bb0661" name="ticketId" type="TEXT" />
+        <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0662" name="ticketId_presente" expression="return ticketId != null &amp;&amp; !ticketId.trim().isEmpty()" errorMessage="El identificador del ticket es obligatorio">
+          <inputNames>ticketId</inputNames>
+        </constraints>
+        <constraints xmi:type="process:ContractConstraint" xmi:id="_h7109c6bb0663" name="mandatory_ticketId" expression="ticketId != null" errorMessage="ticketId es obligatorio">
+          <inputNames>ticketId</inputNames>
+        </constraints>
+      </contract>
+    </elements>
+    <datatypes xmi:type="process:BooleanType" xmi:id="_h7109c6bb0007" name="Boolean" />
+    <datatypes xmi:type="process:DateType" xmi:id="_h7109c6bb0008" name="Date" />
+    <datatypes xmi:type="process:IntegerType" xmi:id="_h7109c6bb0009" name="Integer" />
+    <datatypes xmi:type="process:LongType" xmi:id="_h7109c6bb0010" name="Long" />
+    <datatypes xmi:type="process:DoubleType" xmi:id="_h7109c6bb0011" name="Double" />
+    <datatypes xmi:type="process:StringType" xmi:id="_h7109c6bb0012" name="Text" />
+    <datatypes xmi:type="process:JavaType" xmi:id="_h7109c6bb0013" name="Java_object" />
+    <datatypes xmi:type="process:XMLType" xmi:id="_h7109c6bb0014" name="XML" />
+    <datatypes xmi:type="process:BusinessObjectType" xmi:id="_h7109c6bb0015" name="Business_Object" />
+  </process:MainProcess>
+  <notation:Diagram xmi:id="_h7109c6bb0664" type="Process" element="_h7109c6bb0001" name="GestionPreventa" measurementUnit="Pixel">
+    <children xmi:type="notation:Node" xmi:id="_h7109c6bb0665" type="2007" element="_h7109c6bb0002">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0666" type="5008" />
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0667" type="7001">
+        <children xmi:type="notation:Node" xmi:id="_h7109c6bb0668" type="3007" element="_h7109c6bb0005">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0669" type="5007" />
+          <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0670" type="7002">
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0671" type="3002" element="_h7109c6bb0016">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0672" type="5024">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0673" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0674" x="109" y="55" width="30" height="30" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0675" type="3027" element="_h7109c6bb0020" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0676" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0677" x="240" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0678" type="3027" element="_h7109c6bb0049" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0679" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0680" x="420" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0681" type="3028" element="_h7109c6bb0084" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0682" type="5018" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0683" x="600" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0684" type="3027" element="_h7109c6bb0115" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0685" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0686" x="780" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0687" type="3027" element="_h7109c6bb0267" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0688" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0689" x="1320" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0690" type="3027" element="_h7109c6bb0298" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0691" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0692" x="1320" y="138" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0693" type="3027" element="_h7109c6bb0329" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0694" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0695" x="1320" y="238" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0696" type="3027" element="_h7109c6bb0514" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0697" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0698" x="1860" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0699" type="3027" element="_h7109c6bb0533" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0700" type="5017" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0701" x="2040" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0702" type="3003" element="_h7109c6bb0573">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0703" type="5025">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0704" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0705" x="2269" y="55" width="30" height="30" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0706" type="3003" element="_h7109c6bb0577">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0707" type="5025">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0708" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0709" x="1549" y="55" width="30" height="30" />
+            </children>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7109c6bb0710" />
+          <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0711" />
+          <styles xmi:type="notation:LineStyle" xmi:id="_h7109c6bb0712" lineColor="12632256" />
+          <styles xmi:type="notation:FillStyle" xmi:id="_h7109c6bb0713" />
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0714" width="2329" height="340" />
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h7109c6bb0715" type="3007" element="_h7109c6bb0006">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0716" type="5007" />
+          <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0717" type="7002">
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0718" type="3005" element="_h7109c6bb0136" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0719" type="5005" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0720" x="960" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0721" type="3005" element="_h7109c6bb0360" fillColor="14334392" lineColor="10710316">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0722" type="5005" />
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0723" x="1500" y="38" width="128" height="64" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0724" type="3008" element="_h7109c6bb0565">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0725" type="5026">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0726" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0727" x="1182" y="48" width="43" height="43" />
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_h7109c6bb0728" type="3008" element="_h7109c6bb0569">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0729" type="5026">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0730" y="5" />
+              </children>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0731" x="1722" y="48" width="43" height="43" />
+            </children>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7109c6bb0732" />
+          <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0733" />
+          <styles xmi:type="notation:LineStyle" xmi:id="_h7109c6bb0734" lineColor="12632256" />
+          <styles xmi:type="notation:FillStyle" xmi:id="_h7109c6bb0735" />
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0736" width="2329" height="140" />
+        </children>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7109c6bb0737" />
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0738" />
+      <styles xmi:type="notation:LineStyle" xmi:id="_h7109c6bb0739" lineColor="12632256" />
+      <styles xmi:type="notation:FillStyle" xmi:id="_h7109c6bb0740" />
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7109c6bb0741" width="2359" height="480" />
+    </children>
+    <styles xmi:type="notation:DiagramStyle" xmi:id="_h7109c6bb0742" />
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0743" type="4001" element="_h7109c6bb0587" source="_h7109c6bb0671" target="_h7109c6bb0675" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0744" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0745" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0746" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0747" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0748" type="4001" element="_h7109c6bb0590" source="_h7109c6bb0675" target="_h7109c6bb0678" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0749" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0750" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0751" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0752" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0753" type="4001" element="_h7109c6bb0593" source="_h7109c6bb0678" target="_h7109c6bb0681" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0754" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0755" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0756" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0757" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0758" type="4001" element="_h7109c6bb0596" source="_h7109c6bb0681" target="_h7109c6bb0684" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0759" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0760" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0761" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0762" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0763" type="4001" element="_h7109c6bb0599" source="_h7109c6bb0684" target="_h7109c6bb0718" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0764" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0765" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0766" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0767" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0768" type="4001" element="_h7109c6bb0602" source="_h7109c6bb0718" target="_h7109c6bb0724" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0769" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0770" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0771" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0772" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0773" type="4001" element="_h7109c6bb0605" source="_h7109c6bb0724" target="_h7109c6bb0687" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0774" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0775" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0776" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0777" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0778" type="4001" element="_h7109c6bb0609" source="_h7109c6bb0724" target="_h7109c6bb0690" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0779" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0780" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0781" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0782" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0783" type="4001" element="_h7109c6bb0613" source="_h7109c6bb0724" target="_h7109c6bb0693" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0784" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0785" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0786" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0787" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0788" type="4001" element="_h7109c6bb0615" source="_h7109c6bb0693" target="_h7109c6bb0706" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0789" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0790" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0791" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0792" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0793" type="4001" element="_h7109c6bb0618" source="_h7109c6bb0687" target="_h7109c6bb0721" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0794" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0795" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0796" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0797" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0798" type="4001" element="_h7109c6bb0621" source="_h7109c6bb0690" target="_h7109c6bb0718" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0799" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0800" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0801" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0802" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0803" type="4001" element="_h7109c6bb0624" source="_h7109c6bb0721" target="_h7109c6bb0728" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0804" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0805" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0806" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0807" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0808" type="4001" element="_h7109c6bb0627" source="_h7109c6bb0728" target="_h7109c6bb0696" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0809" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0810" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0811" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0812" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0813" type="4001" element="_h7109c6bb0631" source="_h7109c6bb0728" target="_h7109c6bb0699" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0814" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0815" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0816" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0817" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0818" type="4001" element="_h7109c6bb0633" source="_h7109c6bb0696" target="_h7109c6bb0699" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0819" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0820" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0821" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0822" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_h7109c6bb0823" type="4001" element="_h7109c6bb0636" source="_h7109c6bb0699" target="_h7109c6bb0702" roundedBendpointsRadius="10" routing="Rectilinear" lineColor="12632256">
+      <children xmi:type="notation:DecorationNode" xmi:id="_h7109c6bb0824" type="6001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_h7109c6bb0825" y="-10" />
+      </children>
+      <styles xmi:type="notation:FontStyle" xmi:id="_h7109c6bb0826" />
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_h7109c6bb0827" points="[0, 0, 0, 0]$[0, 0, 0, 0]" />
+    </edges>
+  </notation:Diagram>
+</xmi:XMI>

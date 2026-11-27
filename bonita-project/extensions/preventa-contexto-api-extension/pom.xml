@@ -15,6 +15,12 @@
     <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
     <spock-core.version>2.3-groovy-3.0</spock-core.version>
     <logback-classic.version>1.2.13</logback-classic.version>
+    <!-- Raíz de HubSpot que va en configuration.properties (filtrado). Por defecto, la real; los perfiles de abajo la
+         cambian por el mock del journey cuando se construye para Local, que es el entorno por defecto del plugin de
+         Bonita (bonita.environment ausente, «local» o «Local»): así un bundle Local nunca llama a HubSpot real.
+         Qualification y Production (-Dbonita.environment=Qualification|Production) dejan api.hubapi.com.
+         En el servidor, la variable de entorno HUBSPOT_BASE_URL sigue ganando sobre el fichero. -->
+    <contexto.hubspotUrlBase>https://api.hubapi.com</contexto.hubspotUrlBase>
   </properties>
   <dependencies>
     <dependency>
@@ -60,6 +66,18 @@
     <sourceDirectory>src/main/groovy</sourceDirectory>
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <defaultGoal>verify</defaultGoal>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes><include>configuration.properties</include></includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes><exclude>configuration.properties</exclude></excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -69,6 +87,9 @@
           <includes>
             <include>**/*.java</include>
           </includes>
+          <systemPropertyVariables>
+            <contexto.hubspotUrlBase.esperado>${contexto.hubspotUrlBase}</contexto.hubspotUrlBase.esperado>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
@@ -88,4 +109,27 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>hubspot-mock-local-por-defecto</id>
+      <activation><property><name>!bonita.environment</name></property></activation>
+      <properties>
+        <contexto.hubspotUrlBase>http://localhost:8099/hubspot</contexto.hubspotUrlBase>
+      </properties>
+    </profile>
+    <profile>
+      <id>hubspot-mock-local</id>
+      <activation><property><name>bonita.environment</name><value>local</value></property></activation>
+      <properties>
+        <contexto.hubspotUrlBase>http://localhost:8099/hubspot</contexto.hubspotUrlBase>
+      </properties>
+    </profile>
+    <profile>
+      <id>hubspot-mock-Local</id>
+      <activation><property><name>bonita.environment</name><value>Local</value></property></activation>
+      <properties>
+        <contexto.hubspotUrlBase>http://localhost:8099/hubspot</contexto.hubspotUrlBase>
+      </properties>
+    </profile>
+  </profiles>
 </project>

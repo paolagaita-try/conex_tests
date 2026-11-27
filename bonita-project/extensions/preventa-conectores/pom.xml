@@ -9,7 +9,7 @@
   </parent>
   <artifactId>hubspot-bonita-preventa-conectores</artifactId>
   <name>Conectores propios de preventa hacia HubSpot</name>
-  <description>Tres conectores REST nativos del proyecto hacia la API de HubSpot: hubspot-ticket-leer (lee el ticket), hubspot-consultores-menor-carga (balance de carga ponderada por prioridad: elige el owner con menor suma de pesos —URGENT=4, HIGH=3, MEDIUM=2, LOW=1— de sus tickets en los stages de trabajo, con desempate circular) y hubspot-ticket-actualizar (fija owner y stage). El token de la Private App se lee de la variable de entorno HUBSPOT_PRIVATE_APP_TOKEN, nunca de una entrada. En Local apuntan al mock (mock.json).</description>
+  <description>Tres conectores REST nativos del proyecto hacia la API de HubSpot: hubspot-ticket-leer (lee el ticket), hubspot-consultores-menor-carga (balance de carga ponderada por prioridad: elige el owner con menor suma de pesos —URGENT=4, HIGH=3, MEDIUM=2, LOW=1— de sus tickets en los stages de trabajo, con desempate circular) y hubspot-ticket-actualizar (fija owner y stage); además correo-tarea-asignada, el aviso por correo (SMTP con STARTTLS) de cada tarea humana nueva. El token de la Private App se lee de la variable de entorno HUBSPOT_PRIVATE_APP_TOKEN, nunca de una entrada. En Local apuntan al mock (mock.json).</description>
   <properties>
     <maven.compiler.compilerId>groovy-eclipse-compiler</maven.compiler.compilerId>
     <spock-core.version>2.3-groovy-3.0</spock-core.version>
@@ -58,6 +58,11 @@
       <resource>
         <directory>src/main/resources-filtered</directory>
         <filtering>true</filtering>
+      </resource>
+      <!-- Plantilla del correo y logo: sin filtrar (el PNG se corrompería con el filtrado de Maven). -->
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
       </resource>
     </resources>
     <plugins>

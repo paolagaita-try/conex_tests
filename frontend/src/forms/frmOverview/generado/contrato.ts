@@ -6,7 +6,7 @@ import type { Lectura } from '$lib/bonita/caso';
 import type { ValoresDelFormulario } from '$lib/ui/valores';
 
 /** Identidad del formulario: su id en la matriz, su página, su tarea, su contrato y su proceso. */
-export const FORMULARIO = { id: "frm_overview", pagina: "frmOverview", tipo: "resumen", tarea: null, contrato: null, proceso: "GestionPreventa", version: "1.4" } as const;
+export const FORMULARIO = { id: "frm_overview", pagina: "frmOverview", tipo: "resumen", tarea: null, contrato: null, proceso: "GestionPreventa", version: "1.5" } as const;
 
 /** Todos los inputs del contrato, en su orden: el cuerpo los lleva siempre. */
 export const ENTRADAS = [] as const;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0">
+  <implementationId>correo-tarea-asignada-impl</implementationId>
+  <implementationVersion>1.0.0</implementationVersion>
+  <definitionId>correo-tarea-asignada</definitionId>
+  <definitionVersion>1.0.0</definitionVersion>
+  <implementationClassname>co.trycore.preventa.conectores.CorreoTareaAsignada</implementationClassname>
+  <hasSources>false</hasSources>
+  <description>Avisa por correo (SMTP con STARTTLS) a la consultora de que tiene una tarea nueva en Bonita.</description>
+  <jarDependencies>
+    <jarDependency>${project.artifactId}-${project.version}.jar</jarDependency>
+  </jarDependencies>
+</implementation:connectorImplementation>

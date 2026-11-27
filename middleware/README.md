@@ -9,7 +9,7 @@ Puente entre HubSpot y Bonita para la integración de preventa. Servicio **Rust*
 
 La entrada es lo **único** que el middleware hace sobre el caso: con la premisa v2 «Bonita-first» (`docs/08-construccion/plan-v2-bonita-first.md`) el caso avanza dentro de Bonita. La consultora valida la solicitud y diseña la propuesta en **formularios de Bonita**, y son los conectores de Bonita los que mueven el ticket de stage y escriben en el Negocio. Por eso no hay en el middleware avance a diseño, webhook de artefactos (`/webhooks/artifacts-loaded`), suscripción `deal.propertyChange` ni detector periódico: se retiraron.
 
-El middleware **no escribe** en HubSpot: solo lee el ticket (blindaje de pipeline y reconciliación).
+El middleware **no escribe** en HubSpot: solo lee el ticket (blindaje de pipeline y reconciliación). Tampoco envía correos: el aviso a la consultora de cada tarea nueva (desde la versión 1.5 del proceso) lo envía Bonita con su conector `correo-tarea-asignada`.
 
 ## Correr
 
@@ -24,7 +24,7 @@ cargo run
 cargo test                 # tests de integración (wiremock) + unit (firma)
 ```
 
-Variables de entorno: ver [`.env.example`](.env.example). El caso se instancia en `GestionPreventa` versión `PROCESS_VERSION` (por defecto **1.4**, la del pool vigente; súbela con cada versión nueva del pool). Secretos (`HUBSPOT_PRIVATE_APP_TOKEN`, `HUBSPOT_APP_SECRET`) solo por entorno, nunca en el repo.
+Variables de entorno: ver [`.env.example`](.env.example). El caso se instancia en `GestionPreventa` versión `PROCESS_VERSION` (por defecto **1.5**, la del pool vigente; súbela con cada versión nueva del pool). Secretos (`HUBSPOT_PRIVATE_APP_TOKEN`, `HUBSPOT_APP_SECRET`) solo por entorno, nunca en el repo.
 
 ## Configurar en HubSpot (Free/Starter — sin costo)
 
