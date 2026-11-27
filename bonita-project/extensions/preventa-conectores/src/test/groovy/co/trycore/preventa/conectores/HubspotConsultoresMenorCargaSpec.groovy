@@ -63,16 +63,16 @@ class HubspotConsultoresMenorCargaSpec extends Specification {
     }
 
     def "el ticket que se está asignando no cuenta en la carga de su dueño anterior (prueba real v2)"() {
-        given: "el ticket 51223233059 (HIGH) quedó en stage 3 a nombre de Linda tras una corrida fallida; nadie más tiene carga"
+        given: "el ticket 90000000001 (HIGH) quedó en stage 3 a nombre de Linda tras una corrida fallida; nadie más tiene carga"
         def candidatos = ['89450376', '89450377']
-        def resultados = [tkId('51223233059', '89450376', 'HIGH')]
+        def resultados = [tkId('90000000001', '89450376', 'HIGH')]
 
         expect: "sin excluirlo, Linda carga 3 y el reparto se va a Viviana (lo que pasó en la corrida 2)"
         HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '') == ['89450376': 3, '89450377': 0]
         HubspotConsultoresMenorCarga.elegir(['89450376': 3, '89450377': 0], candidatos, '') == '89450377'
 
         and: "excluyéndolo, ambas cargan 0 y decide el desempate determinista (primera en el orden, sin último asignado)"
-        def carga = HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '51223233059')
+        def carga = HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '90000000001')
         carga == ['89450376': 0, '89450377': 0]
         HubspotConsultoresMenorCarga.elegir(carga, candidatos, '') == '89450376'
     }
@@ -82,14 +82,14 @@ class HubspotConsultoresMenorCargaSpec extends Specification {
         given:
         def candidatos = ['89450376', '89450377']
         def resultados = [
-            tkId('51223233059', duenoPrevio, 'HIGH'),     // el que se asigna: no cuenta
+            tkId('90000000001', duenoPrevio, 'HIGH'),     // el que se asigna: no cuenta
             tkId('900', '89450377', 'LOW'),               // carga real de Viviana: 1
             tkId('901', '88449388', 'URGENT')             // el bot no es candidato: no cuenta
         ]
         expect:
-        HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '51223233059') == ['89450376': 0, '89450377': 1]
+        HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '90000000001') == ['89450376': 0, '89450377': 1]
         HubspotConsultoresMenorCarga.elegir(
-            HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '51223233059'), candidatos, '') == '89450376'
+            HubspotConsultoresMenorCarga.cargaPonderada(resultados, candidatos, '90000000001'), candidatos, '') == '89450376'
         where:
         duenoPrevio | stage
         '89450376'  | '3'

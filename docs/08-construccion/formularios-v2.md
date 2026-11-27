@@ -44,7 +44,7 @@ npm install
 FORM_ID=frm10ValidarSolicitud npx vite        # abre http://localhost:5173/?demo=1
 npx vitest run src/forms/frm10ValidarSolicitud src/forms/frm20DisenarPropuesta src/forms/frmOverview
 npm run build:all                              # ZIPs en dist-zips/ (usar npm run: en Windows el script directo no encuentra npm)
-node scripts/capturas.mjs                      # PNG en docs/08-construccion/formularios/
+node scripts/capturas.mjs                      # PNG en capturas-formularios/ (ignorado por git)
 PYTHONUTF8=1 PYTHONPATH=../tools/arnes python -m custodios.check_formularios ..
 ```
 
@@ -55,8 +55,8 @@ PYTHONUTF8=1 PYTHONPATH=../tools/arnes python -m custodios.check_formularios ..
 
 ## Capturas (datos simulados)
 
-`docs/08-construccion/formularios/`: `<pantalla>-escritorio.png`, `<pantalla>-movil.png` y, para las dos tareas,
-`<pantalla>-errores.png`.
+`node scripts/capturas.mjs` las genera en `capturas-formularios/` (raíz del repo, ignorada por git): `<pantalla>-escritorio.png`,
+`<pantalla>-movil.png` y, para las dos tareas, `<pantalla>-errores.png`. Las capturas no se suben al repositorio.
 
 ## Excepción: permiso `extension/preventa/contexto` (opción B, temporal)
 

@@ -1,13 +1,13 @@
 /**
  * Capturas PNG de cada formulario con datos simulados (`?demo=1`, solo en `vite` dev). Sin Bonita ni HubSpot.
- * Uso: node scripts/capturas.mjs [carpeta-destino]   (por defecto ../docs/08-construccion/formularios)
+ * Uso: node scripts/capturas.mjs [carpeta-destino]   (por defecto ../capturas-formularios, fuera de git; las capturas no se suben al repo)
  */
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
 
-const destino = path.resolve(process.argv[2] ?? '../docs/08-construccion/formularios');
+const destino = path.resolve(process.argv[2] ?? '../capturas-formularios');
 mkdirSync(destino, { recursive: true });
 const FORMULARIOS = ['frm10ValidarSolicitud', 'frm20DisenarPropuesta', 'frmOverview'];
 const vite = path.resolve('node_modules/vite/bin/vite.js');
